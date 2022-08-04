@@ -1,0 +1,27 @@
+
+jobs:
+  - job: Mobile
+    pool:
+      vmImage: 'macOS-latest'
+    steps:
+      - task: JavaToolInstaller@0
+        inputs:
+          versionSpec: '11'
+          jdkArchitectureOption: 'x64'
+          jdkSourceOption: 'PreInstalled'
+      - task: FlutterInstall@0
+        inputs:
+          mode: 'auto'
+          channel: 'stable'
+          version: 'latest'
+
+      - task: FlutterBuild@0
+        inputs:
+          target: 'apk'
+          projectDirectory: '.'
+          entryPoint: "lib/main.dart"
+          iosCodesign: false
+
+      - task: FlutterTest@0
+        inputs:
+          projectDirectory: '.'
