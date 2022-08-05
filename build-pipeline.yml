@@ -25,3 +25,40 @@ jobs:
       - task: FlutterTest@0
         inputs:
           projectDirectory: '.'
+      - task: InstallAppleCertificate@2
+        displayName: "Install Apple p12 cert"
+        inputs:
+          certSecureFile: "Certificates.p12"
+          certPwd: $(library.certPassword)
+          keychain: "temp"
+          deleteCert: true
+              
+      - task: InstallAppleProvisioningProfile@1
+        displayName: "Install Apple Mobile Provisioning Profile"
+        inputs:
+          provisioningProfileLocation: "secureFiles"
+          provProfileSecureFile: "flutter_app.mobileprovision"
+          removeProfile: true
+            
+      - task: Xcode@5
+        displayName: "Code sign ipa for Distribution"
+        inputs:
+          actions: "build"
+          xcWorkspacePath: "**/Runner.xcworkspace"
+          scheme: "Runner"
+          sdk: "iphoneos"
+          configuration: "release"
+          packageApp: true
+          signingOption: "manual"
+          signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+          provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'          
+            
+      - task: CopyFiles@2
+        inputs:
+          contents: '**/*.ipa'
+          targetFolder: '$(build.artifactStagingDirectory)'
+          OverWrite: true
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          artifactName: 'drop'
