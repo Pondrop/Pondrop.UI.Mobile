@@ -5,6 +5,10 @@ import 'package:pondrop/l10n/l10n.dart';
 
 class CounterPage extends StatelessWidget {
   const CounterPage({super.key});
+  
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => const CounterPage());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +34,13 @@ class CounterView extends StatelessWidget {
         children: [
           FloatingActionButton(
             onPressed: () => context.read<CounterCubit>().increment(),
+            heroTag: 'fab_inc',
             child: const Icon(Icons.add),
           ),
           const SizedBox(height: 8),
           FloatingActionButton(
             onPressed: () => context.read<CounterCubit>().decrement(),
+            heroTag: 'fab_dec',
             child: const Icon(Icons.remove),
           ),
         ],

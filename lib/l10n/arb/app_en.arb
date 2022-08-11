@@ -3,5 +3,32 @@
     "counterAppBarTitle": "Counter",
     "@counterAppBarTitle": {
         "description": "Text shown in the AppBar of the Counter Page"
-    }
+    },
+    "email": "Email",
+    "@email": {},
+    "emailInvalid": "Must be a valid email address",
+    "@emailInvalid": {
+        "description": "Text shown an invalid email address is entered"
+    },
+    "password": "Password",
+    "@password": {},
+    "passwordCannotBeEmpty": "Password cannot be empty",
+    "@passwordCannotBeEmpty": {
+        "description": "Text shown when no password entered"
+    },
+    "passwordTooShort": "Password must be at least {length} characters",
+    "@passwordTooShort": {
+        "description": "Text shown when an entered password is too short",
+        "placeholders": {
+            "length": {
+                "type" : "int"
+            }
+        }
+    },
+    "signIn": "Sign in",
+    "@signIn": {},
+    "shopping": "Shopping",
+    "@shopping": {},
+    "profile": "Profile",
+    "@profile": {}
 }
