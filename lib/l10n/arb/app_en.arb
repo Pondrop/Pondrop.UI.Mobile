@@ -30,5 +30,7 @@
     "shopping": "Shopping",
     "@shopping": {},
     "profile": "Profile",
-    "@profile": {}
+    "@profile": {},
+    "stores": "Stores",
+    "@stores": {}
 }

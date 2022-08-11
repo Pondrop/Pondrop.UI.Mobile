@@ -3,8 +3,8 @@ part of 'login_bloc.dart';
 class LoginState extends Equatable {
   const LoginState({
     this.status = const FormSubmissionStatusInitial(),
-    this.email = '',
-    this.password = '',
+    this.email = 'bryan@xam.com',
+    this.password = "test",
     this.passwordObscured = true,
     this.passwordMinLength = 8,
   });

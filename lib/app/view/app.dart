@@ -8,8 +8,10 @@ import 'package:pondrop/location/bloc/location_bloc.dart';
 import 'package:pondrop/location/repositories/location_repository.dart';
 import 'package:pondrop/login/login.dart';
 import 'package:pondrop/splash/view/splash_page.dart';
+import 'package:pondrop/stores/bloc/store_bloc.dart';
 import 'package:pondrop/tabbed/tabbed.dart';
 import 'package:pondrop/tabbed/view/tabbed_page.dart';
+import 'package:store_service/store_service.dart';
 import 'package:user_repository/user_repository.dart';
 
 class App extends StatelessWidget {
@@ -18,11 +20,13 @@ class App extends StatelessWidget {
     required this.authenticationRepository,
     required this.locationRepository,
     required this.userRepository,
+    required this.storeService
   });
 
   final AuthenticationRepository authenticationRepository;
   final LocationRepository locationRepository;
   final UserRepository userRepository;
+  final StoreService storeService;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,7 @@ class App extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: authenticationRepository),
         RepositoryProvider.value(value: userRepository),
+        RepositoryProvider.value(value: locationRepository),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -40,6 +45,11 @@ class App extends StatelessWidget {
             )..add(AuthenticationCheckExistingUser())),
           BlocProvider<LocationBloc>(
             create: (context) => LocationBloc(
+              locationRepository: locationRepository,
+            )),
+            BlocProvider<StoreBloc>(
+            create: (context) => StoreBloc(
+              storeService: storeService,
               locationRepository: locationRepository,
             )),
         ],
@@ -64,6 +74,7 @@ class _AppViewState extends State<AppView> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
         colorScheme: ColorScheme.fromSwatch(

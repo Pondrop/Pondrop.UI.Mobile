@@ -3,6 +3,8 @@ import 'package:pondrop/counter/counter.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/profile/profile.dart';
 
+import '../../stores/view/store_page.dart';
+
 class TabbedPage extends StatefulWidget {
   const TabbedPage({super.key});
 
@@ -20,6 +22,7 @@ class _TabbedPageState extends State<TabbedPage> {
   static const List<Widget> _tabWidgets = <Widget>[
     CounterPage(),
     ProfilePage(),
+    StorePage(),
   ];
 
   @override
@@ -40,6 +43,10 @@ class _TabbedPageState extends State<TabbedPage> {
             BottomNavigationBarItem(
               icon: const Icon(Icons.account_circle),
               label: l10n.profile,
+            ), 
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.store),
+              label: l10n.stores,
             ),
           ],
         currentIndex: _selectedIndex,

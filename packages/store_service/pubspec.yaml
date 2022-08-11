@@ -1,0 +1,6 @@
+name: store_service
+description: Dart package which manages the store service.
+publish_to: none
+
+environment:
+  sdk: ">=2.16.0 <3.0.0"

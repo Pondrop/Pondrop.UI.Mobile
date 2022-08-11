@@ -5,6 +5,7 @@ import 'package:pondrop/app/app.dart';
 import 'package:pondrop/counter/counter.dart';
 import 'package:pondrop/location/repositories/location_repository.dart';
 import 'package:pondrop/login/view/login_page.dart';
+import 'package:store_service/store_service.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:uuid/uuid.dart';
 
@@ -14,15 +15,19 @@ class MockLocationRepository extends Mock implements LocationRepository {}
 
 class MockUserRepository extends Mock implements UserRepository {}
 
+class MockStoreService extends Mock implements StoreService {}
+
 void main() {
   late AuthenticationRepository authenticationRepository;
   late LocationRepository locationRepository;
   late UserRepository userRepository;
+  late StoreService storeService;
 
   setUp(() {
     authenticationRepository = MockAuthenticationRepository();
     locationRepository = MockLocationRepository();
     userRepository = MockUserRepository();
+    storeService = MockStoreService();
   });
 
   group('App', () {
@@ -38,6 +43,7 @@ void main() {
         authenticationRepository: authenticationRepository,
         locationRepository: locationRepository,
         userRepository: userRepository,
+        storeService: storeService
       ));
 
       await tester.pumpAndSettle();
@@ -60,6 +66,7 @@ void main() {
         authenticationRepository: authenticationRepository,
         locationRepository: locationRepository,
         userRepository: userRepository,
+        storeService: storeService
       ));
 
       await tester.pumpAndSettle();

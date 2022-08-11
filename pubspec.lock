@@ -43,6 +43,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "8.1.0"
+  bloc_concurrency:
+    dependency: "direct main"
+    description:
+      name: bloc_concurrency
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   bloc_test:
     dependency: "direct dev"
     description:
@@ -400,7 +407,7 @@ packages:
     source: hosted
     version: "2.1.0"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       url: "https://pub.dartlang.org"
@@ -768,6 +775,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0"
+  store_service:
+    dependency: "direct main"
+    description:
+      path: "packages/store_service"
+      relative: true
+    source: path
+    version: "0.0.0"
   stream_channel:
     dependency: transitive
     description:
