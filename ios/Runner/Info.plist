@@ -45,5 +45,15 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location to find your closest stores.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs access to location to find your closest stores.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to complete store tasks.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to your camera to complete store tasks.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to your microphone to complete store tasks.</string>
 </dict>
 </plist>
