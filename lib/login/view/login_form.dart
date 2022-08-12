@@ -46,8 +46,9 @@ class LoginForm extends StatelessWidget {
         key: emailInputKey,
         initialValue: state.email,
         decoration: InputDecoration(
-          icon: const Icon(Icons.email),
-          hintText: l10n.email,
+          border: const OutlineInputBorder(),
+          prefixIcon: const Icon(Icons.email),
+          labelText: l10n.email,
         ),
         validator: (value) => state.isValidEmail ? null : l10n.emailInvalid,
         onChanged: (value) =>
@@ -67,7 +68,8 @@ class LoginForm extends StatelessWidget {
         initialValue: state.password,
         obscureText: state.passwordObscured,        
         decoration: InputDecoration(
-          icon: const Icon(Icons.security),
+          border: const OutlineInputBorder(),
+          prefixIcon: const Icon(Icons.security),
           suffixIcon: IconButton(
             icon: Icon(
                 state.passwordObscured 
@@ -78,7 +80,7 @@ class LoginForm extends StatelessWidget {
               .read<LoginBloc>()
               .add(LoginPasswordObscuredChanged(!state.passwordObscured)),
             ),
-          hintText: l10n.password,
+          labelText: l10n.password,
         ),
         validator: (value) =>
             state.isPasswordEmpty
