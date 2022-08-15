@@ -51,6 +51,10 @@ class SearchStoreState extends State<SearchStorePage> {
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.clear),
                         onPressed: () {
+                          _searchTextController.clear();
+                      _searchStoreBloc.add(
+                        TextChanged(text: ''),
+                      );
                         },
                       ),
                       hintText: 'Search...',
