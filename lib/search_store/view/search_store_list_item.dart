@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../models/store.dart';
+import '../../stores/models/store.dart';
 
-class StoreListItem extends StatelessWidget {
-  const StoreListItem({super.key, required this.store});
+
+class SearchStoreListItem extends StatelessWidget {
+  const SearchStoreListItem({super.key, required this.store});
 
   final Store store;
 
   @override
   Widget build(BuildContext context) {
-    String distanceInString = store.distanceFromLocation >= 1000 ? '${convertMetersInKM(store.distanceFromLocation)}KM' : '${store.distanceFromLocation}M';
+    
     return Material(
         child: Column(children: [
       ListTile(
         visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+        leading: const Icon(Icons.search),
         title: Padding(
           child: Text(store.name,
               style:
@@ -22,7 +24,7 @@ class StoreListItem extends StatelessWidget {
         ),
         isThreeLine: false,
         subtitle: Text(
-          '$distanceInString - ${store.address}',
+          '150m - ${store.address}',
           style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           softWrap: false,
         ),
@@ -34,8 +36,4 @@ class StoreListItem extends StatelessWidget {
       )
     ]));
   }
-
-    double convertMetersInKM(distanceInMeters){
-      return double.parse((distanceInMeters / 1000).toStringAsFixed(2));
-    }
 }

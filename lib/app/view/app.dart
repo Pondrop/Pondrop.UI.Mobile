@@ -7,6 +7,7 @@ import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/location/bloc/location_bloc.dart';
 import 'package:pondrop/location/repositories/location_repository.dart';
 import 'package:pondrop/login/login.dart';
+import 'package:pondrop/search_store/bloc/search_store_bloc.dart';
 import 'package:pondrop/splash/view/splash_page.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
 import 'package:pondrop/tabbed/tabbed.dart';
@@ -49,6 +50,10 @@ class App extends StatelessWidget {
             )),
             BlocProvider<StoreBloc>(
             create: (context) => StoreBloc(
+              storeService: storeService,
+              locationRepository: locationRepository,
+            )), BlocProvider<SearchStoreBloc>(
+            create: (context) => SearchStoreBloc(
               storeService: storeService,
               locationRepository: locationRepository,
             )),

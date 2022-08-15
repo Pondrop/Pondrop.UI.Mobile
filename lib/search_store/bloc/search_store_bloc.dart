@@ -11,10 +11,10 @@ import 'package:stream_transform/stream_transform.dart';
 
 import '../../location/repositories/location_repository.dart';
 
-part 'store_event.dart';
-part 'store_state.dart';
+part 'search_store_event.dart';
+part 'search_store_state.dart';
 
-const throttleDuration = Duration(milliseconds: 100);
+const throttleDuration = Duration(milliseconds: 300);
 
 EventTransformer<E> throttleDroppable<E>(Duration duration) {
   return (events, mapper) {
@@ -22,71 +22,74 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
-class StoreBloc extends Bloc<storeEvent, storeState> {
-  StoreBloc(
+EventTransformer<Event> debounce<Event>(Duration duration) {
+  return (events, mapper) => events.debounce(duration).switchMap(mapper);
+}
+
+class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
+  SearchStoreBloc(
       {required StoreService storeService,
       required LocationRepository locationRepository})
       : _storeService = storeService,
         _locationRepository = locationRepository,
-        super(const storeState()) {
-    on<storeFetched>(
-      _onstoreFetched,
-      transformer: throttleDroppable(throttleDuration),
-    );
+        super(const SearchStoreState()) {
+    on<TextChanged>(_onSearchStore, transformer: debounce(throttleDuration));
   }
 
   final StoreService _storeService;
   final LocationRepository _locationRepository;
   Position? _position;
 
-  Future<void> _onstoreFetched(
-    storeFetched event,
-    Emitter<storeState> emit,
-  ) async {
-    if (state.hasReachedMax) return;
+  Future<void> _onSearchStore(
+      TextChanged event, Emitter<SearchStoreState> emit) async {
+    final searchTerm = event.text;
+
+    if (searchTerm.isEmpty) return;
+
     try {
-      if (state.status == storeStatus.initial) {
+      if (state.status == SearchStoreStatus.initial) {
         _position = await _locationRepository.getCurrentPosition();
-        final stores = await _fetchstores();
+        final stores = await _fetchstores(searchTerm, state.stores.length);
 
         return emit(
           state.copyWith(
-            status: storeStatus.success,
+            status: SearchStoreStatus.success,
             stores: stores,
             hasReachedMax: false,
           ),
         );
       } else {
-        final stores = await _fetchstores(state.stores.length);
+        _position = await _locationRepository.getCurrentPosition();
+        final stores = await _fetchstores(searchTerm, state.stores.length);
         stores!.isEmpty
             ? emit(state.copyWith(hasReachedMax: true))
             : emit(
                 state.copyWith(
-                  status: storeStatus.success,
+                  status: SearchStoreStatus.success,
                   stores: List.of(state.stores)..addAll(stores),
                   hasReachedMax: false,
                 ),
               );
       }
     } catch (_) {
-      emit(state.copyWith(status: storeStatus.failure));
+      emit(state.copyWith(status: SearchStoreStatus.failure));
     }
   }
 
-  Future<List<Store>?> _fetchstores([int startIndex = 0]) async {
+  Future<List<Store>?> _fetchstores(
+      [String keyword = '', int startIndex = 0]) async {
     final result = await _storeService.searchStore(
-        keyword: '', geolocation: _position, index: startIndex);
+        keyword: keyword, geolocation: _position, index: startIndex);
 
     final storeList = result.value?.map((Value store) {
       try {
         return Store(
-          id: store.id!,
-          name: store.name!,
-          address: store.address!,
-          latitude: store.latitude!,
-          longitude: store.longitude!,
-          distanceFromLocation: store.distanceInMeters(_position!)
-        );
+            id: store.id!,
+            name: store.name!,
+            address: store.address!,
+            latitude: store.latitude!,
+            longitude: store.longitude!,
+            distanceFromLocation: store.distanceInMeters(_position!));
       } on Exception catch (_, ex) {
         throw Exception(ex);
       }
@@ -94,5 +97,4 @@ class StoreBloc extends Bloc<storeEvent, storeState> {
 
     return storeList;
   }
-
 }

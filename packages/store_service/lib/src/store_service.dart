@@ -14,7 +14,7 @@ class StoreService {
     required int index,
   }) async {
      final response = await http
-      .get(Uri.parse('${azureSearchBaseURL}indexes/azuresql-index-vwstores/docs?api-version=2021-04-30-Preview&search=*&\$top=20&\$skip=$index'), headers: requestHeaders);
+      .get(Uri.parse('${azureSearchBaseURL}indexes/azuresql-index-vwstores/docs?api-version=2021-04-30-Preview&search=*&\$top=20&\$skip=$index&'), headers: requestHeaders);
 
       if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -172,4 +172,10 @@ class Value {
     data['keyphrases'] = this.keyphrases;
     return data;
   }
+
+   double distanceInMeters(Position currentLocation) {
+    return Geolocator.distanceBetween(currentLocation.latitude,
+        currentLocation.longitude, latitude!, longitude!);
+  }
+
 }

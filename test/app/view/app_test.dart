@@ -5,9 +5,9 @@ import 'package:pondrop/app/app.dart';
 import 'package:pondrop/counter/counter.dart';
 import 'package:pondrop/location/repositories/location_repository.dart';
 import 'package:pondrop/login/view/login_page.dart';
-import 'package:store_service/store_service.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:uuid/uuid.dart';
+import '../../../packages/store_service/lib/store_service.dart';
 
 class MockAuthenticationRepository extends Mock implements AuthenticationRepository {}
 

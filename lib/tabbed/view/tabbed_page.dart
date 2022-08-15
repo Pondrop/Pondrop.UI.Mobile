@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pondrop/counter/counter.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/profile/profile.dart';
+import 'package:pondrop/search_store/view/search_store_page.dart';
 
 import '../../stores/view/store_page.dart';
 
