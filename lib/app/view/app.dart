@@ -48,15 +48,6 @@ class App extends StatelessWidget {
             create: (context) => LocationBloc(
               locationRepository: locationRepository,
             )),
-            BlocProvider<StoreBloc>(
-            create: (context) => StoreBloc(
-              storeService: storeService,
-              locationRepository: locationRepository,
-            )), BlocProvider<SearchStoreBloc>(
-            create: (context) => SearchStoreBloc(
-              storeService: storeService,
-              locationRepository: locationRepository,
-            )),
         ],
         child: const AppView(),
       ),

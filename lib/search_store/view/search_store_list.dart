@@ -50,13 +50,11 @@ class _StoresListState extends State<SearchStoresList> {
                     ? const BottomLoader()
                     : SearchStoreListItem(store: state.stores[index]);
               },
-              itemCount: state.hasReachedMax
-                  ? state.stores.length
-                  : state.stores.length + 1,
+              itemCount: state.stores.length,
               controller: _scrollController,
             );
           case SearchStoreStatus.initial:
-              return const Center(child: Text(''));
+            return const Center(child: Text(''));
         }
       },
     );

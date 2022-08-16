@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
@@ -49,7 +48,7 @@ class StoreBloc extends Bloc<storeEvent, storeState> {
         _position = await _locationRepository.getCurrentPosition();
         final stores = await _fetchstores();
 
-        return emit(
+        emit(
           state.copyWith(
             status: storeStatus.success,
             stores: stores,
@@ -58,17 +57,22 @@ class StoreBloc extends Bloc<storeEvent, storeState> {
         );
       } else {
         final stores = await _fetchstores(state.stores.length);
-        stores!.isEmpty
-            ? emit(state.copyWith(hasReachedMax: true))
-            : emit(
-                state.copyWith(
-                  status: storeStatus.success,
-                  stores: List.of(state.stores)..addAll(stores),
-                  hasReachedMax: false,
-                ),
-              );
+        
+        if (stores == null || stores.isEmpty) {
+          emit(state.copyWith(hasReachedMax: true));
+        }
+        else {
+          emit(
+            state.copyWith(
+              status: storeStatus.success,
+              stores: List.of(state.stores)..addAll(stores),
+              hasReachedMax: false,
+            ),
+          );
+        }
       }
-    } catch (_) {
+    } catch (ex) {
+      print(ex);
       emit(state.copyWith(status: storeStatus.failure));
     }
   }
@@ -77,15 +81,15 @@ class StoreBloc extends Bloc<storeEvent, storeState> {
     final result = await _storeService.searchStore(
         keyword: '', geolocation: _position, index: startIndex);
 
-    final storeList = result.value?.map((Value store) {
+    final storeList = result.value.map((StoreDto store) {
       try {
         return Store(
-          id: store.id!,
-          name: store.name!,
-          address: store.address!,
-          latitude: store.latitude!,
-          longitude: store.longitude!,
-          distanceFromLocation: store.distanceInMeters(_position!)
+          id: store.id,
+          name: store.name,
+          address: store.address,
+          latitude: store.latitude,
+          longitude: store.longitude,
+          distanceFromLocation: store.distanceInMeters(_position)
         );
       } on Exception catch (_, ex) {
         throw Exception(ex);

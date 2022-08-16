@@ -1,15 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pondrop/location/repositories/location_repository.dart';
 import 'package:pondrop/stores/models/store.dart';
 import 'package:store_service/store_service.dart';
 import 'package:stream_transform/stream_transform.dart';
-
-import '../../location/repositories/location_repository.dart';
 
 part 'search_store_event.dart';
 part 'search_store_state.dart';
@@ -44,34 +42,35 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
       TextChanged event, Emitter<SearchStoreState> emit) async {
     final searchTerm = event.text;
 
-    if (searchTerm.isEmpty) return;
+    if (searchTerm.isEmpty) {
+      emit(
+          state.copyWith(
+            status: SearchStoreStatus.initial,
+            stores: <Store>[],
+          ),
+        );
+
+        return;
+    }
 
     try {
-      if (state.status == SearchStoreStatus.initial) {
-        _position = await _locationRepository.getCurrentPosition();
-        final stores = await _fetchstores(searchTerm, state.stores.length);
+      _position = await _locationRepository.getCurrentPosition();
+      final stores = await _fetchstores(searchTerm);
 
-        return emit(
+      if (stores == null || stores.isEmpty) {
+        emit(state.copyWith(
+            status: SearchStoreStatus.success,
+            stores: <Store>[],
+          ));
+      } else {
+        emit(
           state.copyWith(
             status: SearchStoreStatus.success,
             stores: stores,
-            hasReachedMax: false,
           ),
         );
-      } else {
-        _position = await _locationRepository.getCurrentPosition();
-        final stores = await _fetchstores(searchTerm, state.stores.length);
-        stores!.isEmpty
-            ? emit(state.copyWith(hasReachedMax: true))
-            : emit(
-                state.copyWith(
-                  status: SearchStoreStatus.success,
-                  stores: List.of(state.stores)..addAll(stores),
-                  hasReachedMax: false,
-                ),
-              );
       }
-    } catch (_) {
+    } catch (ex) {
       emit(state.copyWith(status: SearchStoreStatus.failure));
     }
   }
@@ -81,18 +80,14 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
     final result = await _storeService.searchStore(
         keyword: keyword, geolocation: _position, index: startIndex);
 
-    final storeList = result.value?.map((Value store) {
-      try {
-        return Store(
-            id: store.id!,
-            name: store.name!,
-            address: store.address!,
-            latitude: store.latitude!,
-            longitude: store.longitude!,
-            distanceFromLocation: store.distanceInMeters(_position!));
-      } on Exception catch (_, ex) {
-        throw Exception(ex);
-      }
+    final storeList = result.value.map((StoreDto store) {
+      return Store(
+          id: store.id,
+          name: store.name,
+          address: store.address,
+          latitude: store.latitude,
+          longitude: store.longitude,
+          distanceFromLocation: store.distanceInMeters(_position));
     }).toList();
 
     return storeList;
