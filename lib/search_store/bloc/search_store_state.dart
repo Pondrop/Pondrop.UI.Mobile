@@ -23,7 +23,7 @@ class SearchStoreState extends Equatable {
 
   @override
   String toString() {
-    return '''storeState { status: $status, stores: ${stores.length} }''';
+    return '''StoreState { status: $status, stores: ${stores.length} }''';
   }
 
   @override

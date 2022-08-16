@@ -30,6 +30,7 @@ class SearchStoreState extends State<SearchStorePage> {
             ),
         child: Scaffold(
           appBar: AppBar(
+              titleSpacing: 0,
               leading: GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
@@ -39,10 +40,9 @@ class SearchStoreState extends State<SearchStorePage> {
               foregroundColor: Colors.black,
               title: Container(
                   width: double.infinity,
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5)),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                  ),
                   child: Center(child: _searchTextField()))),
           body: const SearchStoresList(null, 'SUGGESTED STORES'),
         ));
@@ -51,9 +51,12 @@ class SearchStoreState extends State<SearchStorePage> {
   Builder _searchTextField() {
     return Builder(builder: (context) {
       return TextField(
+        style: const TextStyle(fontSize: 20, color: Colors.black),
         controller: _searchTextController,
         decoration: InputDecoration(
             suffixIcon: IconButton(
+              focusColor: Colors.black,
+              color: Colors.black,
               icon: const Icon(Icons.clear),
               onPressed: () {
                 _searchTextController.clear();
@@ -62,7 +65,8 @@ class SearchStoreState extends State<SearchStorePage> {
                     .add(const TextChanged(text: ''));
               },
             ),
-            hintText: 'Search...',
+            hintText: 'Search',
+            hintStyle: TextStyle(fontSize: 20, color: Colors.grey[500]),
             border: InputBorder.none),
         onChanged: (text) {
           context.read<SearchStoreBloc>().add(TextChanged(text: text));

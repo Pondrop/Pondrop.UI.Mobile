@@ -17,6 +17,10 @@ class Store extends Equatable {
   final double longitude;
   final double distanceFromLocation;
 
+   double convertDistanceToKM(){
+      return double.parse((distanceFromLocation / 1000).toStringAsFixed(2));
+    }
+
   @override
   List<Object> get props => [id, name, address, latitude, longitude,distanceFromLocation];
 }

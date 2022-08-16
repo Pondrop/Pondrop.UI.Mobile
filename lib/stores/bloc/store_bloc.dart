@@ -21,13 +21,13 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
-class StoreBloc extends Bloc<storeEvent, storeState> {
+class StoreBloc extends Bloc<StoreEvent, StoreState> {
   StoreBloc(
       {required StoreService storeService,
       required LocationRepository locationRepository})
       : _storeService = storeService,
         _locationRepository = locationRepository,
-        super(const storeState()) {
+        super(const StoreState()) {
     on<storeFetched>(
       _onstoreFetched,
       transformer: throttleDroppable(throttleDuration),
@@ -40,7 +40,7 @@ class StoreBloc extends Bloc<storeEvent, storeState> {
 
   Future<void> _onstoreFetched(
     storeFetched event,
-    Emitter<storeState> emit,
+    Emitter<StoreState> emit,
   ) async {
     if (state.hasReachedMax) return;
     try {

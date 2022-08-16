@@ -2,8 +2,8 @@ part of 'store_bloc.dart';
 
 enum storeStatus { initial, success, failure }
 
-class storeState extends Equatable {
-  const storeState({
+class StoreState extends Equatable {
+  const StoreState({
     this.status = storeStatus.initial,
     this.stores = const <Store>[],
     this.hasReachedMax = false,
@@ -13,12 +13,12 @@ class storeState extends Equatable {
   final List<Store> stores;
   final bool hasReachedMax;
 
-  storeState copyWith({
+  StoreState copyWith({
     storeStatus? status,
     List<Store>? stores,
     bool? hasReachedMax,
   }) {
-    return storeState(
+    return StoreState(
       status: status ?? this.status,
       stores: stores ?? this.stores,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
@@ -27,7 +27,7 @@ class storeState extends Equatable {
 
   @override
   String toString() {
-    return '''storeState { status: $status, hasReachedMax: $hasReachedMax, stores: ${stores.length} }''';
+    return '''StoreState { status: $status, hasReachedMax: $hasReachedMax, stores: ${stores.length} }''';
   }
 
   @override

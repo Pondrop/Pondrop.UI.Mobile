@@ -9,33 +9,42 @@ class StoreListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String distanceInString = store.distanceFromLocation >= 1000 ? '${convertMetersInKM(store.distanceFromLocation)}KM' : '${store.distanceFromLocation}M';
+     String distanceInString = store.distanceFromLocation >= 1000
+        ? '${(store.convertDistanceToKM())}KM'
+        : '${store.distanceFromLocation}M';
     return Material(
-        child: Column(children: [
-      ListTile(
-        visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-        title: Padding(
-          child: Text(store.name,
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-          padding: const EdgeInsets.only(bottom: 3.0),
-        ),
-        isThreeLine: false,
-        subtitle: Text(
-          '$distanceInString - ${store.address}',
-          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-          softWrap: false,
-        ),
-        dense: true,
-      ),
-      Container(
-        padding: const EdgeInsets.only(left: 15.0),
-        child: Divider(thickness: 0.5, color: Colors.grey[400]),
-      )
-    ]));
+        child: Padding(
+            padding: const EdgeInsets.fromLTRB(10,5,0,5),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 5),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Padding(
+                          child: Text(store.name,
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500)),
+                          padding: const EdgeInsets.only(bottom: 3.0),
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.only(bottom: 5.0),
+                            child: Text(
+                              '$distanceInString - ${store.address}',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: 14, color: Colors.grey[500]),
+                              softWrap: false,
+                            )),
+                        Divider(thickness: 0.5, color: Colors.grey[300])
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            )));
   }
-
-    double convertMetersInKM(distanceInMeters){
-      return double.parse((distanceInMeters / 1000).toStringAsFixed(2));
-    }
 }

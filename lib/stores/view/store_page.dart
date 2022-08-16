@@ -13,7 +13,7 @@ class StorePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: const Text('Select a store'),
+            title: const Text('Select a store', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500)),
             centerTitle: true,
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,

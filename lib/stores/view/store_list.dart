@@ -25,7 +25,7 @@ class _StoresListState extends State<StoresList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<StoreBloc, storeState>(
+    return BlocBuilder<StoreBloc, StoreState>(
       builder: (context, state) {
         switch (state.status) {
           case storeStatus.failure:
@@ -35,7 +35,7 @@ class _StoresListState extends State<StoresList> {
               return const Center(child: Text('No stores found'));
             }
             return ListView.builder(
-              padding: const EdgeInsets.fromLTRB(0, 5, 5, 0),
+              padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
               itemBuilder: (BuildContext context, int index) {
                 if (index == 0) {
                   return Column(children: [
@@ -45,7 +45,10 @@ class _StoresListState extends State<StoresList> {
                       padding: const EdgeInsets.all(15),
                       child: Text(widget._header,
                           style: TextStyle(
-                              fontSize: 12.0, fontWeight: FontWeight.bold)),
+                              color: Colors.grey[800],
+                              letterSpacing: 0.5,
+                              fontSize: 12.0,
+                              fontWeight: FontWeight.bold)),
                     ),
                     index >= state.stores.length
                         ? const BottomLoader()
