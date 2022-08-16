@@ -6,9 +6,9 @@ import '../../shared/view/bottom_loader.dart';
 import '../bloc/store_bloc.dart';
 
 class StoresList extends StatefulWidget {
-  final String _header;
+  final String header;
 
-  const StoresList(Key? key, this._header) : super(key: key);
+  const StoresList(Key? key, this.header) : super(key: key);
 
   @override
   State<StoresList> createState() => _StoresListState();
@@ -43,7 +43,7 @@ class _StoresListState extends State<StoresList> {
                     Container(
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.all(15),
-                      child: Text(widget._header,
+                      child: Text(widget.header,
                           style: TextStyle(
                               color: Colors.grey[800],
                               letterSpacing: 0.5,

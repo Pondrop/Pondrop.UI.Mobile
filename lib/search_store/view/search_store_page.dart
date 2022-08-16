@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/location/location.dart';
 import 'package:pondrop/search_store/view/search_store_list.dart';
 import 'package:store_service/store_service.dart';
@@ -44,7 +45,7 @@ class SearchStoreState extends State<SearchStorePage> {
                     color: Colors.white,
                   ),
                   child: Center(child: _searchTextField()))),
-          body: const SearchStoresList(null, 'SUGGESTED STORES'),
+          body: const SearchStoresList(null, 'SEARCH RESULTS'),
         ));
   }
 

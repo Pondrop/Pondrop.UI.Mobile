@@ -6,9 +6,9 @@ import '../bloc/search_store_bloc.dart';
 import '../../shared/view/bottom_loader.dart';
 
 class SearchStoresList extends StatefulWidget {
-  final String _header;
+  final String header;
 
-  const SearchStoresList(Key? key, this._header) : super(key: key);
+  const SearchStoresList(Key? key, this.header) : super(key: key);
 
   @override
   State<SearchStoresList> createState() => _StoresListState();
