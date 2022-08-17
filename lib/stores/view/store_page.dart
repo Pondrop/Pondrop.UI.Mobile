@@ -41,7 +41,7 @@ class StorePage extends StatelessWidget {
               RepositoryProvider.of<StoreService>(context),
             locationRepository:
               RepositoryProvider.of<LocationRepository>(context),
-          )..add(storeFetched()),
+          )..add(StoreFetched()),
           child: const StoresList(null, 'STORES NEARBY'),
         ));
   }

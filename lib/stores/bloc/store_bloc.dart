@@ -28,8 +28,12 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
       : _storeService = storeService,
         _locationRepository = locationRepository,
         super(const StoreState()) {
-    on<storeFetched>(
-      _onstoreFetched,
+    on<StoreFetched>(
+      _onStoreFetched,
+      transformer: throttleDroppable(throttleDuration),
+    );
+    on<StoreRefreshed>(
+      _onStoreRefresh,
       transformer: throttleDroppable(throttleDuration),
     );
   }
@@ -38,33 +42,33 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
   final LocationRepository _locationRepository;
   Position? _position;
 
-  Future<void> _onstoreFetched(
-    storeFetched event,
+  Future<void> _onStoreFetched(
+    StoreFetched event,
     Emitter<StoreState> emit,
   ) async {
     if (state.hasReachedMax) return;
     try {
-      if (state.status == storeStatus.initial) {
-        _position = await _locationRepository.getLastKnownOrCurrentPosition(const Duration(minutes: 1));
+      if (state.status == StoreStatus.initial) {
+        _position = await _locationRepository
+            .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
         final stores = await _fetchstores();
 
         emit(
           state.copyWith(
-            status: storeStatus.success,
+            status: StoreStatus.success,
             stores: stores,
             hasReachedMax: false,
           ),
         );
       } else {
         final stores = await _fetchstores(state.stores.length);
-        
+
         if (stores == null || stores.isEmpty) {
           emit(state.copyWith(hasReachedMax: true));
-        }
-        else {
+        } else {
           emit(
             state.copyWith(
-              status: storeStatus.success,
+              status: StoreStatus.success,
               stores: List.of(state.stores)..addAll(stores),
               hasReachedMax: false,
             ),
@@ -73,7 +77,34 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
       }
     } catch (ex) {
       print(ex);
-      emit(state.copyWith(status: storeStatus.failure));
+      emit(state.copyWith(status: StoreStatus.failure));
+    }
+  }
+
+  Future<void> _onStoreRefresh(
+    StoreRefreshed event,
+    Emitter<StoreState> emit,
+  ) async {
+    if (state.status == StoreStatus.refreshing) {
+      return;
+    }
+
+    emit(state.copyWith(status: StoreStatus.refreshing));
+
+    try {
+      _position = await _locationRepository.getLastKnownOrCurrentPosition(const Duration(minutes: 1));
+      final stores = await _fetchstores();
+
+      emit(
+        state.copyWith(
+          status: StoreStatus.success,
+          stores: stores,
+          hasReachedMax: false,
+        ),
+      );
+    } catch (ex) {
+      print(ex);
+      emit(state.copyWith(status: StoreStatus.failure));
     }
   }
 
@@ -84,13 +115,12 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     final storeList = result.value.map((StoreDto store) {
       try {
         return Store(
-          id: store.id,
-          name: store.name,
-          address: store.address,
-          latitude: store.latitude,
-          longitude: store.longitude,
-          lastKnowDistanceMetres: store.distanceInMeters(_position)
-        );
+            id: store.id,
+            name: store.name,
+            address: store.address,
+            latitude: store.latitude,
+            longitude: store.longitude,
+            lastKnowDistanceMetres: store.distanceInMeters(_position));
       } on Exception catch (_, ex) {
         throw Exception(ex);
       }
@@ -98,5 +128,4 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
     return storeList;
   }
-
 }
