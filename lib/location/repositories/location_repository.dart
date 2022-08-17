@@ -78,7 +78,7 @@ class LocationRepository {
     return null;
   }
 
-  Future<Position?> getLastKnownOrCurrentPosition({Duration? maxLastKnownAge}) async {
+  Future<Position?> getLastKnownOrCurrentPosition([Duration? maxLastKnownAge]) async {
     if (await checkAndRequestPermissions()) {      
       final lastKnownPosition = await getLastKnownPosition();
       if (lastKnownPosition != null) {

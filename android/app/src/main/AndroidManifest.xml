@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.pondrop">
+    package="com.pondrop">
    <application
         android:label="pondrop"
         android:name="${applicationName}"

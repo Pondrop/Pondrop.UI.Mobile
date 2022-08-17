@@ -59,7 +59,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginSubmitted event,
     Emitter<LoginState> emit,
   ) async {
-    if (state.isValidEmail && !state.isPasswordEmpty) {
+    if (state.isValidEmail) {
       emit(state.copyWith(status: const FormSubmissionStatusSubmitting()));
       try {
         await _authenticationRepository.logIn(

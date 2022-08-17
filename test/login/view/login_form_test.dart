@@ -50,27 +50,6 @@ void main() {
       ).called(1);
     });
 
-    testWidgets('adds LoginPasswordChanged to LoginBloc when password updated',
-    (tester) async {
-      when(() => loginBloc.state).thenReturn(const LoginState());
-
-      await tester.pumpApp(
-        BlocProvider.value(
-          value: loginBloc,
-          child: Scaffold(body: LoginForm()),
-        ),
-      );
-
-      await tester.enterText(
-        find.byKey(LoginForm.passwordInputKey),
-        testPassword,
-      );
-      
-      verify(() => 
-        loginBloc.add(const LoginPasswordChanged(testPassword)),
-      ).called(1);
-    });
-
     testWidgets('loading indicator shown when status is submitting',
     (tester) async {
       when(() => loginBloc.state)
@@ -87,10 +66,29 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
+    testWidgets('login button disabled when empty',
+    (tester) async {
+      when(() => loginBloc.state)
+        .thenReturn(const LoginState(
+          status: FormSubmissionStatusInitial(),
+          email: ''));
+
+      await tester.pumpApp(
+        BlocProvider.value(
+          value: loginBloc,
+          child: Scaffold(body: LoginForm()),
+        ),
+      );
+
+      expect(tester.widget<ElevatedButton>(find.byType(ElevatedButton)).enabled, isFalse);
+    });
+
     testWidgets('does not add LoginSubmitted to LoginBloc when submitted & invalid',
     (tester) async {
       when(() => loginBloc.state)
-        .thenReturn(const LoginState());
+        .thenReturn(const LoginState(
+          status: FormSubmissionStatusInitial(),
+          email: 'not_a_valid_email'));
 
       await tester.pumpApp(
         BlocProvider.value(

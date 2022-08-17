@@ -4,6 +4,10 @@
     "@counterAppBarTitle": {
         "description": "Text shown in the AppBar of the Counter Page"
     },
+    "getStarted": "Get started",
+    "@getStarted": { },
+    "enterValidEmailToContinue": "Please enter a valid email to continue.",
+    "@enterValidEmailToContinue": { },
     "email": "Email",
     "@email": {},
     "emailInvalid": "Must be a valid email address",
@@ -25,10 +29,12 @@
             }
         }
     },
-    "signIn": "Sign in",
-    "@signIn": {},
+    "loginPageButtonText": "Continue",
+    "@loginPageButtonText": {},
     "shopping": "Shopping",
     "@shopping": {},
     "profile": "Profile",
-    "@profile": {}
+    "@profile": {},
+    "stores": "Stores",
+    "@stores": {}
 }
