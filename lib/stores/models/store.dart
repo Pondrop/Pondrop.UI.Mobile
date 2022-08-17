@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 
 class Store extends Equatable {
   const Store(
@@ -8,19 +8,30 @@ class Store extends Equatable {
       required this.address,
       required this.latitude,
       required this.longitude,
-      required this.distanceFromLocation});
+      required this.lastKnowDistanceMetres});
 
   final String id;
   final String name;
   final String address;
   final double latitude;
   final double longitude;
-  final double distanceFromLocation;
+  final double lastKnowDistanceMetres;
 
-   double convertDistanceToKM(){
-      return double.parse((distanceFromLocation / 1000).toStringAsFixed(2));
+  String getDistanceDisplayString() {
+    if (lastKnowDistanceMetres < 0) {
+      return '';
     }
 
+    if (lastKnowDistanceMetres >= 1000000) {
+      return '${NumberFormat('#,##0').format(lastKnowDistanceMetres / 1000)}km';
+    } else {
+      return lastKnowDistanceMetres >= 1000
+          ? '${NumberFormat('#,##0.0').format(lastKnowDistanceMetres / 1000)}km'
+          : '${lastKnowDistanceMetres.toStringAsFixed(0)}m';
+    }
+  }
+
   @override
-  List<Object> get props => [id, name, address, latitude, longitude,distanceFromLocation];
+  List<Object> get props =>
+      [id, name, address, latitude, longitude, lastKnowDistanceMetres];
 }

@@ -37,9 +37,10 @@ class StorePage extends StatelessWidget {
             ]),
         body: BlocProvider(
           create: (_) => StoreBloc(
-            storeService: StoreService(),
+            storeService: 
+              RepositoryProvider.of<StoreService>(context),
             locationRepository:
-                RepositoryProvider.of<LocationRepository>(context),
+              RepositoryProvider.of<LocationRepository>(context),
           )..add(storeFetched()),
           child: const StoresList(null, 'STORES NEARBY'),
         ));

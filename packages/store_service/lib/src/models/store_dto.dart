@@ -47,33 +47,33 @@ class StoreDto {
   @JsonKey(name: 'Longitude')
   final double longitude;
   @JsonKey(name: 'Location')
-  final String location;
+  final String? location;
   @JsonKey(name: 'Address')
   final String address;
   @JsonKey(name: 'Street')
-  final String street;
+  final String? street;
   @JsonKey(name: 'City')
-  final String city;
+  final String? city;
   @JsonKey(name: 'State')
-  final String state;
+  final String? state;
   @JsonKey(name: 'Zip_Code')
-  final String zipCode;
+  final String? zipCode;
   @JsonKey(name: 'Phone')
   final String? phone;
   @JsonKey(name: 'OpenHours')
-  final String openHours;
+  final String? openHours;
   @JsonKey(name: 'URL')
-  final String url;
+  final String? url;
   @JsonKey(name: 'Provider')
-  final String provider;
+  final String? provider;
   @JsonKey(name: 'UpdatedDate')
   final DateTime updatedDate;
   @JsonKey(name: 'Country')
-  final String country;
+  final String? country;
   @JsonKey(name: 'Status')
-  final String status;
+  final String? status;
   @JsonKey(name: 'DirectionURL')
-  final String directionUrl;
+  final String? directionUrl;
   @JsonKey(name: 'Banner')
   final String? banner;
   @JsonKey(name: 'StockTicker')
@@ -83,9 +83,9 @@ class StoreDto {
   @JsonKey(name: 'Email')
   final String? email;
   @JsonKey(name: 'locations')
-  final List<String> locations;
+  final List<String>? locations;
   @JsonKey(name: 'keyphrases')
-  final List<String> keyphrases;
+  final List<String>? keyphrases;
 
   double distanceInMeters(Position? position) {
     if (position == null) {

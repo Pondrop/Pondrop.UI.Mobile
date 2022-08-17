@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pondrop/authentication/bloc/authentication_bloc.dart';
@@ -10,6 +13,7 @@ import 'package:pondrop/login/login.dart';
 import 'package:pondrop/search_store/bloc/search_store_bloc.dart';
 import 'package:pondrop/splash/view/splash_page.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
+import 'package:pondrop/stores/view/store_page.dart';
 import 'package:pondrop/tabbed/tabbed.dart';
 import 'package:pondrop/tabbed/view/tabbed_page.dart';
 import 'package:store_service/store_service.dart';
@@ -36,18 +40,19 @@ class App extends StatelessWidget {
         RepositoryProvider.value(value: authenticationRepository),
         RepositoryProvider.value(value: userRepository),
         RepositoryProvider.value(value: locationRepository),
+        RepositoryProvider.value(value: storeService),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AuthenticationBloc>(
-            create: (context) => AuthenticationBloc(
-              authenticationRepository: authenticationRepository,
-              userRepository: userRepository,
-            )..add(AuthenticationCheckExistingUser())),
+              create: (context) => AuthenticationBloc(
+                    authenticationRepository: authenticationRepository,
+                    userRepository: userRepository,
+                  )..add(AuthenticationCheckExistingUser())),
           BlocProvider<LocationBloc>(
-            create: (context) => LocationBloc(
-              locationRepository: locationRepository,
-            )),
+              create: (context) => LocationBloc(
+                    locationRepository: locationRepository,
+                  )),
         ],
         child: const AppView(),
       ),
@@ -69,13 +74,47 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
+    const primaryColor = Color(0xFF006492);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
+        appBarTheme: const AppBarTheme(color: primaryColor),
+        primaryColor: primaryColor,
         colorScheme: ColorScheme.fromSwatch(
-          accentColor: const Color(0xFF13B9FF),
+          accentColor: primaryColor,
         ),
+        hintColor: Colors.black87,
+        textTheme: TextTheme(
+          headline1: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          headline2: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          headline3: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          headline4: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          headline5: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          headline6: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          bodyText1: const TextStyle(fontSize: 14),
+          bodyText2: const TextStyle(fontSize: 12),
+          caption: TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.6)),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+              primary: primaryColor,
+              onPrimary: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 32, vertical: 14))),
+        inputDecorationTheme: const InputDecorationTheme(
+          floatingLabelStyle: TextStyle(color: primaryColor),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: primaryColor),
+          ),
+        ),
+        textSelectionTheme:
+            const TextSelectionThemeData(cursorColor: primaryColor),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedIconTheme: IconThemeData(color: primaryColor)
+        )
       ),
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -84,26 +123,31 @@ class _AppViewState extends State<AppView> {
       supportedLocales: AppLocalizations.supportedLocales,
       navigatorKey: _navigatorKey,
       builder: (context, child) {
-        return BlocListener<AuthenticationBloc, AuthenticationState>(
-          listener: (context, state) {
-            switch (state.status) {
-              case AuthenticationStatus.authenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  TabbedPage.route(),
-                  (route) => false,
-                );
-                break;
-              case AuthenticationStatus.unauthenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  LoginPage.route(),
-                  (route) => false,
-                );
-                break;
-              case AuthenticationStatus.unknown:
-                break;
-            }
-          },
-          child: child,
+        return AnnotatedRegion(
+          value: SystemUiOverlayStyle.dark,
+          child: BlocListener<AuthenticationBloc, AuthenticationState>(
+            listener: (context, state) {
+              _navigator.pushAndRemoveUntil<void>(
+                StorePage.route(),
+                (route) => false,
+              );
+
+              // for the future
+              // switch (state.status) {
+              //   case AuthenticationStatus.authenticated:                  
+              //     break;
+              //   case AuthenticationStatus.unauthenticated:
+              //     _navigator.pushAndRemoveUntil<void>(
+              //       LoginPage.route(),
+              //       (route) => false,
+              //     );
+              //     break;
+              //   case AuthenticationStatus.unknown:
+              //     break;
+              // }
+            },
+            child: child,
+          ),
         );
       },
       onGenerateRoute: (_) => SplashPage.route(),

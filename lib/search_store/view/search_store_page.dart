@@ -25,9 +25,10 @@ class SearchStoreState extends State<SearchStorePage> {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (_) => SearchStoreBloc(
-              storeService: StoreService(),
+              storeService:
+                RepositoryProvider.of<StoreService>(context),
               locationRepository:
-                  RepositoryProvider.of<LocationRepository>(context),
+                RepositoryProvider.of<LocationRepository>(context),
             ),
         child: Scaffold(
           appBar: AppBar(
@@ -68,7 +69,8 @@ class SearchStoreState extends State<SearchStorePage> {
             ),
             hintText: 'Search',
             hintStyle: TextStyle(fontSize: 20, color: Colors.grey[500]),
-            border: InputBorder.none),
+            border: InputBorder.none,
+            focusedBorder: InputBorder.none),
         onChanged: (text) {
           context.read<SearchStoreBloc>().add(TextChanged(text: text));
         },

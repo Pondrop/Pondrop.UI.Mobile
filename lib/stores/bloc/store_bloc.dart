@@ -45,7 +45,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     if (state.hasReachedMax) return;
     try {
       if (state.status == storeStatus.initial) {
-        _position = await _locationRepository.getCurrentPosition();
+        _position = await _locationRepository.getLastKnownOrCurrentPosition(const Duration(minutes: 1));
         final stores = await _fetchstores();
 
         emit(
@@ -89,7 +89,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           address: store.address,
           latitude: store.latitude,
           longitude: store.longitude,
-          distanceFromLocation: store.distanceInMeters(_position)
+          lastKnowDistanceMetres: store.distanceInMeters(_position)
         );
       } on Exception catch (_, ex) {
         throw Exception(ex);

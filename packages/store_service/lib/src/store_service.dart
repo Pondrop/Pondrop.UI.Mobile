@@ -17,10 +17,16 @@ class StoreService {
     required Position? geolocation,
     required int index,
   }) async {
+    var url = '${azureSearchBaseURL}indexes/azuresql-index-stores/docs?api-version=2021-04-30-Preview&search=$keyword*&\$top=20&\$skip=$index&';
+
+    if (geolocation != null) {
+      url += '\$orderby=geo.distance(locationsort, geography\'POINT(${geolocation.longitude} ${geolocation.latitude})\') asc&';
+    }
+
     final response = await http.get(
-        Uri.parse(
-            '${azureSearchBaseURL}indexes/azuresql-index-vwstores/docs?api-version=2021-04-30-Preview&search=$keyword*&\$top=20&\$skip=$index&'),
-        headers: requestHeaders);
+      Uri.parse(url),
+      headers: requestHeaders
+    );
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,

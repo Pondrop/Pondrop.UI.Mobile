@@ -13,28 +13,29 @@ StoreDto _$StoreDtoFromJson(Map<String, dynamic> json) => StoreDto(
       name: json['Name'] as String,
       latitude: (json['Latitude'] as num).toDouble(),
       longitude: (json['Longitude'] as num).toDouble(),
-      location: json['Location'] as String,
+      location: json['Location'] as String?,
       address: json['Address'] as String,
-      street: json['Street'] as String,
-      city: json['City'] as String,
-      state: json['State'] as String,
-      zipCode: json['Zip_Code'] as String,
+      street: json['Street'] as String?,
+      city: json['City'] as String?,
+      state: json['State'] as String?,
+      zipCode: json['Zip_Code'] as String?,
       phone: json['Phone'] as String?,
-      openHours: json['OpenHours'] as String,
-      url: json['URL'] as String,
-      provider: json['Provider'] as String,
+      openHours: json['OpenHours'] as String?,
+      url: json['URL'] as String?,
+      provider: json['Provider'] as String?,
       updatedDate: DateTime.parse(json['UpdatedDate'] as String),
-      country: json['Country'] as String,
-      status: json['Status'] as String,
-      directionUrl: json['DirectionURL'] as String,
+      country: json['Country'] as String?,
+      status: json['Status'] as String?,
+      directionUrl: json['DirectionURL'] as String?,
       banner: json['Banner'] as String?,
       stockTicker: json['StockTicker'] as String?,
       fax: json['Fax'] as String?,
       email: json['Email'] as String?,
-      locations:
-          (json['locations'] as List<dynamic>).map((e) => e as String).toList(),
-      keyphrases: (json['keyphrases'] as List<dynamic>)
-          .map((e) => e as String)
+      locations: (json['locations'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      keyphrases: (json['keyphrases'] as List<dynamic>?)
+          ?.map((e) => e as String)
           .toList(),
     );
 

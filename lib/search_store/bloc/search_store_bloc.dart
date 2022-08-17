@@ -54,7 +54,7 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
     }
 
     try {
-      _position = await _locationRepository.getCurrentPosition();
+      _position = await _locationRepository.getLastKnownOrCurrentPosition(const Duration(minutes: 1));
       final stores = await _fetchstores(searchTerm);
 
       if (stores == null || stores.isEmpty) {
@@ -87,7 +87,7 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
           address: store.address,
           latitude: store.latitude,
           longitude: store.longitude,
-          distanceFromLocation: store.distanceInMeters(_position));
+          lastKnowDistanceMetres: store.distanceInMeters(_position));
     }).toList();
 
     return storeList;

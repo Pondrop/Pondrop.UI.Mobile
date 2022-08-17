@@ -1,4 +1,4 @@
-package com.example.pondrop
+package com.pondrop
 
 import io.flutter.embedding.android.FlutterActivity
 
