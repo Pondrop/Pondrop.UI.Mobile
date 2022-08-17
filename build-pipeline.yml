@@ -15,9 +15,10 @@ jobs:
 
       - task: FlutterBuild@0
         inputs:
-          target: 'ipa'
+          target: 'ios'
           projectDirectory: '.'
           entryPoint: 'lib/main.dart'
+          iosCodesign: false
 
       - task: FlutterTest@0
         inputs:
