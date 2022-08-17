@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/shared/view/bottom_loader.dart';
+import 'package:pondrop/stores/bloc/store_bloc.dart';
 import 'package:pondrop/stores/view/store_list_item.dart';
-
-import '../../shared/view/bottom_loader.dart';
-import '../bloc/store_bloc.dart';
 
 class StoresList extends StatefulWidget {
   final String header;
