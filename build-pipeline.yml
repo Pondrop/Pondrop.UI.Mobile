@@ -1,6 +1,6 @@
 
 variables:
-  - group: Pondrop-AdminPortal-Dev
+  - group: Pondrop-Mobile-Dev
   
 jobs:
   - job: Mobile
