@@ -10,6 +10,7 @@ import 'package:store_service/store_service.dart';
 import '../../helpers/helpers.dart';
 
 class MockLocationRepository extends Mock implements LocationRepository {}
+
 class MockStoreService extends Mock implements StoreService {}
 
 void main() {
@@ -26,15 +27,12 @@ void main() {
       expect(SearchStorePage.route(), isA<MaterialPageRoute>());
     });
 
-    // testWidgets('renders a Search Store List', (tester) async {
-    //   await tester.pumpApp(MultiRepositoryProvider(
-    //     providers: [
-    //       RepositoryProvider.value(value: storeService),
-    //       RepositoryProvider.value(value: locationRepository),
-    //     ],
-    //     child: const SearchStoresList(null, 'SEARCH RESULTS')
-    //   ));
-    //   expect(find.byType(SearchStoresList), findsOneWidget);
-    // });
+    testWidgets('renders a Search Store List', (tester) async {
+      await tester.pumpApp(MultiRepositoryProvider(providers: [
+        RepositoryProvider.value(value: storeService),
+        RepositoryProvider.value(value: locationRepository),
+      ], child: const SearchStorePage()));
+      expect(find.byType(SearchStoresList), findsOneWidget);
+    });
   });
 }

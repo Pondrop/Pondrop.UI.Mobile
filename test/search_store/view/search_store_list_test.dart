@@ -1,8 +1,11 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pondrop/location/location.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
+import 'package:pondrop/stores/view/store_list.dart';
 import 'package:store_service/store_service.dart';
 
 import '../../helpers/helpers.dart';
@@ -29,28 +32,23 @@ void main() {
       storeBloc = MockStoreBloc();
     });
     
+    // testWidgets('adds Store Fetch to Store Page appears',
+    // (tester) async {  
+    //   when(() => storeBloc.state).thenReturn(const StoreState());
+
+    //   await tester.pumpApp(
+    //     BlocProvider.value(
+    //       value: storeBloc,
+    //       child: const Scaffold(body: StoresList(null, 'SEARCH RESULTS')),
+    //     ),
+    //   );
+      
+    //   verify(() => 
+    //     storeBloc.add(StoreFetched()),
+    //   ).called(1);
+    // });
 });
 
-  //   testWidgets('adds Store Fetch to Store Page appears',
-  //   (tester) async {  
-  //     when(() => storeBloc.state).thenReturn(const StoreState());
-
-  //     await tester.pumpApp(
-  //       BlocProvider.value(
-  //         value: storeBloc,
-  //         child: Scaffold(body:  StoresList(header:'Test')),
-  //       ),
-  //     );
-
-  //     await tester.enterText(
-  //       find.byKey(LoginForm.emailInputKey),
-  //       testEmail,
-  //     );
-      
-  //     verify(() => 
-  //       loginBloc.add(const LoginEmailChanged(testEmail)),
-  //     ).called(1);
-  //   });
 
   //   testWidgets('adds LoginPasswordChanged to LoginBloc when password updated',
   //   (tester) async {

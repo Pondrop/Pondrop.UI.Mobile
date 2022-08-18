@@ -26,15 +26,19 @@ void main() {
       expect(StorePage.route(), isA<MaterialPageRoute>());
     });
 
-    // testWidgets('renders a Store List', (tester) async {
-    //   await tester.pumpApp(MultiRepositoryProvider(
-    //     providers: [
-    //       RepositoryProvider.value(value: storeService),
-    //       RepositoryProvider.value(value: locationRepository),
-    //     ],
-    //     child: const StoresList(null, 'STORES NEARBY')
-    //   ));
-    //   expect(find.byType(StoresList), findsOneWidget);
-    // });
+    testWidgets('renders a Store List', (tester) async {
+      await tester.pumpApp(MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider.value(value: storeService),
+          RepositoryProvider.value(value: locationRepository),
+        ],
+        child: const StorePage()
+      ));
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(StoresList), findsOneWidget);
+    });
+    
   });
 }
