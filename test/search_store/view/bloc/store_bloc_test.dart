@@ -27,16 +27,6 @@ void main() {
         equals(const SearchStoreState()));
     });
 
-    blocTest<SearchStoreBloc, SearchStoreState>(
-      'state is Failure',
-  
-      build: () => SearchStoreBloc(
-          storeService: storeService,
-          locationRepository: locationRepository,),
-      act: (bloc) => bloc.add(SearchStoreFetched()),
-      expect: () => [const SearchStoreState(status: SearchStoreStatus.failure)],
-    );
-
      blocTest<SearchStoreBloc, SearchStoreState>(
       'emit text when Search Text is changed',
   
