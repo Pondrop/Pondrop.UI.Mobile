@@ -1,20 +1,20 @@
 part of 'store_bloc.dart';
 
-enum storeStatus { initial, success, failure }
+enum StoreStatus { initial, refreshing, success, failure }
 
 class StoreState extends Equatable {
   const StoreState({
-    this.status = storeStatus.initial,
+    this.status = StoreStatus.initial,
     this.stores = const <Store>[],
     this.hasReachedMax = false,
   });
 
-  final storeStatus status;
+  final StoreStatus status;
   final List<Store> stores;
   final bool hasReachedMax;
 
   StoreState copyWith({
-    storeStatus? status,
+    StoreStatus? status,
     List<Store>? stores,
     bool? hasReachedMax,
   }) {

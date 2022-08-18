@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pondrop/location/location.dart';
 import 'package:pondrop/search_store/view/search_store_page.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
-import 'package:pondrop/stores/models/store.dart';
 import 'package:pondrop/stores/view/store_list.dart';
 import 'package:store_service/store_service.dart';
 
@@ -41,7 +40,7 @@ class StorePage extends StatelessWidget {
               RepositoryProvider.of<StoreService>(context),
             locationRepository:
               RepositoryProvider.of<LocationRepository>(context),
-          )..add(storeFetched()),
+          )..add(const StoreFetched()),
           child: const StoresList(null, 'STORES NEARBY'),
         ));
   }

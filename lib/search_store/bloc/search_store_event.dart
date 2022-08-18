@@ -9,7 +9,6 @@ abstract class SearchStoreEvent extends Equatable {
 
 class SearchStoreFetched extends SearchStoreEvent {}
 
-
 class TextChanged extends SearchStoreEvent {
   const TextChanged({required this.text});
 

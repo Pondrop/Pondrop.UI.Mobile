@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/search_store/bloc/search_store_bloc.dart';
 import 'package:pondrop/search_store/view/search_store_list_item.dart';
-
-import '../bloc/search_store_bloc.dart';
-import '../../shared/view/bottom_loader.dart';
+import 'package:pondrop/shared/view/bottom_loader.dart';
 
 class SearchStoresList extends StatefulWidget {
   final String header;
