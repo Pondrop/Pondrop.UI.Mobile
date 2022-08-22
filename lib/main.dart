@@ -5,10 +5,10 @@ import 'package:pondrop/bootstrap.dart';
 import 'package:pondrop/repositories/repositories.dart';
 
 void main() {
-  final authenticationRepository = AuthenticationRepository();
   final locationRepository = LocationRepository(geoCode: GeoCode());
   final userRepository = UserRepository(secureStorage: const FlutterSecureStorage());
   final storeRepository = StoreRepository();
+  final authenticationRepository = AuthenticationRepository(userRepository: userRepository);
   
   bootstrap(() => App(
     authenticationRepository: authenticationRepository,

@@ -69,7 +69,6 @@ class AuthenticationBloc
     Emitter<AuthenticationState> emit,
   ) async {
     await _authenticationRepository.signOut(state.user.accessToken);
-    _userRepository.clearUser();
   }
 
   Future<User?> _tryGetUser() async {
