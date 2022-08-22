@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,16 +5,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pondrop/authentication/bloc/authentication_bloc.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/location/bloc/location_bloc.dart';
-import 'package:pondrop/location/repositories/location_repository.dart';
 import 'package:pondrop/login/login.dart';
-import 'package:pondrop/search_store/bloc/search_store_bloc.dart';
+import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/splash/view/splash_page.dart';
-import 'package:pondrop/stores/bloc/store_bloc.dart';
 import 'package:pondrop/stores/view/store_page.dart';
-import 'package:pondrop/tabbed/tabbed.dart';
-import 'package:pondrop/tabbed/view/tabbed_page.dart';
-import 'package:store_service/store_service.dart';
-import 'package:user_repository/user_repository.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -25,13 +16,13 @@ class App extends StatelessWidget {
     required this.authenticationRepository,
     required this.locationRepository,
     required this.userRepository,
-    required this.storeService
+    required this.storeRepository
   });
 
   final AuthenticationRepository authenticationRepository;
   final LocationRepository locationRepository;
   final UserRepository userRepository;
-  final StoreService storeService;
+  final StoreRepository storeRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +31,7 @@ class App extends StatelessWidget {
         RepositoryProvider.value(value: authenticationRepository),
         RepositoryProvider.value(value: userRepository),
         RepositoryProvider.value(value: locationRepository),
-        RepositoryProvider.value(value: storeService),
+        RepositoryProvider.value(value: storeRepository),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -75,6 +66,7 @@ class _AppViewState extends State<AppView> {
   @override
   Widget build(BuildContext context) {
     const primaryColor = Color(0xFF006492);
+    const errorColor = Color(0xFFBA1A1A);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -83,6 +75,7 @@ class _AppViewState extends State<AppView> {
         primaryColor: primaryColor,
         colorScheme: ColorScheme.fromSwatch(
           accentColor: primaryColor,
+          errorColor: errorColor
         ),
         hintColor: Colors.black87,
         textTheme: TextTheme(
@@ -127,24 +120,22 @@ class _AppViewState extends State<AppView> {
           value: SystemUiOverlayStyle.dark,
           child: BlocListener<AuthenticationBloc, AuthenticationState>(
             listener: (context, state) {
-              _navigator.pushAndRemoveUntil<void>(
-                StorePage.route(),
-                (route) => false,
-              );
-
-              // for the future
-              // switch (state.status) {
-              //   case AuthenticationStatus.authenticated:                  
-              //     break;
-              //   case AuthenticationStatus.unauthenticated:
-              //     _navigator.pushAndRemoveUntil<void>(
-              //       LoginPage.route(),
-              //       (route) => false,
-              //     );
-              //     break;
-              //   case AuthenticationStatus.unknown:
-              //     break;
-              // }
+              switch (state.status) {
+                case AuthenticationStatus.authenticated:
+                  _navigator.pushAndRemoveUntil<void>(
+                    StorePage.route(),
+                    (route) => false,
+                  );
+                  break;
+                case AuthenticationStatus.unauthenticated:
+                  _navigator.pushAndRemoveUntil<void>(
+                    LoginPage.route(),
+                    (route) => false,
+                  );
+                  break;
+                case AuthenticationStatus.unknown:
+                  break;
+              }
             },
             child: child,
           ),

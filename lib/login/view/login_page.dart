@@ -1,10 +1,9 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/login/login.dart';
-import 'package:user_repository/user_repository.dart';
+import 'package:pondrop/repositories/repositories.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});

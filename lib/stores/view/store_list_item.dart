@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-
-import '../models/store.dart';
+import 'package:pondrop/models/store.dart';
 
 class StoreListItem extends StatelessWidget {
   const StoreListItem({super.key, required this.store});

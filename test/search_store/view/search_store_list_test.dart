@@ -1,28 +1,24 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:pondrop/location/location.dart';
+import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
-import 'package:pondrop/stores/view/store_list.dart';
-import 'package:store_service/store_service.dart';
 
 import '../../helpers/helpers.dart';
 
 class MockLocationRepository extends Mock implements LocationRepository {}
-class MockStoreService extends Mock implements StoreService {}
+class MockStoreRepository extends Mock implements StoreRepository {}
 
 class MockStoreBloc extends MockBloc<StoreEvent, StoreState> implements StoreBloc {}
 
 void main() {
 
   late LocationRepository locationRepository;
-  late StoreService storeService;
+  late StoreRepository storeRepository;
 
   setUp(() {
     locationRepository = MockLocationRepository();
-    storeService = MockStoreService();
+    storeRepository = MockStoreRepository();
   });
 
   group('SeachStoreList', () {

@@ -1,10 +1,9 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pondrop/login/models/form_submission_status.dart';
-import 'package:user_repository/user_repository.dart';
-import 'package:uuid/uuid.dart';
+import 'package:pondrop/models/models.dart';
+import 'package:pondrop/repositories/repositories.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -24,7 +23,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   final AuthenticationRepository _authenticationRepository;
   final UserRepository _userRepository;
-
 
   void _onEmailChanged(
     LoginEmailChanged event,
@@ -61,15 +59,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async {
     if (state.isValidEmail) {
       emit(state.copyWith(status: const FormSubmissionStatusSubmitting()));
+      
       try {
-        await _authenticationRepository.logIn(
-          email: state.email,
+        final emailTrimmed = state.email.trim();
+        final tok = await _authenticationRepository.signIn(
+          email: emailTrimmed,
           password: state.password,
         );
 
-        await _userRepository.setUser(User(const Uuid().v4(), email: state.email));
-        
-        emit(state.copyWith(status: const FormSubmissionStatusSuccess()));
+        if (tok.isNotEmpty) {
+          await _userRepository.setUser(User(email: emailTrimmed, accessToken: tok));
+          emit(state.copyWith(status: const FormSubmissionStatusSuccess()));
+        }
+        else {
+          emit(state.copyWith(status: const FormSubmissionStatusFailed('')));
+        }
       } catch (e) {
         emit(state.copyWith(status: FormSubmissionStatusFailed(e.toString())));
       }

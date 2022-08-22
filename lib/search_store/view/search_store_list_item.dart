@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../stores/models/store.dart';
+import 'package:pondrop/models/models.dart';
 
 class SearchStoreListItem extends StatelessWidget {
   const SearchStoreListItem({super.key, required this.store});

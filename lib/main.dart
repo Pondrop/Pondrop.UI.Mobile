@@ -1,22 +1,19 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geocode/geocode.dart';
 import 'package:pondrop/app/app.dart';
 import 'package:pondrop/bootstrap.dart';
-import 'package:pondrop/location/repositories/location_repository.dart';
-import 'package:store_service/store_service.dart';
-import 'package:user_repository/user_repository.dart';
+import 'package:pondrop/repositories/repositories.dart';
 
 void main() {
   final authenticationRepository = AuthenticationRepository();
   final locationRepository = LocationRepository(geoCode: GeoCode());
   final userRepository = UserRepository(secureStorage: const FlutterSecureStorage());
-  final storeService = StoreService();
+  final storeRepository = StoreRepository();
   
   bootstrap(() => App(
     authenticationRepository: authenticationRepository,
     locationRepository: locationRepository,
     userRepository: userRepository,
-    storeService: storeService
+    storeRepository: storeRepository
   ));
 }
