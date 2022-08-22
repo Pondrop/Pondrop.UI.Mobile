@@ -29,7 +29,7 @@ class SearchStoreListItem extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        Text(store.name,
+                        Text(store.displayName,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1!
