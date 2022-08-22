@@ -68,7 +68,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         );
 
         if (tok.isNotEmpty) {
-          await _userRepository.setUser(User(email: emailTrimmed, accessToken: tok));
           emit(state.copyWith(status: const FormSubmissionStatusSuccess()));
         }
         else {
