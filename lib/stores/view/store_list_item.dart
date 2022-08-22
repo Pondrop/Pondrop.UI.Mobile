@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pondrop/models/store.dart';
+import 'package:pondrop/store_report/store_report.dart';
 
 class StoreListItem extends StatelessWidget {
   const StoreListItem({super.key, required this.store});
@@ -10,39 +11,37 @@ class StoreListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final distanceString = store.getDistanceDisplayString();
 
-    return Material(
+    return InkWell(
+        onTap: () async {
+          await Navigator.of(context).push(StoreReportPage.route(store));
+        },
         child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.only(left: 5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Text(store.displayName,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(
-                                    fontSize: 16, fontWeight: FontWeight.w400)),
-                        const SizedBox(height: 5),
-                        Text(
-                          distanceString.isNotEmpty
-                              ? '$distanceString - ${store.address}'
-                              : store.address,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                        const SizedBox(height: 4),
-                        Divider(thickness: 0.5, color: Colors.grey[300])
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            )));
+          padding: const EdgeInsets.fromLTRB(16, 10, 0, 2),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(store.name,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(
+                          fontSize: 16, fontWeight: FontWeight.w400)),
+              const SizedBox(height: 8),
+              Text(
+                distanceString.isNotEmpty
+                    ? '$distanceString - ${store.address}'
+                    : store.address,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.caption,
+              ),
+              const SizedBox(height: 10),
+              Divider(
+                thickness: 1,
+                height: 1,
+                color: Colors.grey[300],
+              ),
+            ],
+          ),
+        ));
   }
 }

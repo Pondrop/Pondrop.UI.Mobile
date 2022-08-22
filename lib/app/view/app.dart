@@ -71,9 +71,13 @@ class _AppViewState extends State<AppView> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(color: primaryColor),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+        ),
         primaryColor: primaryColor,
         colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.blueGrey,
           accentColor: primaryColor,
           errorColor: errorColor
         ),
@@ -96,7 +100,7 @@ class _AppViewState extends State<AppView> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
               padding:
-                  const EdgeInsets.symmetric(horizontal: 32, vertical: 14))),
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 14))),
         inputDecorationTheme: const InputDecorationTheme(
           floatingLabelStyle: TextStyle(color: primaryColor),
           focusedBorder: OutlineInputBorder(
