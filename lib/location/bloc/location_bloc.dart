@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geocode/geocode.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pondrop/location/repositories/location_repository.dart';
+import 'package:pondrop/repositories/location_repository.dart';
 
 part 'location_event.dart';
 part 'location_state.dart';

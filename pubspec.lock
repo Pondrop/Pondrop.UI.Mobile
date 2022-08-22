@@ -29,13 +29,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.8.2"
-  authentication_repository:
-    dependency: "direct main"
-    description:
-      path: "packages/authentication_repository"
-      relative: true
-    source: path
-    version: "0.0.0"
   bloc:
     dependency: "direct main"
     description:
@@ -504,6 +497,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.3.1"
+  jwt_decode:
+    dependency: "direct main"
+    description:
+      name: jwt_decode
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.1"
   lints:
     dependency: transitive
     description:
@@ -803,13 +803,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0"
-  store_service:
-    dependency: "direct main"
-    description:
-      path: "packages/store_service"
-      relative: true
-    source: path
-    version: "0.0.0"
   stream_channel:
     dependency: transitive
     description:
@@ -873,13 +866,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.1"
-  user_repository:
-    dependency: "direct main"
-    description:
-      path: "packages/user_repository"
-      relative: true
-    source: path
-    version: "0.0.0"
   uuid:
     dependency: "direct main"
     description:

@@ -34,12 +34,12 @@ class LoginForm extends StatelessWidget {
               l10n.getStarted,
               style: Theme.of(context).textTheme.headline6,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               l10n.enterValidEmailToContinue,
               style: Theme.of(context).textTheme.bodyText1,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             _emailField(),
             //const Padding(padding: EdgeInsets.all(12)),
             //_passwordField(),
@@ -64,6 +64,7 @@ class LoginForm extends StatelessWidget {
             border: const OutlineInputBorder(),
             labelText: l10n.email,
           ),
+          keyboardType: TextInputType.emailAddress,
           validator: (value) => state.isValidEmail ? null : l10n.emailInvalid,
           onChanged: (value) =>
               context.read<LoginBloc>().add(LoginEmailChanged(value)),

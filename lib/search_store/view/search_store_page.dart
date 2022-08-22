@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pondrop/location/location.dart';
+import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/search_store/view/search_store_list.dart';
-import 'package:store_service/store_service.dart';
 
 import '../bloc/search_store_bloc.dart';
 
@@ -24,8 +23,8 @@ class SearchStoreState extends State<SearchStorePage> {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (_) => SearchStoreBloc(
-              storeService:
-                RepositoryProvider.of<StoreService>(context),
+              storeRepository:
+                RepositoryProvider.of<StoreRepository>(context),
               locationRepository:
                 RepositoryProvider.of<LocationRepository>(context),
             ),

@@ -1,28 +1,27 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:pondrop/location/repositories/location_repository.dart';
+import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/search_store/bloc/search_store_bloc.dart';
-import 'package:store_service/store_service.dart';
 
 class MockLocationRepository extends Mock implements LocationRepository {}
 
-class MockStoreService extends Mock implements StoreService {}
+class MockStoreRepository extends Mock implements StoreRepository {}
 
 void main() {
   late LocationRepository locationRepository;
-  late StoreService storeService;
+  late StoreRepository storeRepository;
 
   setUp(() {
     locationRepository = MockLocationRepository();
-    storeService = MockStoreService();
+    storeRepository = MockStoreRepository();
   });
 
   group('SearchStoreBloc', () {
     test('initial state is Initial', () {
       expect(
         SearchStoreBloc(
-          storeService: storeService,
+          storeRepository: storeRepository,
           locationRepository: locationRepository,).state,
         equals(const SearchStoreState()));
     });
@@ -31,7 +30,7 @@ void main() {
       'emit text when Search Text is changed',
   
       build: () => SearchStoreBloc(
-          storeService: storeService,
+          storeRepository: storeRepository,
           locationRepository: locationRepository,),
       act: (bloc) => bloc.add(const TextChanged(text: '')),
       expect: () => [],

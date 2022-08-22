@@ -1,14 +1,13 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pondrop/stores/models/store.dart';
-import 'package:store_service/store_service.dart';
+import 'package:pondrop/models/models.dart';
+import 'package:pondrop/repositories/repositories.dart';
 import 'package:stream_transform/stream_transform.dart';
-
-import '../../location/repositories/location_repository.dart';
 
 part 'store_event.dart';
 part 'store_state.dart';
@@ -23,9 +22,9 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 
 class StoreBloc extends Bloc<StoreEvent, StoreState> {
   StoreBloc(
-      {required StoreService storeService,
+      {required StoreRepository storeRepository,
       required LocationRepository locationRepository})
-      : _storeService = storeService,
+      : _storeRepository = storeRepository,
         _locationRepository = locationRepository,
         super(const StoreState()) {
     on<StoreFetched>(
@@ -38,9 +37,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     );
   }
 
-  final StoreService _storeService;
+  final StoreRepository _storeRepository;
   final LocationRepository _locationRepository;
-  Position? _position;
 
   Future<void> _onStoreFetched(
     StoreFetched event,
@@ -49,21 +47,22 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     if (state.hasReachedMax) return;
     try {
       if (state.status == StoreStatus.initial) {
-        _position = await _locationRepository
+        final position = await _locationRepository
             .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
-        final stores = await _fetchstores();
+        final stores = await _storeRepository.fetchStores(sortByPosition: position);
 
         emit(
           state.copyWith(
             status: StoreStatus.success,
             stores: stores,
+            position: position,
             hasReachedMax: false,
           ),
         );
       } else {
-        final stores = await _fetchstores(state.stores.length);
+        final stores = await _storeRepository.fetchStores(sortByPosition: state.position);
 
-        if (stores == null || stores.isEmpty) {
+        if (stores.isEmpty) {
           emit(state.copyWith(hasReachedMax: true));
         } else {
           emit(
@@ -76,7 +75,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
         }
       }
     } catch (ex) {
-      print(ex);
+      log(ex.toString());
       emit(state.copyWith(status: StoreStatus.failure));
     }
   }
@@ -92,40 +91,21 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     emit(state.copyWith(status: StoreStatus.refreshing));
 
     try {
-      _position = await _locationRepository.getLastKnownOrCurrentPosition(const Duration(minutes: 1));
-      final stores = await _fetchstores();
+      final position = await _locationRepository
+        .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
+      final stores = await _storeRepository.fetchStores(sortByPosition: position);
 
       emit(
         state.copyWith(
           status: StoreStatus.success,
           stores: stores,
+          position: position,
           hasReachedMax: false,
         ),
       );
     } catch (ex) {
-      print(ex);
+      log(ex.toString());
       emit(state.copyWith(status: StoreStatus.failure));
     }
-  }
-
-  Future<List<Store>?> _fetchstores([int startIndex = 0]) async {
-    final result = await _storeService.searchStore(
-        keyword: '', geolocation: _position, index: startIndex);
-
-    final storeList = result.value.map((StoreDto store) {
-      try {
-        return Store(
-            id: store.id,
-            name: store.name,
-            address: store.address,
-            latitude: store.latitude,
-            longitude: store.longitude,
-            lastKnowDistanceMetres: store.distanceInMeters(_position));
-      } on Exception catch (_, ex) {
-        throw Exception(ex);
-      }
-    }).toList();
-
-    return storeList;
   }
 }

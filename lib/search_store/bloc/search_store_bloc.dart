@@ -4,9 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pondrop/location/repositories/location_repository.dart';
-import 'package:pondrop/stores/models/store.dart';
-import 'package:store_service/store_service.dart';
+import 'package:pondrop/models/models.dart';
+import 'package:pondrop/repositories/repositories.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part 'search_store_event.dart';
@@ -26,17 +25,16 @@ EventTransformer<Event> debounce<Event>(Duration duration) {
 
 class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
   SearchStoreBloc(
-      {required StoreService storeService,
+      {required StoreRepository storeRepository,
       required LocationRepository locationRepository})
-      : _storeService = storeService,
+      : _storeService = storeRepository,
         _locationRepository = locationRepository,
         super(const SearchStoreState()) {
     on<TextChanged>(_onSearchStore, transformer: debounce(throttleDuration));
   }
 
-  final StoreService _storeService;
+  final StoreRepository _storeService;
   final LocationRepository _locationRepository;
-  Position? _position;
 
   Future<void> _onSearchStore(
       TextChanged event, Emitter<SearchStoreState> emit) async {
@@ -54,42 +52,27 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
     }
 
     try {
-      _position = await _locationRepository.getLastKnownOrCurrentPosition(const Duration(minutes: 1));
-      final stores = await _fetchstores(searchTerm);
+      final position = await _locationRepository
+        .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
+      final stores = await _storeService.fetchStores(keyword: searchTerm, sortByPosition: position);
 
-      if (stores == null || stores.isEmpty) {
+      if (stores.isEmpty) {
         emit(state.copyWith(
             status: SearchStoreStatus.success,
             stores: <Store>[],
+            position: position,
           ));
       } else {
         emit(
           state.copyWith(
             status: SearchStoreStatus.success,
             stores: stores,
+            position: position,
           ),
         );
       }
     } catch (ex) {
       emit(state.copyWith(status: SearchStoreStatus.failure));
     }
-  }
-
-  Future<List<Store>?> _fetchstores(
-      [String keyword = '', int startIndex = 0]) async {
-    final result = await _storeService.searchStore(
-        keyword: keyword, geolocation: _position, index: startIndex);
-
-    final storeList = result.value.map((StoreDto store) {
-      return Store(
-          id: store.id,
-          name: store.name,
-          address: store.address,
-          latitude: store.latitude,
-          longitude: store.longitude,
-          lastKnowDistanceMetres: store.distanceInMeters(_position));
-    }).toList();
-
-    return storeList;
   }
 }
