@@ -20,7 +20,11 @@ class StoreRepository {
 
     final stores = searchResult.value.map((e) => Store(
       id: e.id,
+      provider: e.provider ?? '',
       name: e.name,
+      displayName: e.provider?.isNotEmpty == true 
+        ? '${e.provider} ${e.name}'
+        : e.name,
       address: e.address,
       latitude: e.latitude,
       longitude: e.longitude,

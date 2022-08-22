@@ -4,14 +4,18 @@ import 'package:intl/intl.dart';
 class Store extends Equatable {
   const Store(
       {required this.id,
+      required this.provider,
       required this.name,
+      required this.displayName,
       required this.address,
       required this.latitude,
       required this.longitude,
       required this.lastKnowDistanceMetres});
 
   final String id;
+  final String provider;
   final String name;
+  final String displayName;
   final String address;
   final double latitude;
   final double longitude;
@@ -33,5 +37,5 @@ class Store extends Equatable {
 
   @override
   List<Object> get props =>
-      [id, name, address, latitude, longitude, lastKnowDistanceMetres];
+      [id, provider, name, address, latitude, longitude, lastKnowDistanceMetres];
 }
