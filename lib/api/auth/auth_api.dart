@@ -18,7 +18,7 @@ class AuthApi {
     required String email,
     required String password,
   }) async {
-    final resp = await http.post(
+    final resp = await _httpClient.post(
       Uri.https(_authority, '/Auth/shopper/signin'),
       headers: _requestHeaders,
       body: jsonEncode(<String, String>{
@@ -32,7 +32,7 @@ class AuthApi {
   }
 
   Future<void> signOut(String accessToken) {
-    return http.post(
+    return _httpClient.post(
       Uri.https(_authority, '/Auth/shopper/signout'),
       headers: { 'Authorization' : 'Bearer $accessToken' });
   }
