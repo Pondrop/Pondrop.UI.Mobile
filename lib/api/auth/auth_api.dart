@@ -31,7 +31,9 @@ class AuthApi {
     return accessToken;
   }
 
-  Future<void> signOut(String accessToken) async {
-    await Future.delayed(const Duration(seconds: 3));
+  Future<void> signOut(String accessToken) {
+    return http.post(
+      Uri.https(_authority, '/Auth/shopper/signout'),
+      headers: { 'Authorization' : 'Bearer $accessToken' });
   }
 }
