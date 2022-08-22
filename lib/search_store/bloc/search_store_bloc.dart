@@ -44,6 +44,7 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
       emit(
           state.copyWith(
             status: SearchStoreStatus.initial,
+            query: searchTerm,
             stores: <Store>[],
           ),
         );
@@ -59,6 +60,7 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
       if (stores.isEmpty) {
         emit(state.copyWith(
             status: SearchStoreStatus.success,
+            query: searchTerm,
             stores: <Store>[],
             position: position,
           ));
@@ -66,6 +68,7 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
         emit(
           state.copyWith(
             status: SearchStoreStatus.success,
+            query: searchTerm,
             stores: stores,
             position: position,
           ),

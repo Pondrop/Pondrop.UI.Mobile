@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/models/models.dart';
 import 'package:pondrop/shared/view/bottom_loader.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
 import 'package:pondrop/stores/view/store_list_item.dart';
@@ -44,6 +45,12 @@ class _StoresListState extends State<StoresList> {
           return ListView.builder(
             padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
             itemBuilder: (BuildContext context, int index) {
+              Widget getItem(int idx, List<Store> stores) {
+                return  idx >= stores.length
+                  ? const BottomLoader()
+                  : StoreListItem(store: stores[index]);
+              }
+
               if (index == 0) {
                 return Column(children: [
                   // The header
@@ -57,14 +64,11 @@ class _StoresListState extends State<StoresList> {
                             fontSize: 12.0,
                             fontWeight: FontWeight.bold)),
                   ),
-                  index >= state.stores.length
-                      ? const BottomLoader()
-                      : StoreListItem(store: state.stores[index])
+                  getItem(index, state.stores)
                 ]);
               }
-              return index >= state.stores.length
-                  ? const BottomLoader()
-                  : StoreListItem(store: state.stores[index]);
+
+              return getItem(index, state.stores);
             },
             itemCount: state.hasReachedMax
                 ? state.stores.length
@@ -85,7 +89,7 @@ class _StoresListState extends State<StoresList> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<StoreBloc>().add(StoreFetched());
+    if (_isBottom) context.read<StoreBloc>().add(const StoreFetched());
   }
 
   bool get _isBottom {

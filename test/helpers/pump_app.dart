@@ -16,4 +16,17 @@ extension PumpApp on WidgetTester {
       ),
     );
   }
+
+  Future<void> pumpAppWithRoute(RouteFactory onGenerateRoute) {
+    return pumpWidget(
+      MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        onGenerateRoute: onGenerateRoute,
+      ),
+    );
+  }
 }

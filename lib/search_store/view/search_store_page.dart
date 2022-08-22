@@ -9,41 +9,27 @@ class SearchStorePage extends StatefulWidget {
   const SearchStorePage({Key? key}) : super(key: key);
 
   @override
-  State<SearchStorePage> createState() => SearchStoreState();
+  State<SearchStorePage> createState() => _SearchStoreState();
 
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => const SearchStorePage());
   }
 }
 
-class SearchStoreState extends State<SearchStorePage> {
+class _SearchStoreState extends State<SearchStorePage> {
   final _searchTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (_) => SearchStoreBloc(
-              storeRepository:
-                RepositoryProvider.of<StoreRepository>(context),
+              storeRepository: RepositoryProvider.of<StoreRepository>(context),
               locationRepository:
-                RepositoryProvider.of<LocationRepository>(context),
+                  RepositoryProvider.of<LocationRepository>(context),
             ),
         child: Scaffold(
-          appBar: AppBar(
-              titleSpacing: 0,
-              leading: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Icon(Icons.arrow_back)),
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              title: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  child: Center(child: _searchTextField()))),
+          appBar:
+              AppBar(title: _searchTextField()),
           body: const SearchStoresList(null, 'SEARCH RESULTS'),
         ));
   }
@@ -54,15 +40,24 @@ class SearchStoreState extends State<SearchStorePage> {
         style: const TextStyle(fontSize: 20, color: Colors.black),
         controller: _searchTextController,
         decoration: InputDecoration(
-            suffixIcon: IconButton(
-              focusColor: Colors.black,
-              color: Colors.black,
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                _searchTextController.clear();
-                context
-                    .read<SearchStoreBloc>()
-                    .add(const TextChanged(text: ''));
+            suffixIcon: BlocBuilder<SearchStoreBloc, SearchStoreState>(
+              builder: (context, state) {
+                if (state.query.isNotEmpty) {
+                  return IconButton(
+                    tooltip: 'Clear',
+                    focusColor: Colors.black,
+                    color: Colors.black,
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchTextController.clear();
+                      context
+                          .read<SearchStoreBloc>()
+                          .add(const TextChanged(text: ''));
+                    },
+                  );
+                }
+                
+                return const SizedBox.shrink();
               },
             ),
             hintText: 'Search',
