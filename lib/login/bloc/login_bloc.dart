@@ -11,9 +11,9 @@ part 'login_state.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({
     required AuthenticationRepository authenticationRepository,
-    required UserRepository userRepository,
+    required LocationRepository locationRepository,
   })  : _authenticationRepository = authenticationRepository,
-        _userRepository = userRepository,
+        _locationRepository = locationRepository,
         super(const LoginState()) {
     on<LoginEmailChanged>(_onEmailChanged);
     on<LoginPasswordChanged>(_onPasswordChanged);
@@ -22,7 +22,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   final AuthenticationRepository _authenticationRepository;
-  final UserRepository _userRepository;
+  final LocationRepository _locationRepository;
 
   void _onEmailChanged(
     LoginEmailChanged event,
@@ -58,6 +58,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     if (state.isValidEmail) {
+      if (!await _locationRepository.checkAndRequestPermissions()) {
+        emit(state.copyWith(status: const FormSubmissionStatusFailed('Location Services are required to use Pondrop.')));
+      }
+
       emit(state.copyWith(status: const FormSubmissionStatusSubmitting()));
       
       try {
@@ -71,7 +75,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           emit(state.copyWith(status: const FormSubmissionStatusSuccess()));
         }
         else {
-          emit(state.copyWith(status: const FormSubmissionStatusFailed('')));
+          emit(state.copyWith(status: const FormSubmissionStatusFailed('Could not validate email. Please try again.')));
         }
       } catch (e) {
         emit(state.copyWith(status: FormSubmissionStatusFailed(e.toString())));

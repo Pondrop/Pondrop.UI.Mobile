@@ -68,9 +68,10 @@ class LoginForm extends StatelessWidget {
           validator: (value) => state.isValidEmail ? null : l10n.emailInvalid,
           onChanged: (value) =>
               context.read<LoginBloc>().add(LoginEmailChanged(value)),
+          enabled: state.status != const FormSubmissionStatusSubmitting(),
         );
       },
-      buildWhen: (o, n) => o.email != n.email,
+      buildWhen: (o, n) => o.email != n.email || o.status != n.status,
     );
   }
 

@@ -7,7 +7,7 @@ class AuthApi {
   AuthApi({http.Client? httpClient})
       : _httpClient = httpClient ?? http.Client();
 
-  static const _authority = 'auth-service.purpleisland-ecf19528.australiaeast.azurecontainerapps.io';
+  static const _authority = 'auth-service.ashyocean-bde16918.australiaeast.azurecontainerapps.io';
   static const Map<String, String> _requestHeaders = {
     'Content-type': 'application/json',
   };

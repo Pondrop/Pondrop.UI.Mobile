@@ -25,7 +25,7 @@ class StoreReportPage extends StatelessWidget {
         appBar: AppBar(
           elevation: 0,
           title: const Text(
-            'Store report',
+            'Store activity',
             style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
           ),
         ),
