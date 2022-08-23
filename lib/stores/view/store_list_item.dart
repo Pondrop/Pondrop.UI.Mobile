@@ -20,7 +20,7 @@ class StoreListItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(store.name,
+              Text(store.displayName,
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1!

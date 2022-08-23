@@ -6,18 +6,18 @@ import 'package:pondrop/repositories/repositories.dart';
 
 class MockAuthenticationRepository extends Mock implements AuthenticationRepository {}
 
-class MockUserRepository extends Mock implements UserRepository {}
+class MockLocationRepository extends Mock implements LocationRepository {}
 
 void main() {
   const testEmail = 'test@test.com';
   const testPassword = 'super_secure_password';
 
   late AuthenticationRepository authenticationRepository;
-  late UserRepository userRepository;
+  late LocationRepository locationRepository;
 
   setUp(() {
     authenticationRepository = MockAuthenticationRepository();
-    userRepository = MockUserRepository();
+    locationRepository = MockLocationRepository();
   });
 
   group('LoginBloc', () {
@@ -25,7 +25,7 @@ void main() {
       expect(
         LoginBloc(
           authenticationRepository: authenticationRepository,
-          userRepository: userRepository,).state,
+          locationRepository: locationRepository,).state,
         equals(const LoginState()));
     });
 
@@ -33,7 +33,7 @@ void main() {
       'emits new email when LoginEmailChanged added',
       build: () => LoginBloc(
           authenticationRepository: authenticationRepository,
-          userRepository: userRepository,),
+          locationRepository: locationRepository,),
       act: (bloc) => bloc.add(const LoginEmailChanged(testEmail)),
       expect: () => [const LoginState(email: testEmail)],
     );
@@ -42,7 +42,7 @@ void main() {
       'emits new password when LoginPasswordChanged added',
       build: () => LoginBloc(
           authenticationRepository: authenticationRepository,
-          userRepository: userRepository,),
+          locationRepository: locationRepository,),
       act: (bloc) => bloc.add(const LoginPasswordChanged(testPassword)),
       expect: () => [const LoginState(password: testPassword)],
     );

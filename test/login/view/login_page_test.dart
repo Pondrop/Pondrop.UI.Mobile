@@ -9,15 +9,15 @@ import '../../helpers/helpers.dart';
 
 class MockAuthenticationRepository extends Mock implements AuthenticationRepository {}
 
-class MockUserRepository extends Mock implements UserRepository {}
+class MockLocationRepository extends Mock implements LocationRepository {}
 
 void main() {
   late AuthenticationRepository authenticationRepository;
-  late UserRepository userRepository;
+  late LocationRepository locationRepository;
 
   setUp(() {
     authenticationRepository = MockAuthenticationRepository();
-    userRepository = MockUserRepository();
+    locationRepository = MockLocationRepository();
   });
 
   group('LoginPage', () {
@@ -29,7 +29,7 @@ void main() {
       await tester.pumpApp(MultiRepositoryProvider(
         providers: [
           RepositoryProvider.value(value: authenticationRepository),
-          RepositoryProvider.value(value: userRepository),
+          RepositoryProvider.value(value: locationRepository),
         ],
         child: const LoginPage()
       ));

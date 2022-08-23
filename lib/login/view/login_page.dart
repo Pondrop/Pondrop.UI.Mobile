@@ -22,7 +22,7 @@ class LoginPage extends StatelessWidget {
             return LoginBloc(
               authenticationRepository:
                   RepositoryProvider.of<AuthenticationRepository>(context),
-              userRepository: RepositoryProvider.of<UserRepository>(context),
+              locationRepository: RepositoryProvider.of<LocationRepository>(context),
             );
           },
           child: Column(
