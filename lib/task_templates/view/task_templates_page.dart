@@ -51,16 +51,16 @@ class TaskTemplatesPage extends StatelessWidget {
                 title: "Low stocked item",
                 subtitle: "Report low or empty stock levels",
               ),
-              TaskTemplateListItem(
-                icon: Icons.receipt_long_outlined,
-                title: "Receipts",
-                subtitle: "Confirm product pricing at the checkout",
-              ),
-              TaskTemplateListItem(
-                icon: Icons.inventory_2_outlined,
-                title: "Product information",
-                subtitle: "Validate product pricing and locate items in store",
-              )
+              // TaskTemplateListItem(
+              //   icon: Icons.receipt_long_outlined,
+              //   title: "Receipts",
+              //   subtitle: "Confirm product pricing at the checkout",
+              // ),
+              // TaskTemplateListItem(
+              //   icon: Icons.inventory_2_outlined,
+              //   title: "Product information",
+              //   subtitle: "Validate product pricing and locate items in store",
+              // )
             ],
           ));
     });
