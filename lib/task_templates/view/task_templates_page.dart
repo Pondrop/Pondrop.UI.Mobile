@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pondrop/models/models.dart';
-import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/task_templates/view/task_template_list_item.dart';
 
 import '../bloc/task_templates_bloc.dart';
@@ -11,15 +9,13 @@ class TaskTemplatesPage extends StatelessWidget {
 
   static Route route() {
     return MaterialPageRoute<void>(
-        builder: (_) => const TaskTemplatesPage(), settings: RouteSettings());
+        builder: (_) => const TaskTemplatesPage(), settings: const RouteSettings());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (_) => TaskTemplatesBloc(
-              store: ModalRoute.of(context)!.settings.arguments as Store,
-              storeRepository: RepositoryProvider.of<StoreRepository>(context),
             ),
         child: Scaffold(
             appBar: AppBar(
@@ -43,7 +39,7 @@ class TaskTemplatesPage extends StatelessWidget {
   Widget _taskTemplates(BuildContext context) {
     return Builder(builder: (context) {
       return Padding(
-          padding: EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.only(top: 10),
           child: ListView(
             children: const <Widget>[
               TaskTemplateListItem(

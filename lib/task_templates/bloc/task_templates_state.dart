@@ -5,7 +5,7 @@ class TaskTemplatesState extends Equatable {
 
 
   TaskTemplatesState copyWith() {
-    return TaskTemplatesState();
+    return const TaskTemplatesState();
   }
 
   @override

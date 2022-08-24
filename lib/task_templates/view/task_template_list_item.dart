@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pondrop/models/store.dart';
-import 'package:pondrop/store_report/store_report.dart';
 
 class TaskTemplateListItem extends StatelessWidget {
   const TaskTemplateListItem(
@@ -25,9 +23,9 @@ class TaskTemplateListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14),
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
                     child: Container(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 201, 230, 255),
                           borderRadius: BorderRadius.circular(100)),

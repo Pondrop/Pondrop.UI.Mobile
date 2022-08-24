@@ -48,7 +48,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     try {
       if (state.status == StoreStatus.initial) {
         final position = await _locationRepository
-            .getCurrentPosition();
+            .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
         final stores = await _storeRepository.fetchStores(sortByPosition: position);
 
         emit(
