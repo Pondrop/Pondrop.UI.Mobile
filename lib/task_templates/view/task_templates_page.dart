@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/task_templates/view/task_template_list_item.dart';
 
 import '../bloc/task_templates_bloc.dart';
@@ -8,7 +9,7 @@ class TaskTemplatesPage extends StatelessWidget {
   const TaskTemplatesPage({Key? key}) : super(key: key);
 
   static Route route() {
-    return MaterialPageRoute<void>(
+    return MaterialWithModalsPageRoute<void>(
         builder: (_) => const TaskTemplatesPage(), settings: const RouteSettings());
   }
 

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pondrop/store_task/store_task.dart';
+import 'package:pondrop/style/app_colors.dart';
 
 class TaskTemplateListItem extends StatelessWidget {
   const TaskTemplateListItem(
@@ -15,7 +18,10 @@ class TaskTemplateListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          Navigator.of(context).pop();
+          showCupertinoModalBottomSheet(
+            context: context,
+            builder: (context) => const StoreTaskPage()
+          );
         },
         child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 0, 2),
@@ -27,7 +33,7 @@ class TaskTemplateListItem extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 201, 230, 255),
+                          color: AppColors.primaryLightColor,
                           borderRadius: BorderRadius.circular(100)),
                       child: Icon(
                         icon,
