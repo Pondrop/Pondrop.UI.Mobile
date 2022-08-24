@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 
+import '../../task_templates/view/task_templates_page.dart';
 import '../bloc/store_report_bloc.dart';
 
 class StoreReportPage extends StatelessWidget {
   const StoreReportPage({Key? key}) : super(key: key);
 
   static Route route(Store store) {
+    store = store;
     return MaterialPageRoute<void>(
         builder: (_) => const StoreReportPage(),
         settings: RouteSettings(arguments: store));
@@ -23,12 +25,12 @@ class StoreReportPage extends StatelessWidget {
       ),
       child: Scaffold(
         appBar: AppBar(
-          elevation: 0,
-          title: const Text(
-            'Store activity',
-            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
-          ),
-        ),
+            elevation: 0,
+            title: const Text(
+              'Store activity',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+            ),
+            centerTitle: true),
         body: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Material(
             color: Theme.of(context).appBarTheme.backgroundColor,
@@ -40,13 +42,12 @@ class StoreReportPage extends StatelessWidget {
           icon: const Icon(Icons.add),
           label: const Text('Add task'),
           style: ElevatedButton.styleFrom(
-            primary: const Color(0xFFC8E1FD),
-            onPrimary: Colors.black
-          ),
-          onPressed: () { },
-        ),
+              primary: const Color(0xFFC8E1FD), onPrimary: Colors.black),
+          onPressed:  () async {
+          await Navigator.of(context).push(TaskTemplatesPage.route());
+        },
       ),
-    );
+    ));
   }
 
   Widget _storeHeader(BuildContext context) {
