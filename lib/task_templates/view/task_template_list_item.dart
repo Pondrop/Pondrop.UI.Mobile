@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:pondrop/store_task/store_task.dart';
+import 'package:pondrop/api/submissions/models/submission_template_dto.dart';
+import 'package:pondrop/models/models.dart';
+import 'package:pondrop/store_submission/store_submission.dart';
 import 'package:pondrop/style/app_colors.dart';
 
 class TaskTemplateListItem extends StatelessWidget {
-  const TaskTemplateListItem(
-      {super.key,
-      required this.icon,
-      required this.title,
-      required this.subtitle});
+  const TaskTemplateListItem({super.key, required this.submissionTemplate});
 
-  final IconData icon;
-  final String title;
-  final String subtitle;
+  final SubmissionTemplateDto submissionTemplate;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {
+        onTap: () async {
           showCupertinoModalBottomSheet(
-            context: context,
-            builder: (context) => const StoreTaskPage()
+              context: context,
+              builder: (context) => StoreSubmissionPage(
+                submission: submissionTemplate.toStoreSubmission()
+              ),
           );
         },
         child: Padding(
@@ -36,7 +34,8 @@ class TaskTemplateListItem extends StatelessWidget {
                           color: AppColors.primaryLightColor,
                           borderRadius: BorderRadius.circular(100)),
                       child: Icon(
-                        icon,
+                        IconData(submissionTemplate.iconCodePoint,
+                            fontFamily: submissionTemplate.iconFontFamily),
                         color: Colors.black,
                       ),
                     )),
@@ -44,7 +43,7 @@ class TaskTemplateListItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title,
+                      Text(submissionTemplate.title,
                           style: Theme.of(context)
                               .textTheme
                               .bodyText1!
@@ -52,7 +51,7 @@ class TaskTemplateListItem extends StatelessWidget {
                                   fontSize: 14, fontWeight: FontWeight.w500)),
                       const SizedBox(height: 8),
                       Text(
-                        subtitle,
+                        submissionTemplate.description,
                         style: Theme.of(context).textTheme.caption,
                       ),
                       const SizedBox(height: 10),

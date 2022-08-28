@@ -28,12 +28,13 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   bloc: ^8.1.0
-  bloc_concurrency: ^0.2.0
+  bloc_concurrency: ^0.2.0  
   email_validator: ^2.1.16
   equatable: ^2.0.0
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1  
+  flutter_multi_formatter: ^2.6.2
   flutter_localizations:
     sdk: flutter
   flutter_secure_storage: ^5.1.0

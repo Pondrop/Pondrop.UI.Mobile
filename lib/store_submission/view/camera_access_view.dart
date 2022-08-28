@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pondrop/l10n/l10n.dart';
+
+import '../bloc/store_submission_bloc.dart';
 
 class CameraAccessView extends StatelessWidget {
   const CameraAccessView({Key? key}) : super(key: key);
@@ -30,7 +33,9 @@ class CameraAccessView extends StatelessWidget {
         const SizedBox(
           height: 48,
         ),
-        ElevatedButton(onPressed: () {}, child: Text(l10n.okay)),
+        ElevatedButton(onPressed: () {
+          context.read<StoreSubmissionBloc>().add(const StoreSubmissionNextEvent());
+        }, child: Text(l10n.okay)),
         const SizedBox(
           height: 12,
         ),
