@@ -6,3 +6,11 @@ abstract class TaskTemplatesEvent extends Equatable {
   
   const TaskTemplatesEvent();
 }
+
+class TaskTemplatesFetched extends TaskTemplatesEvent {
+  const TaskTemplatesFetched();
+}
+
+class TaskTemplatesRefreshed extends TaskTemplatesEvent {
+  const TaskTemplatesRefreshed();
+}

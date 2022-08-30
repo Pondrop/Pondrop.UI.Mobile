@@ -9,15 +9,15 @@ import 'package:pondrop/login/login.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/splash/view/splash_page.dart';
 import 'package:pondrop/stores/view/store_page.dart';
+import 'package:pondrop/style/style.dart';
 
 class App extends StatelessWidget {
-  const App({
-    super.key,
-    required this.authenticationRepository,
-    required this.locationRepository,
-    required this.userRepository,
-    required this.storeRepository
-  });
+  const App(
+      {super.key,
+      required this.authenticationRepository,
+      required this.locationRepository,
+      required this.userRepository,
+      required this.storeRepository});
 
   final AuthenticationRepository authenticationRepository;
   final LocationRepository locationRepository;
@@ -65,54 +65,60 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFF006492);
-    const errorColor = Color(0xFFBA1A1A);
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-        ),
-        primaryColor: primaryColor,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.blueGrey,
-          accentColor: primaryColor,
-          errorColor: errorColor
-        ),
-        hintColor: Colors.black87,
-        textTheme: TextTheme(
-          headline1: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          headline2: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          headline3: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          headline4: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          headline5: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          headline6: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-          bodyText1: const TextStyle(fontSize: 14),
-          bodyText2: const TextStyle(fontSize: 12),
-          caption: TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.6)),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-              primary: primaryColor,
-              onPrimary: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 14))),
-        inputDecorationTheme: const InputDecorationTheme(
-          floatingLabelStyle: TextStyle(color: primaryColor),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: primaryColor),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
           ),
-        ),
-        textSelectionTheme:
-            const TextSelectionThemeData(cursorColor: primaryColor),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          selectedIconTheme: IconThemeData(color: primaryColor)
-        )
-      ),
+          primaryColor: AppColors.primaryColor,
+          colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.blueGrey,
+            accentColor: AppColors.primaryColor,
+            errorColor: AppColors.errorColor,
+          ),
+          hintColor: Colors.black87,
+          textTheme: TextTheme(
+            headline1: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.bold),
+            headline2: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.bold),
+            headline3: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.bold),
+            headline4: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.bold),
+            headline5: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.bold),
+            headline6: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.bold),
+            bodyText1: const TextStyle(fontSize: 14),
+            bodyText2: const TextStyle(fontSize: 12),
+            caption:
+                TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.6)),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                  primary: AppColors.primaryColor,
+                  onPrimary: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24, vertical: 14))),
+          textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                  textStyle: const TextStyle(
+                      color: AppColors.primaryColor, fontSize: 16, fontWeight: FontWeight.w500))),
+          inputDecorationTheme: const InputDecorationTheme(
+            floatingLabelStyle: TextStyle(color: AppColors.primaryColor),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.primaryColor),
+            ),
+          ),
+          textSelectionTheme:
+              const TextSelectionThemeData(cursorColor: AppColors.primaryColor),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+              selectedIconTheme: IconThemeData(color: AppColors.primaryColor))),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

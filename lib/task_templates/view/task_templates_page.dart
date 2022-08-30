@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pondrop/task_templates/view/task_template_list_item.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pondrop/repositories/repositories.dart';
 
 import '../bloc/task_templates_bloc.dart';
+import 'task_templates.dart';
 
 class TaskTemplatesPage extends StatelessWidget {
   const TaskTemplatesPage({Key? key}) : super(key: key);
 
   static Route route() {
-    return MaterialPageRoute<void>(
-        builder: (_) => const TaskTemplatesPage(), settings: const RouteSettings());
+    return MaterialWithModalsPageRoute<void>(
+        builder: (_) => const TaskTemplatesPage());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (_) => TaskTemplatesBloc(
-            ),
+              submissionRepository: SubmissionRepository(),
+              userRepository: context.read<UserRepository>(),
+            )..add(const TaskTemplatesFetched()),
         child: Scaffold(
             appBar: AppBar(
                 elevation: 0,
@@ -33,32 +37,8 @@ class TaskTemplatesPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop();
                     })),
-            body: _taskTemplates(context)));
-  }
-
-  Widget _taskTemplates(BuildContext context) {
-    return Builder(builder: (context) {
-      return Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: ListView(
-            children: const <Widget>[
-              TaskTemplateListItem(
-                icon: Icons.production_quantity_limits,
-                title: "Low stocked item",
-                subtitle: "Report low or empty stock levels",
-              ),
-              // TaskTemplateListItem(
-              //   icon: Icons.receipt_long_outlined,
-              //   title: "Receipts",
-              //   subtitle: "Confirm product pricing at the checkout",
-              // ),
-              // TaskTemplateListItem(
-              //   icon: Icons.inventory_2_outlined,
-              //   title: "Product information",
-              //   subtitle: "Validate product pricing and locate items in store",
-              // )
-            ],
-          ));
-    });
+            body: Builder(builder: (context) {
+              return const TaskTemplates();
+            })));
   }
 }

@@ -36,5 +36,34 @@
     "profile": "Profile",
     "@profile": {},
     "stores": "Stores",
-    "@stores": {}
+    "@stores": {},
+    "accessCamera": "Access camera",
+    "@accessCamera": {},
+    "accessCameraDescription": "We need to use your camera to take photos of produces and shelves",
+    "@accessCameraDescription": {},
+    "okay": "Okay",
+    "@okay": {},
+    "notNow": "Not now",
+    "@notNow": {},
+    "cancel": "Cancel",
+    "@cancel": {},
+    "next": "Next",
+    "@next": {},
+    "done": "Done",
+    "@done": {},
+    "fieldRequired": "* required",
+    "@fieldRequired": {},
+    "takePhoto": "Take photo",
+    "@takePhoto": {},
+    "itemOfItem": "{item} of {total}",
+    "@itemOfItem": {
+        "placeholders": {
+            "item": {
+                "type" : "int"
+            },
+            "total": {
+                "type" : "int"
+            }
+        }
+    }
 }
