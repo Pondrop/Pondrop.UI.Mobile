@@ -58,9 +58,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     if (state.isValidEmail) {
-      if (!await _locationRepository.checkAndRequestPermissions()) {
-        emit(state.copyWith(status: const FormSubmissionStatusFailed('Location Services are required to use Pondrop.')));
-      }
+      await _locationRepository.checkAndRequestPermissions();
 
       emit(state.copyWith(status: const FormSubmissionStatusSubmitting()));
       

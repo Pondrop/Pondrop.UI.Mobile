@@ -42,14 +42,6 @@ class LocationRepository {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
 
-        if (permission == LocationPermission.denied) {          
-          return Future.error('Location permissions are denied');
-        }
-      }
-      
-      if (permission == LocationPermission.deniedForever) {
-        // Permissions are denied forever, handle appropriately. 
-        return Future.error('Location permissions are permanently denied.');
       }
 
       return permission == LocationPermission.always ||
