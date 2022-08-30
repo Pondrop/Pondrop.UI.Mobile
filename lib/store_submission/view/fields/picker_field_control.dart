@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 
 import '../../bloc/store_submission_bloc.dart';
@@ -12,10 +13,28 @@ class PickerFieldControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return TextField(
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: field.label,
+        suffixIcon: field.mandatory
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
+                    child: Text(l10n.fieldRequired,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontStyle: FontStyle.italic)),
+                  ),
+                ],
+              )
+            : null,
       ),
       controller: TextEditingController(text: field.result.stringValue),
       focusNode: _AlwaysDisabledFocusNode(),

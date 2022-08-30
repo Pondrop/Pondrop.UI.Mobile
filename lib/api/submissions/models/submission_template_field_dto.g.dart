@@ -35,5 +35,6 @@ const _$SubmissionFieldTypeEnumMap = {
   SubmissionFieldType.text: 'text',
   SubmissionFieldType.multilineText: 'multilineText',
   SubmissionFieldType.integer: 'integer',
+  SubmissionFieldType.currency: 'currency',
   SubmissionFieldType.picker: 'picker',
 };
