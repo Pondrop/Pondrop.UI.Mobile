@@ -47,9 +47,14 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     if (state.hasReachedMax) return;
     try {
       if (state.status == StoreStatus.initial) {
-        final position = await _locationRepository
+        Position? position;
+        if (await _locationRepository.isLocationServiceEnabled()) {
+         position = await _locationRepository
             .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
-        final stores = await _storeRepository.fetchStores(sortByPosition: position);
+        }
+
+        final stores =
+            await _storeRepository.fetchStores(sortByPosition: position);
 
         emit(
           state.copyWith(
@@ -60,7 +65,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           ),
         );
       } else {
-        final stores = await _storeRepository.fetchStores(sortByPosition: state.position);
+        final stores = await _storeRepository.fetchStores(sortByPosition: state.position, skipIdx: state.stores.length);
 
         if (stores.isEmpty) {
           emit(state.copyWith(hasReachedMax: true));
@@ -92,7 +97,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
     try {
       final position = await _locationRepository
-        .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
+          .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
       final stores = await _storeRepository.fetchStores(sortByPosition: position);
 
       emit(
