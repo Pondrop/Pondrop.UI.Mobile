@@ -65,6 +65,8 @@ class StoreSubmissionBloc
       case SubmissionStatus.summary:
         emit(state.copyWith(action: SubmissionStatus.submitted));
         break;
+      default:
+        break;
     }
   }
 

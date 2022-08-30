@@ -19,6 +19,7 @@ class TaskTemplatesPage extends StatelessWidget {
     return BlocProvider(
         create: (_) => TaskTemplatesBloc(
               submissionRepository: SubmissionRepository(),
+              userRepository: context.read<UserRepository>(),
             )..add(const TaskTemplatesFetched()),
         child: Scaffold(
             appBar: AppBar(

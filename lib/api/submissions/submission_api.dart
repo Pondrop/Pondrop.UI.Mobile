@@ -3,141 +3,40 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:pondrop/api/submissions/models/models.dart';
+import 'package:pondrop/repositories/repositories.dart';
 import 'package:uuid/uuid.dart';
 
 class SubmissionApi {
-  SubmissionApi({http.Client? httpClient})
+  SubmissionApi(
+      {http.Client? httpClient})
       : _httpClient = httpClient ?? http.Client();
 
-  static const String _baseUrl = 'https://pondropsearchstandard.search.windows.net/';
+  static const String _baseUrl =
+      'template-submission-service.ashyocean-bde16918.australiaeast.azurecontainerapps.io';
   static const Map<String, String> _requestHeaders = {
-    'Content-type': 'application/json',
-    'api-key': 't9qQq8k9bXhsR4VoCbJAIHYwkBrSTpE03KMKR3Kp6MAzSeAyv0pe'
+    'Content-type': 'application/json'
   };
 
   final http.Client _httpClient;
 
-  Future<List<SubmissionTemplateDto>> fetchTemplates() async {
-    await Future.delayed(const Duration(milliseconds: 750));
+  Future<List<SubmissionTemplateDto>> fetchTemplates(String? accessToken) async {
 
-    final templates = [
-      SubmissionTemplateDto(
-        id: const Uuid().v4(),
-        title: 'Low stocked item',
-        description: 'Report low or empty stock levels',
-        iconCodePoint: 0xe4ee,
-        iconFontFamily: 'MaterialIcons',
-        steps: [
-          SubmissionTemplateStepDto(
-            id: const Uuid().v4(),
-            title: 'Shelf ticket',
-            instructions: 'Take a photo of the shelf ticket for the low stocked item',
-            instructionsContinueButton: 'Okay',
-            iconCodePoint: 0xf353,
-            iconFontFamily: 'MaterialIcons',
-            fields: [
-              SubmissionTemplateFieldDto(
-                id: const Uuid().v4(),
-                label: '',
-                mandatory: true,
-                fieldType: SubmissionFieldType.photo,
-                maxValue: 1
-              ),
-              SubmissionTemplateFieldDto(
-                id: const Uuid().v4(),
-                label: 'Quantity',
-                mandatory: true,
-                fieldType: SubmissionFieldType.integer,
-              ),
-              SubmissionTemplateFieldDto(
-                id: const Uuid().v4(),
-                label: 'Ticket price',
-                mandatory: true,
-                fieldType: SubmissionFieldType.currency,
-              ),
-              SubmissionTemplateFieldDto(
-                id: const Uuid().v4(),
-                label: 'Aisle',
-                mandatory: false,
-                fieldType: SubmissionFieldType.picker,
-                pickerValues: _aislePickerValues()
-              ),
-              SubmissionTemplateFieldDto(
-                id: const Uuid().v4(),
-                label: 'Shelf number',
-                mandatory: false,
-                fieldType: SubmissionFieldType.picker,
-                pickerValues: _shelvePickerValues()
-              ),
-              SubmissionTemplateFieldDto(
-                id: const Uuid().v4(),
-                label: 'Comments',
-                mandatory: false,
-                fieldType: SubmissionFieldType.multilineText,
-                maxValue: 500
-              ),
-            ]
-          ),
-          SubmissionTemplateStepDto(
-            id: const Uuid().v4(),
-            title: 'Location',
-            instructions: 'Take a photo of the shelf for the low stocked product',
-            instructionsContinueButton: 'Got it!',
-            instructionsSkipButton: 'Skip',
-            iconCodePoint: 0xf86e,
-            iconFontFamily: 'MaterialIcons',
-            fields: [
-              SubmissionTemplateFieldDto(
-                id: const Uuid().v4(),        
-                label: '',
-                mandatory: true,
-                fieldType: SubmissionFieldType.photo,
-                maxValue: 1
-              ),
-            ]
-          )
-        ]
-      )
-    ];
+    final headers = Map<String, String>.from(_requestHeaders)
+      ..addAll({'Authorization': 'Bearer ${accessToken ?? ""}'});
 
-    return templates;
-  }
+    final response = await _httpClient.get(Uri.https(_baseUrl, '/Submission'),
+        headers: headers);
 
-  static List<String> _aislePickerValues() {
-    final values = [
-      'Fruit and veg',
-      'Deli',
-      'Freezers',
-      'Checkout',
-      'Stationary',
-      'News/Magazines',
-    ];
-
-    for (var i = 1; i <= 30; i++) {
-      values.add(i.toString());
+    if (response.statusCode == 200) {
+      Iterable l = json.decode(response.body);
+      List<SubmissionTemplateDto> submissionTemplates =
+          List<SubmissionTemplateDto>.from(
+              l.map((model) => SubmissionTemplateDto.fromJson(model)));
+      return submissionTemplates;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load data');
     }
-
-    return values;
-  }
-
-  static List<String> _shelvePickerValues() {
-    final values = <String>[];
-
-    const maxNum = 10;
-    for (var i = 1; i <= maxNum; i++) {
-      switch (i) {
-        case 1:
-          values.add('$i (Top)');
-          break;
-        case maxNum:
-          values.add('$i (Bottom)');
-          break;
-        default:
-          values.add(i.toString());
-          break;
-      }
-    }
-
-    return values;
   }
 }

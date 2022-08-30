@@ -27,16 +27,18 @@ class StoreSubmissionPage extends StatelessWidget {
       )..add(const StoreSubmissionNextEvent()),
       child: BlocListener<StoreSubmissionBloc, StoreSubmissionState>(
         listener: (context, state) async {
-          if (state.status == SubmissionStatus.cameraRejected || state.status == SubmissionStatus.submitted) {
+          if (state.status == SubmissionStatus.cameraRejected ||
+              state.status == SubmissionStatus.submitted) {
             Navigator.of(context).pop();
           } else if (state.status == SubmissionStatus.stepInstructions) {
             final bloc = context.read<StoreSubmissionBloc>();
 
             final okay = await Navigator.of(context)
                 .push<bool>(DialogPage.route(DialogConfig(
-              title: l10n.itemOfItem(state.currentStepIdx + 1, state.submission.steps.length),
-              iconData: IconData(state.currentStep.iconCodePoint,
-                  fontFamily: state.currentStep.iconFontFamily),
+              title: l10n.itemOfItem(
+                  state.currentStepIdx + 1, state.submission.steps.length),
+              iconData: IconData(state.currentStep.instructionsIconCodePoint,
+                  fontFamily: state.currentStep.instructionsIconFontFamily),
               header: state.currentStep.title,
               body: state.currentStep.instructions,
               okayButtonText: state.currentStep.instructionsContinueButton,
@@ -45,7 +47,8 @@ class StoreSubmissionPage extends StatelessWidget {
 
             bloc.add(const StoreSubmissionNextEvent());
             if (okay == true) {
-              await PhotoFieldControl.takePhoto(bloc, state.currentStep.fields.first);
+              await PhotoFieldControl.takePhoto(
+                  bloc, state.currentStep.fields.first);
             }
           }
         },
@@ -121,7 +124,8 @@ class StoreSubmissionPage extends StatelessWidget {
               ),
               Expanded(
                   child: BlocBuilder<StoreSubmissionBloc, StoreSubmissionState>(
-                    buildWhen:(previous, current) => current.status != SubmissionStatus.submitted,
+                buildWhen: (previous, current) =>
+                    current.status != SubmissionStatus.submitted,
                 builder: (context, state) {
                   if (state.status == SubmissionStatus.summary) {
                     return const SubmissionSummaryList();

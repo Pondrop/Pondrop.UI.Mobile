@@ -17,8 +17,8 @@ class FakeStoreSubmissionTemplates {
                 instructions:
                     'Take a photo of the shelf ticket for the low stocked item',
                 instructionsContinueButton: 'Okay',
-                iconCodePoint: 0xf353,
-                iconFontFamily: 'MaterialIcons',
+                instructionsIconCodePoint: 0xf353,
+                instructionsIconFontFamily: 'MaterialIcons',
                 fields: [
                   SubmissionTemplateFieldDto(
                       id: const Uuid().v4(),
@@ -64,8 +64,8 @@ class FakeStoreSubmissionTemplates {
                     'Take a photo of the shelf for the low stocked product',
                 instructionsContinueButton: 'Got it!',
                 instructionsSkipButton: 'Skip',
-                iconCodePoint: 0xf86e,
-                iconFontFamily: 'MaterialIcons',
+                instructionsIconCodePoint: 0xf86e,
+                instructionsIconFontFamily: 'MaterialIcons',
                 fields: [
                   SubmissionTemplateFieldDto(
                       id: const Uuid().v4(),
