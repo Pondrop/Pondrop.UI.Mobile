@@ -1,24 +1,25 @@
 part of 'store_submission_bloc.dart';
 
-enum SubmissionAction {
+enum SubmissionStatus {
   initial,
   cameraRequest,
   cameraRejected,
   stepInstructions,
   stepSubmission,
-  summary
+  summary,
+  submitted,
 }
 
 class StoreSubmissionState extends Equatable {
   const StoreSubmissionState({
-    this.previousAction = SubmissionAction.initial,
-    this.action = SubmissionAction.initial,
+    this.previousAction = SubmissionStatus.initial,
+    this.status = SubmissionStatus.initial,
     required this.submission,
     this.currentStepIdx = -1,
   });
   
-  final SubmissionAction previousAction;
-  final SubmissionAction action;
+  final SubmissionStatus previousAction;
+  final SubmissionStatus status;
   final StoreSubmission submission;
   final int currentStepIdx;
 
@@ -30,13 +31,13 @@ class StoreSubmissionState extends Equatable {
     currentStep.isComplete;
 
   StoreSubmissionState copyWith({
-    SubmissionAction? action,
+    SubmissionStatus? action,
     StoreSubmission? submission,
     int? currentStepIdx,
   }) {
     return StoreSubmissionState(
-      previousAction: this.action,
-      action: action ?? this.action,
+      previousAction: this.status,
+      status: action ?? this.status,
       submission: submission ?? this.submission,
       currentStepIdx : currentStepIdx ?? this.currentStepIdx,
     );
@@ -44,7 +45,7 @@ class StoreSubmissionState extends Equatable {
 
   @override
   List<Object> get props => [
-    action,
+    status,
     submission,
     currentStepIdx,
   ];

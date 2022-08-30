@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/models.dart';
 
 part 'store_submission_event.dart';
@@ -18,54 +17,53 @@ class StoreSubmissionBloc
     on<StoreSubmissionFieldResultEvent>(_onResult);
   }
 
-  void _onResult(
-      StoreSubmissionFieldResultEvent event, Emitter<StoreSubmissionState> emit) {
+  void _onResult(StoreSubmissionFieldResultEvent event,
+      Emitter<StoreSubmissionState> emit) {
     final newSubmission = state.submission.copy();
     final step = newSubmission.steps[state.currentStepIdx];
     final field = step.fields.firstWhere((e) => e.fieldId == event.fieldId);
-    
+
     field.result.stringValue = event.result.stringValue;
     field.result.intValue = event.result.intValue;
+    field.result.doubleValue = event.result.doubleValue;
     field.result.photoPathValue = event.result.photoPathValue;
-    
-    emit(state.copyWith(
-      submission: newSubmission
-    ));
+
+    emit(state.copyWith(submission: newSubmission));
   }
 
-  Future<void> _onNext(
-      StoreSubmissionNextEvent event, Emitter<StoreSubmissionState> emit) async {
-    switch (state.action) {
-      case SubmissionAction.initial:
+  Future<void> _onNext(StoreSubmissionNextEvent event,
+      Emitter<StoreSubmissionState> emit) async {
+    switch (state.status) {
+      case SubmissionStatus.initial:
         {
           final cameraStatus = await Permission.camera.status;
           if (cameraStatus.isGranted) {
             _goToNextStep(emit);
           } else {
-            emit(state.copyWith(action: SubmissionAction.cameraRequest));
+            emit(state.copyWith(action: SubmissionStatus.cameraRequest));
           }
         }
         break;
-      case SubmissionAction.cameraRequest:
+      case SubmissionStatus.cameraRequest:
         {
           final cameraStatus = await Permission.camera.request();
           if (cameraStatus.isGranted) {
             _goToNextStep(emit);
           } else {
-            emit(state.copyWith(action: SubmissionAction.cameraRejected));
+            emit(state.copyWith(action: SubmissionStatus.cameraRejected));
           }
         }
         break;
-      case SubmissionAction.cameraRejected:
+      case SubmissionStatus.cameraRejected:
         break;
-      case SubmissionAction.stepInstructions:
-        emit(state.copyWith(action: SubmissionAction.stepSubmission));
+      case SubmissionStatus.stepInstructions:
+        emit(state.copyWith(action: SubmissionStatus.stepSubmission));
         break;
-      case SubmissionAction.stepSubmission:
+      case SubmissionStatus.stepSubmission:
         _goToNextStep(emit);
         break;
-      case SubmissionAction.summary:
-        // TODO: Handle this case.
+      case SubmissionStatus.summary:
+        emit(state.copyWith(action: SubmissionStatus.submitted));
         break;
     }
   }
@@ -78,15 +76,19 @@ class StoreSubmissionBloc
 
       if (nextStep.instructionsContinueButton.isNotEmpty) {
         emit(state.copyWith(
-          action: SubmissionAction.stepInstructions,
+          action: SubmissionStatus.stepInstructions,
           currentStepIdx: nextStepIdx,
         ));
       } else {
         emit(state.copyWith(
-          action: SubmissionAction.stepSubmission,
+          action: SubmissionStatus.stepSubmission,
           currentStepIdx: nextStepIdx,
         ));
       }
+    } else {
+      emit(state.copyWith(
+        action: SubmissionStatus.summary,
+      ));
     }
   }
 }

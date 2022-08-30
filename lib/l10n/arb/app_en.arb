@@ -48,5 +48,22 @@
     "cancel": "Cancel",
     "@cancel": {},
     "next": "Next",
-    "@next": {}
+    "@next": {},
+    "done": "Done",
+    "@done": {},
+    "fieldRequired": "* required",
+    "@fieldRequired": {},
+    "takePhoto": "Take photo",
+    "@takePhoto": {},
+    "itemOfItem": "{item} of {total}",
+    "@itemOfItem": {
+        "placeholders": {
+            "item": {
+                "type" : "int"
+            },
+            "total": {
+                "type" : "int"
+            }
+        }
+    }
 }

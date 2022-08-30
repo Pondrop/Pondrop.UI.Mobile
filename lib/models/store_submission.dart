@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
 
 extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
@@ -23,7 +24,7 @@ extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
                           stepId: step.id,
                           fieldId: field.id,
                           label: field.label,
-                          mandatory: field.mandatory,                          
+                          mandatory: field.mandatory,
                           fieldType: field.fieldType,
                           maxValue: field.maxValue,
                           pickerValues: field.pickerValues,
@@ -88,7 +89,7 @@ class StoreSubmissionStep extends Equatable {
 
   StoreSubmissionStep copy() {
     return StoreSubmissionStep(
-        templateId : templateId,
+        templateId: templateId,
         stepId: stepId,
         title: title,
         instructions: instructions,
@@ -136,6 +137,21 @@ class StoreSubmissionField extends Equatable {
 
   final StoreSubmissionFieldResult result;
 
+  String get resultString {
+    switch (fieldType) {
+      case SubmissionFieldType.photo:
+        return result.photoPathValue ?? '';
+      case SubmissionFieldType.text:
+      case SubmissionFieldType.multilineText:
+      case SubmissionFieldType.picker:
+        return result.stringValue ?? '';
+      case SubmissionFieldType.currency:
+        return NumberFormat.simpleCurrency().format(result.doubleValue ?? 0);
+      case SubmissionFieldType.integer:
+        return result.intValue?.toString() ?? '';
+    }
+  }
+
   StoreSubmissionField copy() {
     return StoreSubmissionField(
         templateId: templateId,
@@ -165,20 +181,26 @@ class StoreSubmissionFieldResult extends Equatable {
   StoreSubmissionFieldResult({
     this.stringValue,
     this.intValue,
+    this.doubleValue,
     this.photoPathValue,
   });
 
   String? stringValue;
   int? intValue;
+  double? doubleValue;
   String? photoPathValue;
 
   bool get isEmpty =>
-      stringValue == null && intValue == null && photoPathValue == null;
+      stringValue == null &&
+      intValue == null &&
+      doubleValue == null &&
+      photoPathValue == null;
 
   StoreSubmissionFieldResult copy() {
     return StoreSubmissionFieldResult(
       stringValue: stringValue,
       intValue: intValue,
+      doubleValue: doubleValue,
       photoPathValue: photoPathValue,
     );
   }
@@ -187,6 +209,7 @@ class StoreSubmissionFieldResult extends Equatable {
   List<Object?> get props => [
         stringValue,
         intValue,
+        doubleValue,
         photoPathValue,
       ];
 }
