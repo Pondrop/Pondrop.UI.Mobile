@@ -39,8 +39,8 @@ class StoreSubmissionPage extends StatelessWidget {
                 .push<bool>(DialogPage.route(DialogConfig(
               title:
                   '${state.currentStepIdx + 1} of ${state.submission.steps.length}',
-              iconData: IconData(state.currentStep.iconCodePoint,
-                  fontFamily: state.currentStep.iconFontFamily),
+              iconData: IconData(state.currentStep.instructionsIconCodePoint,
+                  fontFamily: state.currentStep.instructionsIconFontFamily),
               header: state.currentStep.title,
               body: state.currentStep.instructions,
               okayButtonText: state.currentStep.instructionsContinueButton,

@@ -8,8 +8,8 @@ class SubmissionRepository {
 
   final SubmissionApi _submissionApi;
 
- Future<List<SubmissionTemplateDto>> fetchTemplates() async {
-    final templates = await _submissionApi.fetchTemplates();
+ Future<List<SubmissionTemplateDto>> fetchTemplates(String accessToken) async {
+    final templates = await _submissionApi.fetchTemplates(accessToken);
     return templates;
   }
 }

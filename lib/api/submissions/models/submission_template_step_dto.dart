@@ -12,8 +12,8 @@ class SubmissionTemplateStepDto {
     required this.instructions,
     required this.instructionsContinueButton,
     this.instructionsSkipButton = '',
-    required this.iconCodePoint,
-    required this.iconFontFamily,
+    required this.instructionsIconCodePoint,
+    required this.instructionsIconFontFamily,
     required this.fields,
   });
 
@@ -27,10 +27,10 @@ class SubmissionTemplateStepDto {
   final String instructionsContinueButton;
   @JsonKey(name: 'instructionsSkipButton')
   final String instructionsSkipButton;
-  @JsonKey(name: 'iconCodePoint')
-  final int iconCodePoint;
-  @JsonKey(name: 'iconFontFamily')
-  final String iconFontFamily;
+  @JsonKey(name: 'instructionsIconCodePoint')
+  final int instructionsIconCodePoint;
+  @JsonKey(name: 'instructionsIconFontFamily')
+  final String instructionsIconFontFamily;
 
   @JsonKey(name: 'fields')
   final List<SubmissionTemplateFieldDto> fields;

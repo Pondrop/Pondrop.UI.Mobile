@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
+import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 
 part 'task_templates_event.dart';
@@ -8,14 +9,17 @@ part 'task_templates_state.dart';
 
 class TaskTemplatesBloc extends Bloc<TaskTemplatesEvent, TaskTemplatesState> {
   TaskTemplatesBloc(
-    {required SubmissionRepository submissionRepository}
-  ): _submissionRepository = submissionRepository,
+      {required SubmissionRepository submissionRepository,
+      required UserRepository userRepository})
+      : _submissionRepository = submissionRepository,
+        _userRepository = userRepository,
         super(const TaskTemplatesState()) {
     on<TaskTemplatesFetched>(_onTemplatesFetched);
     on<TaskTemplatesRefreshed>(_onTemplatesRefreshed);
   }
 
   final SubmissionRepository _submissionRepository;
+  final UserRepository _userRepository;
 
   Future<void> _onTemplatesFetched(
     TaskTemplatesFetched event,
@@ -30,7 +34,8 @@ class TaskTemplatesBloc extends Bloc<TaskTemplatesEvent, TaskTemplatesState> {
     TaskTemplatesRefreshed event,
     Emitter<TaskTemplatesState> emit,
   ) async {
-    if (state.status != TaskTemplateStatus.initial && state.status != TaskTemplateStatus.refreshing) {
+    if (state.status != TaskTemplateStatus.initial &&
+        state.status != TaskTemplateStatus.refreshing) {
       emit(state.copyWith(status: TaskTemplateStatus.refreshing));
       await _loadTemplates(emit);
     }
@@ -38,12 +43,12 @@ class TaskTemplatesBloc extends Bloc<TaskTemplatesEvent, TaskTemplatesState> {
 
   Future<void> _loadTemplates(Emitter<TaskTemplatesState> emit) async {
     try {
-      final templates = await _submissionRepository.fetchTemplates();
-       emit(state.copyWith(
-        status: TaskTemplateStatus.success,
-        templates: templates));
-    }
-    on Exception {
+      final user = await _userRepository.getUser();
+      final templates =
+          await _submissionRepository.fetchTemplates(user?.accessToken ?? "");
+      emit(state.copyWith(
+          status: TaskTemplateStatus.success, templates: templates));
+    } on Exception {
       emit(state.copyWith(status: TaskTemplateStatus.failure));
     }
   }

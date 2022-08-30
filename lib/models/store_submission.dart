@@ -15,8 +15,8 @@ extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
                   instructions: step.instructions,
                   instructionsContinueButton: step.instructionsContinueButton,
                   instructionsSkipButton: step.instructionsSkipButton,
-                  iconCodePoint: step.iconCodePoint,
-                  iconFontFamily: step.iconFontFamily,
+                  instructionsIconCodePoint: step.instructionsIconCodePoint,
+                  instructionsIconFontFamily: step.instructionsIconFontFamily,
                   fields: step.fields
                       .map((field) => StoreSubmissionField(
                           templateId: id,
@@ -68,8 +68,8 @@ class StoreSubmissionStep extends Equatable {
     required this.instructions,
     required this.instructionsContinueButton,
     required this.instructionsSkipButton,
-    required this.iconCodePoint,
-    required this.iconFontFamily,
+    required this.instructionsIconCodePoint,
+    required this.instructionsIconFontFamily,
     required this.fields,
   });
 
@@ -79,8 +79,8 @@ class StoreSubmissionStep extends Equatable {
   final String instructions;
   final String instructionsContinueButton;
   final String instructionsSkipButton;
-  final int iconCodePoint;
-  final String iconFontFamily;
+  final int instructionsIconCodePoint;
+  final String instructionsIconFontFamily;
 
   final List<StoreSubmissionField> fields;
 
@@ -94,8 +94,8 @@ class StoreSubmissionStep extends Equatable {
         instructions: instructions,
         instructionsContinueButton: instructionsContinueButton,
         instructionsSkipButton: instructionsSkipButton,
-        iconCodePoint: iconCodePoint,
-        iconFontFamily: iconFontFamily,
+        instructionsIconCodePoint: instructionsIconCodePoint,
+        instructionsIconFontFamily: instructionsIconFontFamily,
         fields: fields.map((e) => e.copy()).toList());
   }
 
@@ -106,8 +106,8 @@ class StoreSubmissionStep extends Equatable {
         instructions,
         instructionsContinueButton,
         instructionsSkipButton,
-        iconCodePoint,
-        iconFontFamily,
+        instructionsIconCodePoint,
+        instructionsIconFontFamily,
         fields
       ];
 }
