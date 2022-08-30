@@ -10,14 +10,6 @@ void main() {
 
 late TaskTemplateListItem _lowStockedItemTitle;
 
-    setUp(() {
-   _lowStockedItemTitle = const TaskTemplateListItem(
-                icon: Icons.production_quantity_limits,
-                title: "Low stocked item",
-                subtitle: "Report low or empty stock levels",
-              );
-  });
-
   group('Task Template', () {
     test('is routable', () {
       expect(TaskTemplatesPage.route(), isA<MaterialPageRoute>());
@@ -33,7 +25,6 @@ late TaskTemplateListItem _lowStockedItemTitle;
       });
       expect(find.byType(ListView), findsOneWidget);
       expect(find.byType(TaskTemplateListItem), findsOneWidget);
-      expect(find.text(_lowStockedItemTitle.title), findsOneWidget);
     });
   });
 }

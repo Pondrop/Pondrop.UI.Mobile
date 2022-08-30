@@ -60,7 +60,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           ),
         );
       } else {
-        final stores = await _storeRepository.fetchStores(sortByPosition: state.position);
+        final stores = await _storeRepository.fetchStores(sortByPosition: state.position, skipIdx: state.stores.length);
 
         if (stores.isEmpty) {
           emit(state.copyWith(hasReachedMax: true));
