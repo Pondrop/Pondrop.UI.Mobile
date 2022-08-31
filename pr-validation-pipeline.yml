@@ -21,6 +21,7 @@ jobs:
           projectDirectory: '.'
           entryPoint: "lib/main.dart"
           iosCodesign: false
+          extraArgs: '--no-tree-shake-icons'
 
       - task: FlutterTest@0
         inputs:
