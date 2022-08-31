@@ -16,6 +16,10 @@ class StoreSubmissionPage extends StatelessWidget {
   const StoreSubmissionPage({Key? key, required this.submission})
       : super(key: key);
 
+  static Route route(StoreSubmission submission) {
+    return MaterialPageRoute<void>(builder: (_) => StoreSubmissionPage(submission: submission));
+  }
+
   final StoreSubmission submission;
 
   @override
