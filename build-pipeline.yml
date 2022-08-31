@@ -1,4 +1,3 @@
-
 variables:
   - group: Pondrop-Mobile-Dev
   
@@ -12,6 +11,13 @@ jobs:
           mode: 'auto'
           channel: 'stable'
           version: 'latest'
+
+      - task: ios-bundle-version@1
+        inputs:
+          sourcePath: 'ios/Runner/Info.plist'
+          versionCodeOption: 'buildid'
+          versionCode: '$(Build.BuildId)'
+          printFile: true
 
       - task: FlutterBuild@0
         inputs:
