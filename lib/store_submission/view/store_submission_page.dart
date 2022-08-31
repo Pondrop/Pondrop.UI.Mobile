@@ -16,6 +16,10 @@ class StoreSubmissionPage extends StatelessWidget {
   const StoreSubmissionPage({Key? key, required this.submission})
       : super(key: key);
 
+  static Route route(StoreSubmission submission) {
+    return MaterialPageRoute<void>(builder: (_) => StoreSubmissionPage(submission: submission));
+  }
+
   final StoreSubmission submission;
 
   @override
@@ -131,45 +135,42 @@ class StoreSubmissionPage extends StatelessWidget {
                     return const SubmissionSummaryList();
                   }
 
-                  Widget? child;
-
                   if (state.status == SubmissionStatus.cameraRequest) {
-                    child = const CameraAccessView();
-                  } else {
-                    final children = <Widget>[];
+                    return const CameraAccessView();
+                  }
 
-                    for (final i in state.currentStep.fields) {
-                      switch (i.fieldType) {
-                        case SubmissionFieldType.photo:
-                          children.add(PhotoFieldControl(field: i));
-                          break;
-                        case SubmissionFieldType.text:
-                        case SubmissionFieldType.multilineText:
-                        case SubmissionFieldType.integer:
-                        case SubmissionFieldType.currency:
-                          children.add(TextFieldControl(field: i));
-                          break;
-                        case SubmissionFieldType.picker:
-                          children.add(PickerFieldControl(field: i));
-                          break;
-                      }
+                  final children = <Widget>[];
 
-                      children.add(const SizedBox(
-                        height: 16,
-                      ));
-
-                      child = Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: children,
-                      );
+                  for (final i in state.currentStep.fields) {
+                    switch (i.fieldType) {
+                      case SubmissionFieldType.photo:
+                        children.add(PhotoFieldControl(field: i));
+                        break;
+                      case SubmissionFieldType.text:
+                      case SubmissionFieldType.multilineText:
+                      case SubmissionFieldType.integer:
+                      case SubmissionFieldType.currency:
+                        children.add(TextFieldControl(field: i));
+                        break;
+                      case SubmissionFieldType.picker:
+                        children.add(PickerFieldControl(field: i));
+                        break;
                     }
+
+                    children.add(const SizedBox(
+                      height: 16,
+                    ));
                   }
 
                   return SingleChildScrollView(
                       controller: ModalScrollController.of(context),
                       child: Padding(
-                          padding: const EdgeInsets.all(8), child: child!));
+                          padding: const EdgeInsets.all(8),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: children,
+                          )));
                 },
               )),
             ],
