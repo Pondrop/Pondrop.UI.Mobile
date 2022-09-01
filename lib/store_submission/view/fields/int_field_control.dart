@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/models.dart';
 
 import '../../bloc/store_submission_bloc.dart';
 import 'required_view.dart';
 
-class TextFieldControl extends StatelessWidget {
-  const TextFieldControl({super.key, required this.field});
+class IntFieldControl extends StatelessWidget {
+  const IntFieldControl({super.key, required this.field});
 
   final StoreSubmissionField field;
 
@@ -19,14 +19,12 @@ class TextFieldControl extends StatelessWidget {
         labelText: field.label,
         suffixIcon: field.mandatory ? const RequiredView() : null,
       ),
-      keyboardType: field.fieldType == SubmissionFieldType.multilineText
-          ? TextInputType.multiline
-          : TextInputType.text,
-      maxLines: field.fieldType == SubmissionFieldType.multilineText ? 4 : 1,
-      maxLength: field.maxValue,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      maxLines: 1,
       onChanged: (value) {
-        final result = StoreSubmissionFieldResult(
-            stringValue: value.isEmpty ? null : value);
+        final intValue = int.tryParse(value);
+        final result = StoreSubmissionFieldResult(intValue: intValue);
         context.read<StoreSubmissionBloc>().add(StoreSubmissionFieldResultEvent(
             stepId: field.stepId, fieldId: field.fieldId, result: result));
       },
