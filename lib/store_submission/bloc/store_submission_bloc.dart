@@ -55,6 +55,11 @@ class StoreSubmissionBloc
         }
         break;
       case SubmissionStatus.cameraRejected:
+        if (await Permission.camera.isGranted) {
+          _goToNextStep(emit);
+        } else {
+          emit(state.copyWith(action: SubmissionStatus.cameraRequest));
+        }
         break;
       case SubmissionStatus.stepInstructions:
         emit(state.copyWith(action: SubmissionStatus.stepSubmission));

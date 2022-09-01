@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -17,7 +18,8 @@ class StoreSubmissionPage extends StatelessWidget {
       : super(key: key);
 
   static Route route(StoreSubmission submission) {
-    return MaterialPageRoute<void>(builder: (_) => StoreSubmissionPage(submission: submission));
+    return MaterialPageRoute<void>(
+        builder: (_) => StoreSubmissionPage(submission: submission));
   }
 
   final StoreSubmission submission;
@@ -31,8 +33,12 @@ class StoreSubmissionPage extends StatelessWidget {
       )..add(const StoreSubmissionNextEvent()),
       child: BlocListener<StoreSubmissionBloc, StoreSubmissionState>(
         listener: (context, state) async {
-          if (state.status == SubmissionStatus.cameraRejected ||
-              state.status == SubmissionStatus.submitted) {
+          if (state.status == SubmissionStatus.cameraRejected) {
+            await showDialog(
+              context: context,
+              builder: (_) => cameraAccessPrompt(context),
+            );
+          } else if (state.status == SubmissionStatus.submitted) {
             Navigator.of(context).pop();
           } else if (state.status == SubmissionStatus.stepInstructions) {
             final bloc = context.read<StoreSubmissionBloc>();
@@ -129,6 +135,7 @@ class StoreSubmissionPage extends StatelessWidget {
               Expanded(
                   child: BlocBuilder<StoreSubmissionBloc, StoreSubmissionState>(
                 buildWhen: (previous, current) =>
+                    current.status != SubmissionStatus.cameraRejected &&
                     current.status != SubmissionStatus.submitted,
                 builder: (context, state) {
                   if (state.status == SubmissionStatus.summary) {
@@ -144,16 +151,25 @@ class StoreSubmissionPage extends StatelessWidget {
                   for (final i in state.currentStep.fields) {
                     switch (i.fieldType) {
                       case SubmissionFieldType.photo:
-                        children.add(PhotoFieldControl(field: i));
+                        children.add(
+                            PhotoFieldControl(key: Key(i.fieldId), field: i));
                         break;
                       case SubmissionFieldType.text:
                       case SubmissionFieldType.multilineText:
+                        children.add(
+                            TextFieldControl(key: Key(i.fieldId), field: i));
+                        break;
                       case SubmissionFieldType.integer:
+                        children.add(
+                            IntFieldControl(key: Key(i.fieldId), field: i));
+                        break;
                       case SubmissionFieldType.currency:
-                        children.add(TextFieldControl(field: i));
+                        children.add(CurrencyFieldControl(
+                            key: Key(i.fieldId), field: i));
                         break;
                       case SubmissionFieldType.picker:
-                        children.add(PickerFieldControl(field: i));
+                        children.add(
+                            PickerFieldControl(key: Key(i.fieldId), field: i));
                         break;
                     }
 
@@ -177,6 +193,33 @@ class StoreSubmissionPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  AlertDialog cameraAccessPrompt(BuildContext context) {
+    final l10n = context.l10n;
+    return AlertDialog(
+      title: Text(l10n.cameraAccessRequired),
+      content: Text(l10n.pleaseEnableCameraAccess),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+          child: Text(l10n.cancel),
+        ),
+        TextButton(
+          onPressed: () {
+            context
+                .read<StoreSubmissionBloc>()
+                .add(const StoreSubmissionNextEvent());
+            Navigator.pop(context);
+            AppSettings.openAppSettings();
+          },
+          child: Text(l10n.openSettings),
+        ),
+      ],
     );
   }
 }

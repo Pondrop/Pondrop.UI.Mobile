@@ -1,42 +1,45 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 
 import '../../bloc/store_submission_bloc.dart';
+import 'required_view.dart';
 
-class PickerFieldControl extends StatelessWidget {
+class PickerFieldControl extends StatefulWidget {
   const PickerFieldControl({super.key, required this.field});
 
   final StoreSubmissionField field;
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
+  State<PickerFieldControl> createState() => _PickerFieldControlState();
+}
 
+class _PickerFieldControlState extends State<PickerFieldControl> {
+  final textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return TextField(
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
-        labelText: field.label,
-        suffixIcon: field.mandatory
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 12, 0),
-                    child: Text(l10n.fieldRequired,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(fontStyle: FontStyle.italic)),
-                  ),
-                ],
-              )
+        labelText: widget.field.label,
+        suffixIcon: widget.field.mandatory
+            ? const RequiredView()
             : null,
       ),
-      controller: TextEditingController(text: field.result.stringValue),
+      controller: textController,
       focusNode: _AlwaysDisabledFocusNode(),
       readOnly: true,
       onTap: () {
@@ -46,16 +49,16 @@ class PickerFieldControl extends StatelessWidget {
           FocusManager.instance.primaryFocus?.unfocus();
         }
 
-        if (field.pickerValues != null) {
+        if (widget.field.pickerValues != null) {
           final items = [const Center(child: Text(' - '))];
-          items.addAll(field.pickerValues!.map((e) => Center(
+          items.addAll(widget.field.pickerValues!.map((e) => Center(
                   child: Text(
                 e,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ))));
-          final currentIdx = field.result.stringValue?.isNotEmpty == true
-              ? field.pickerValues!.indexOf(field.result.stringValue!) + 1
+          final currentIdx = widget.field.result.stringValue?.isNotEmpty == true
+              ? widget.field.pickerValues!.indexOf(widget.field.result.stringValue!) + 1
               : 0;
 
           showCupertinoModalPopup(
@@ -66,14 +69,15 @@ class PickerFieldControl extends StatelessWidget {
                   color: Colors.white,
                   child: CupertinoPicker(
                     onSelectedItemChanged: (value) {
+                      final stringValue =
+                          value == 0 ? null : widget.field.pickerValues![value - 1];
                       final bloc = context.read<StoreSubmissionBloc>();
                       bloc.add(StoreSubmissionFieldResultEvent(
-                          stepId: field.stepId,
-                          fieldId: field.fieldId,
+                          stepId: widget.field.stepId,
+                          fieldId: widget.field.fieldId,
                           result: StoreSubmissionFieldResult(
-                              stringValue: value == 0
-                                  ? null
-                                  : field.pickerValues![value - 1])));
+                              stringValue: stringValue)));
+                      textController.text = stringValue ?? '';
                     },
                     itemExtent: 36,
                     scrollController:

@@ -43,6 +43,8 @@
     "@accessCameraDescription": {},
     "okay": "Okay",
     "@okay": {},
+    "ok": "OK",
+    "@ok": {},
     "notNow": "Not now",
     "@notNow": {},
     "cancel": "Cancel",
@@ -65,5 +67,11 @@
                 "type" : "int"
             }
         }
-    }
+    },
+    "cameraAccessRequired": "Camera access required",
+    "@cameraAccessRequired": {},
+    "pleaseEnableCameraAccess": "Please enable camera access in app settings, then press 'Okay'.",
+    "@pleaseEnableCameraAccess": {},
+    "openSettings": "Open settings",
+    "@openSettings": {}
 }

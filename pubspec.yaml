@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  app_settings: ^4.1.8
   bloc: ^8.1.0
   bloc_concurrency: ^0.2.0  
   email_validator: ^2.1.16
@@ -34,7 +35,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1  
-  flutter_multi_formatter: ^2.6.2
   flutter_localizations:
     sdk: flutter
   flutter_secure_storage: ^6.0.0

@@ -46,7 +46,8 @@ class PhotoFieldControl extends StatelessWidget {
                             context.read<StoreSubmissionBloc>(), field);
                       },
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.black, onPrimary: Colors.white),
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white),
                       child: Text(l10n.takePhoto),
                     )
                   ]),
