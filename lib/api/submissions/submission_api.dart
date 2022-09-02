@@ -3,12 +3,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:pondrop/api/submissions/models/models.dart';
-import 'package:pondrop/repositories/repositories.dart';
-import 'package:uuid/uuid.dart';
 
 class SubmissionApi {
-  SubmissionApi(
-      {http.Client? httpClient})
+  SubmissionApi({http.Client? httpClient})
       : _httpClient = httpClient ?? http.Client();
 
   static const String _baseUrl =
@@ -19,24 +16,39 @@ class SubmissionApi {
 
   final http.Client _httpClient;
 
-  Future<List<SubmissionTemplateDto>> fetchTemplates(String? accessToken) async {
+  List<SubmissionTemplateDto>? _localTemplates;
 
-    final headers = Map<String, String>.from(_requestHeaders)
-      ..addAll({'Authorization': 'Bearer ${accessToken ?? ""}'});
-
-    final response = await _httpClient.get(Uri.https(_baseUrl, '/Submission'),
-        headers: headers);
-
-    if (response.statusCode == 200) {
-      Iterable l = json.decode(response.body);
-      List<SubmissionTemplateDto> submissionTemplates =
-          List<SubmissionTemplateDto>.from(
-              l.map((model) => SubmissionTemplateDto.fromJson(model)));
-      return submissionTemplates;
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load data');
+  Future<List<SubmissionTemplateDto>> fetchTemplates(
+      String? accessToken) async {
+    if (_localTemplates?.isNotEmpty == true) {
+      return _localTemplates!;
     }
+
+    if (accessToken?.isNotEmpty == true) {
+      final headers = Map<String, String>.from(_requestHeaders)
+        ..addAll({'Authorization': 'Bearer ${accessToken ?? ""}'});
+
+      final response = await _httpClient.get(Uri.https(_baseUrl, '/Submission'),
+          headers: headers);
+
+      if (response.statusCode == 200) {
+        Iterable jsonList = json.decode(response.body);
+        final submissionTemplates = jsonList
+            .map((model) => SubmissionTemplateDto.fromJson(model))
+            .toList();
+
+        if (submissionTemplates.isNotEmpty) {
+          _localTemplates = submissionTemplates;
+        }
+
+        return submissionTemplates;
+      } else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to load data');
+      }
+    }
+
+    return [];
   }
 }

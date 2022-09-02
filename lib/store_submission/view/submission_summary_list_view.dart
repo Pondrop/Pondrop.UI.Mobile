@@ -7,8 +7,8 @@ import 'package:pondrop/api/submission_api.dart';
 
 import '../bloc/store_submission_bloc.dart';
 
-class SubmissionSummaryList extends StatelessWidget {
-  const SubmissionSummaryList({Key? key}) : super(key: key);
+class SubmissionSummaryListView extends StatelessWidget {
+  const SubmissionSummaryListView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

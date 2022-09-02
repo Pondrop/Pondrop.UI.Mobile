@@ -90,21 +90,21 @@ class DialogPage extends StatelessWidget {
         Navigator.of(context).pop(true);
       },
       style: ElevatedButton.styleFrom(
-          primary: Colors.white, onPrimary: Colors.black),
+          backgroundColor: Colors.white, foregroundColor: Colors.black),
       child: Text(config.okayButtonText,
           style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 18)),
     ));
     children.add(separator);
 
     if (config.cancelButtonText.isNotEmpty) {
-      TextButton(
+      children.add(TextButton(
           onPressed: () {
             Navigator.of(context).pop(false);
           },
           child: Text(config.cancelButtonText,
               style: Theme.of(context).textTheme.bodyText1!.copyWith(
                     color: Colors.white,
-                  )));
+                  ))));
       children.add(separator);
     }
 
@@ -123,16 +123,31 @@ class DialogPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24.0),
               ),
               color: Colors.black.withOpacity(0.75),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-                child: SingleChildScrollView(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: children),
+              child: Stack(children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                  child: SingleChildScrollView(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: children),
+                  ),
                 ),
-              ),
+                Positioned(
+                  left: 8,
+                  top: 8,
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(null);
+                    },
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ]),
             ),
           ),
         ),
