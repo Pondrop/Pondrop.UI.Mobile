@@ -5,76 +5,83 @@ class FakeStoreSubmissionTemplates {
   static List<SubmissionTemplateDto> fakeTemplates() {
     final templates = [
       SubmissionTemplateDto(
-          id: const Uuid().v4(),
-          title: 'Low stocked item',
-          description: 'Report low or empty stock levels',
-          iconCodePoint: 0xe4ee,
-          iconFontFamily: 'MaterialIcons',
-          steps: [
-            SubmissionTemplateStepDto(
-                id: const Uuid().v4(),
-                title: 'Shelf ticket',
-                instructions:
-                    'Take a photo of the shelf ticket for the low stocked item',
-                instructionsContinueButton: 'Okay',
-                instructionsIconCodePoint: 0xf353,
-                instructionsIconFontFamily: 'MaterialIcons',
-                fields: [
-                  SubmissionTemplateFieldDto(
-                      id: const Uuid().v4(),
-                      label: '',
-                      mandatory: true,
-                      fieldType: SubmissionFieldType.photo,
-                      maxValue: 1),
-                  SubmissionTemplateFieldDto(
+        id: const Uuid().v4(),
+        title: 'Low stocked item',
+        description: 'Report low or empty stock levels',
+        iconCodePoint: 0xe4ee,
+        iconFontFamily: 'MaterialIcons',
+        steps: [
+          SubmissionTemplateStepDto(
+              id: const Uuid().v4(),
+              title: 'Shelf ticket',
+              instructions:
+                  'Take a photo of the shelf ticket for the low stocked item',
+              instructionsContinueButton: 'Okay',
+              instructionsIconCodePoint: 0xf353,
+              instructionsIconFontFamily: 'MaterialIcons',
+              fields: [
+                SubmissionTemplateFieldDto(
                     id: const Uuid().v4(),
-                    label: 'Quantity',
+                    label: '',
                     mandatory: true,
-                    fieldType: SubmissionFieldType.integer,
-                  ),
-                  SubmissionTemplateFieldDto(
+                    fieldType: SubmissionFieldType.photo,
+                    maxValue: 1),
+                SubmissionTemplateFieldDto(
+                  id: const Uuid().v4(),
+                  label: 'Quantity',
+                  mandatory: true,
+                  fieldType: SubmissionFieldType.integer,
+                ),
+                SubmissionTemplateFieldDto(
+                  id: const Uuid().v4(),
+                  label: 'Ticket price',
+                  mandatory: true,
+                  fieldType: SubmissionFieldType.currency,
+                ),
+                SubmissionTemplateFieldDto(
                     id: const Uuid().v4(),
-                    label: 'Ticket price',
+                    label: 'Aisle',
+                    mandatory: false,
+                    fieldType: SubmissionFieldType.picker,
+                    pickerValues: _aislePickerValues()),
+                SubmissionTemplateFieldDto(
+                    id: const Uuid().v4(),
+                    label: 'Shelf number',
+                    mandatory: false,
+                    fieldType: SubmissionFieldType.picker,
+                    pickerValues: _shelvePickerValues()),
+              ]),
+          SubmissionTemplateStepDto(
+              id: const Uuid().v4(),
+              title: 'Location',
+              instructions:
+                  'Take a photo of the shelf for the low stocked product',
+              instructionsContinueButton: 'Got it!',
+              instructionsSkipButton: 'Skip',
+              instructionsIconCodePoint: 0xf86e,
+              instructionsIconFontFamily: 'MaterialIcons',
+              fields: [
+                SubmissionTemplateFieldDto(
+                    id: const Uuid().v4(),
+                    label: '',
                     mandatory: true,
-                    fieldType: SubmissionFieldType.currency,
-                  ),
-                  SubmissionTemplateFieldDto(
-                      id: const Uuid().v4(),
-                      label: 'Aisle',
-                      mandatory: false,
-                      fieldType: SubmissionFieldType.picker,
-                      pickerValues: _aislePickerValues()),
-                  SubmissionTemplateFieldDto(
-                      id: const Uuid().v4(),
-                      label: 'Shelf number',
-                      mandatory: false,
-                      fieldType: SubmissionFieldType.picker,
-                      pickerValues: _shelvePickerValues()),
-                  SubmissionTemplateFieldDto(
-                      id: const Uuid().v4(),
-                      label: 'Comments',
-                      mandatory: false,
-                      fieldType: SubmissionFieldType.multilineText,
-                      maxValue: 500),
-                ]),
-            SubmissionTemplateStepDto(
-                id: const Uuid().v4(),
-                title: 'Location',
-                instructions:
-                    'Take a photo of the shelf for the low stocked product',
-                instructionsContinueButton: 'Got it!',
-                instructionsSkipButton: 'Skip',
-                instructionsIconCodePoint: 0xf86e,
-                instructionsIconFontFamily: 'MaterialIcons',
-                fields: [
-                  SubmissionTemplateFieldDto(
-                      id: const Uuid().v4(),
-                      label: '',
-                      mandatory: true,
-                      fieldType: SubmissionFieldType.photo,
-                      maxValue: 1),
-                ])
-          ])
+                    fieldType: SubmissionFieldType.photo,
+                    maxValue: 1),
+              ]),
+          SubmissionTemplateStepDto(
+              id: const Uuid().v4(),
+              title: 'Summary',
+              isSummary: true,
+              fields: [
+                SubmissionTemplateFieldDto(
+                    id: const Uuid().v4(),
+                    label: 'Comments',
+                    mandatory: false,
+                    fieldType: SubmissionFieldType.multilineText,
+                    maxValue: 500),
+              ])
+        ],
+      )
     ];
 
     return templates;

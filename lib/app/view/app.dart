@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:pondrop/app/app.dart';
 import 'package:pondrop/authentication/bloc/authentication_bloc.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/location/bloc/location_bloc.dart';
@@ -32,6 +33,9 @@ class App extends StatelessWidget {
         RepositoryProvider.value(value: userRepository),
         RepositoryProvider.value(value: locationRepository),
         RepositoryProvider.value(value: storeRepository),
+        RepositoryProvider(
+            create: (context) => SubmissionRepository(
+                userRepository: RepositoryProvider.of<UserRepository>(context)))
       ],
       child: MultiBlocProvider(
         providers: [
@@ -99,8 +103,8 @@ class _AppViewState extends State<AppView> {
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
               style: ElevatedButton.styleFrom(
-                  primary: AppColors.primaryColor,
-                  onPrimary: Colors.white,
+                  backgroundColor: AppColors.primaryColor,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                   padding: const EdgeInsets.symmetric(
@@ -108,7 +112,9 @@ class _AppViewState extends State<AppView> {
           textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                   textStyle: const TextStyle(
-                      color: AppColors.primaryColor, fontSize: 16, fontWeight: FontWeight.w500))),
+                      color: AppColors.primaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500))),
           inputDecorationTheme: const InputDecorationTheme(
             floatingLabelStyle: TextStyle(color: AppColors.primaryColor),
             focusedBorder: OutlineInputBorder(
@@ -128,26 +134,30 @@ class _AppViewState extends State<AppView> {
       builder: (context, child) {
         return AnnotatedRegion(
           value: SystemUiOverlayStyle.dark,
-          child: BlocListener<AuthenticationBloc, AuthenticationState>(
-            listener: (context, state) {
-              switch (state.status) {
-                case AuthenticationStatus.authenticated:
-                  _navigator.pushAndRemoveUntil<void>(
-                    StorePage.route(),
-                    (route) => false,
-                  );
-                  break;
-                case AuthenticationStatus.unauthenticated:
-                  _navigator.pushAndRemoveUntil<void>(
-                    LoginPage.route(),
-                    (route) => false,
-                  );
-                  break;
-                case AuthenticationStatus.unknown:
-                  break;
-              }
-            },
-            child: child,
+          child: LoadingOverlay(
+            child: BlocListener<AuthenticationBloc, AuthenticationState>(
+              listenWhen: (previous, current) =>
+                  previous.status != current.status,
+              listener: (context, state) {
+                switch (state.status) {
+                  case AuthenticationStatus.authenticated:
+                    _navigator.pushAndRemoveUntil<void>(
+                      StorePage.route(),
+                      (route) => false,
+                    );
+                    break;
+                  case AuthenticationStatus.unauthenticated:
+                    _navigator.pushAndRemoveUntil<void>(
+                      LoginPage.route(),
+                      (route) => false,
+                    );
+                    break;
+                  case AuthenticationStatus.unknown:
+                    break;
+                }
+              },
+              child: child,
+            ),
           ),
         );
       },

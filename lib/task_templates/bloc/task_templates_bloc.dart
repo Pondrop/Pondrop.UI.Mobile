@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
-import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 
 part 'task_templates_event.dart';
@@ -9,17 +8,14 @@ part 'task_templates_state.dart';
 
 class TaskTemplatesBloc extends Bloc<TaskTemplatesEvent, TaskTemplatesState> {
   TaskTemplatesBloc(
-      {required SubmissionRepository submissionRepository,
-      required UserRepository userRepository})
+      {required SubmissionRepository submissionRepository})
       : _submissionRepository = submissionRepository,
-        _userRepository = userRepository,
         super(const TaskTemplatesState()) {
     on<TaskTemplatesFetched>(_onTemplatesFetched);
     on<TaskTemplatesRefreshed>(_onTemplatesRefreshed);
   }
 
   final SubmissionRepository _submissionRepository;
-  final UserRepository _userRepository;
 
   Future<void> _onTemplatesFetched(
     TaskTemplatesFetched event,
@@ -43,9 +39,8 @@ class TaskTemplatesBloc extends Bloc<TaskTemplatesEvent, TaskTemplatesState> {
 
   Future<void> _loadTemplates(Emitter<TaskTemplatesState> emit) async {
     try {
-      final user = await _userRepository.getUser();
       final templates =
-          await _submissionRepository.fetchTemplates(user?.accessToken ?? "");
+          await _submissionRepository.fetchTemplates();
       emit(state.copyWith(
           status: TaskTemplateStatus.success, templates: templates));
     } on Exception {

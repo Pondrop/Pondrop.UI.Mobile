@@ -58,7 +58,10 @@ class PhotoFieldControl extends StatelessWidget {
   static Future<void> takePhoto(
       StoreSubmissionBloc bloc, StoreSubmissionField field) async {
     if (field.fieldType == SubmissionFieldType.photo) {
-      final image = await ImagePicker().pickImage(source: ImageSource.camera);
+      final image = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        imageQuality: 65
+      );
       if (image != null) {
         bloc.add(StoreSubmissionFieldResultEvent(
             stepId: field.stepId,

@@ -9,18 +9,22 @@ part of 'submission_step_result_dto.dart';
 SubmissionStepResultDto _$SubmissionStepResultDtoFromJson(
         Map<String, dynamic> json) =>
     SubmissionStepResultDto(
-      stepId: json['stepId'] as String,
-      results: (json['fieldType'] as List<dynamic>)
+      templateStepId: json['templateStepId'] as String,
+      latitude: (json['latitude'] as num?)?.toDouble() ?? 0,
+      longitude: (json['longitude'] as num?)?.toDouble() ?? 0,
+      startedUtc: DateTime.parse(json['startedUtc'] as String),
+      fields: (json['fields'] as List<dynamic>)
           .map((e) =>
               SubmissionFieldResultDto.fromJson(e as Map<String, dynamic>))
           .toList(),
-      startedUtc: DateTime.parse(json['startedUtc'] as String),
     );
 
 Map<String, dynamic> _$SubmissionStepResultDtoToJson(
         SubmissionStepResultDto instance) =>
     <String, dynamic>{
-      'stepId': instance.stepId,
-      'fieldType': instance.results.map((e) => e.toJson()).toList(),
+      'templateStepId': instance.templateStepId,
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
       'startedUtc': instance.startedUtc.toIso8601String(),
+      'fields': instance.fields.map((e) => e.toJson()).toList(),
     };

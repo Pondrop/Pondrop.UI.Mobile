@@ -37,6 +37,8 @@
     "@profile": {},
     "stores": "Stores",
     "@stores": {},
+    "store": "Store",
+    "@store": {},
     "accessCamera": "Access camera",
     "@accessCamera": {},
     "accessCameraDescription": "We need to use your camera to take photos of produces and shelves",
@@ -73,5 +75,35 @@
     "pleaseEnableCameraAccess": "Please enable camera access in app settings, then press 'Okay'.",
     "@pleaseEnableCameraAccess": {},
     "openSettings": "Open settings",
-    "@openSettings": {}
+    "@openSettings": {},
+    "logOut": "Log out",
+    "@logOut": {},
+    "loggingOut": "Logging out",
+    "@loggingOut": {},
+    "itemEllipsis": "{item}...",
+    "@itemEllipsis": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "submitting": "Submitting",
+    "@Submitting": {},
+    "selectAItem": "Select a {item}",
+    "@selectAItem": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "itemFailedPleaseTryAgain": "{item} failed. Please try again.",
+    "@itemFailedPleaseTryAgain": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    }
 }

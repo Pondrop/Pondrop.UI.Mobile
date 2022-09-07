@@ -17,28 +17,29 @@ class TaskTemplatesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (_) => TaskTemplatesBloc(
-              submissionRepository: SubmissionRepository(),
-              userRepository: context.read<UserRepository>(),
-            )..add(const TaskTemplatesFetched()),
-        child: Scaffold(
-            appBar: AppBar(
-                elevation: 0,
-                title: const Text(
-                  'Select a task',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
-                ),
-                centerTitle: true,
-                leading: IconButton(
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.black,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    })),
-            body: Builder(builder: (context) {
-              return const TaskTemplates();
-            })));
+      create: (_) => TaskTemplatesBloc(
+        submissionRepository:
+            RepositoryProvider.of<SubmissionRepository>(context),
+      )..add(const TaskTemplatesFetched()),
+      child: Scaffold(
+          appBar: AppBar(
+              elevation: 0,
+              title: const Text(
+                'Select a task',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+              ),
+              centerTitle: true,
+              leading: IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })),
+          body: Builder(builder: (context) {
+            return const TaskTemplates();
+          })),
+    );
   }
 }

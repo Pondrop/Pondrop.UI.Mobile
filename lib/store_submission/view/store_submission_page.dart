@@ -2,9 +2,11 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pondrop/app/app.dart';
 import 'package:pondrop/dialogs/dialogs.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
+import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/store_submission/view/camera_access_view.dart';
 import 'package:pondrop/store_submission/view/submission_field_view.dart';
 import 'package:pondrop/style/style.dart';
@@ -30,24 +32,44 @@ class StoreSubmissionPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => StoreSubmissionBloc(
         submission: submission,
+        submissionRepository:
+            RepositoryProvider.of<SubmissionRepository>(context),
+        locationRepository: RepositoryProvider.of<LocationRepository>(context),
       )..add(const StoreSubmissionNextEvent()),
       child: BlocListener<StoreSubmissionBloc, StoreSubmissionState>(
         listener: (context, state) async {
+          final bloc = context.read<StoreSubmissionBloc>();
           final navigator = Navigator.of(context);
+
+          if (state.status == SubmissionStatus.submitting) {
+            LoadingOverlay.of(context).show(l10n.itemEllipsis(l10n.submitting));
+            bloc.add(const StoreSubmissionNextEvent());
+            return;
+          }
+
+          LoadingOverlay.of(context).hide();
+
+          if (state.status == SubmissionStatus.submitFailed) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(l10n.itemFailedPleaseTryAgain(l10n.submitting))));
+            return;
+          } else if (state.status == SubmissionStatus.submitSuccess) {
+            navigator.pop();
+            return;
+          }
 
           if (state.status == SubmissionStatus.cameraRejected) {
             await showDialog(
               context: context,
               builder: (_) => _cameraAccessPrompt(context),
             );
-          } else if (state.status == SubmissionStatus.submitted) {
-            navigator.pop();
           } else if (state.status == SubmissionStatus.stepInstructions) {
-            final bloc = context.read<StoreSubmissionBloc>();
-
-            final okay = await navigator.push<bool?>(DialogPage.route(DialogConfig(
+            final okay =
+                await navigator.push<bool?>(DialogPage.route(DialogConfig(
               title: l10n.itemOfItem(
-                  state.currentStepIdx + 1, state.submission.steps.length),
+                  state.currentStepIdx + 1,
+                  state.submission.steps.length -
+                      (state.lastStepHasMandatoryFields ? 0 : 1)),
               iconData: IconData(state.currentStep.instructionsIconCodePoint,
                   fontFamily: state.currentStep.instructionsIconFontFamily),
               header: state.currentStep.title,
@@ -92,9 +114,9 @@ class StoreSubmissionPage extends StatelessWidget {
                             StoreSubmissionState>(
                           builder: (context, state) {
                             return Text(
-                              state.status == SubmissionStatus.summary
-                                  ? state.submission.title
-                                  : state.currentStep.title,
+                              state.currentStep.title.isNotEmpty
+                                  ? state.currentStep.title
+                                  : state.submission.title,
                               style: AppStyles.popupTitleTextStyle,
                             );
                           },
@@ -102,35 +124,21 @@ class StoreSubmissionPage extends StatelessWidget {
                       )),
                       BlocBuilder<StoreSubmissionBloc, StoreSubmissionState>(
                         builder: (context, state) {
-                          if (state.status == SubmissionStatus.summary) {
-                            return TextButton(
-                                onPressed: () {
-                                  context
-                                      .read<StoreSubmissionBloc>()
-                                      .add(const StoreSubmissionNextEvent());
-                                },
-                                child: Text(
-                                  l10n.done,
-                                  style: AppStyles.linkTextStyle
-                                      .copyWith(fontWeight: FontWeight.w500),
-                                ));
-                          } else {
-                            return TextButton(
-                                onPressed: state.currentStep.isComplete
-                                    ? () {
-                                        context.read<StoreSubmissionBloc>().add(
-                                            const StoreSubmissionNextEvent());
-                                      }
-                                    : null,
-                                child: Text(
-                                  l10n.next,
-                                  style: AppStyles.linkTextStyle.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      color: state.currentStep.isComplete
-                                          ? null
-                                          : Colors.grey),
-                                ));
-                          }
+                          return TextButton(
+                              onPressed: state.currentStep.isComplete
+                                  ? () {
+                                      context.read<StoreSubmissionBloc>().add(
+                                          const StoreSubmissionNextEvent());
+                                    }
+                                  : null,
+                              child: Text(
+                                state.isLastStep ? l10n.done : l10n.next,
+                                style: AppStyles.linkTextStyle.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    color: state.currentStep.isComplete
+                                        ? null
+                                        : Colors.grey),
+                              ));
                         },
                       ),
                     ]),
@@ -139,22 +147,27 @@ class StoreSubmissionPage extends StatelessWidget {
                   child: BlocBuilder<StoreSubmissionBloc, StoreSubmissionState>(
                 buildWhen: (previous, current) =>
                     current.status != SubmissionStatus.cameraRejected &&
-                    current.status != SubmissionStatus.submitted,
+                    current.status != SubmissionStatus.submitFailed &&
+                    current.status != SubmissionStatus.submitSuccess,
                 builder: (context, state) {
-                  if (state.status == SubmissionStatus.summary) {
-                    return const SubmissionSummaryListView();
-                  }
-
                   if (state.status == SubmissionStatus.cameraRequest) {
                     return const CameraAccessView();
+                  }
+
+                  if (state.currentStep.isSummary) {
+                    return SubmissionSummaryListView(
+                      step: state.currentStep,
+                    );
                   }
 
                   final children = <Widget>[];
 
                   for (final i in state.currentStep.fields) {
-                    children.add(SubmissionFieldView(field: i,));
-                    children.add(const SizedBox(
-                      height: 16,
+                    children.add(Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: SubmissionFieldView(
+                        field: i,
+                      ),
                     ));
                   }
 

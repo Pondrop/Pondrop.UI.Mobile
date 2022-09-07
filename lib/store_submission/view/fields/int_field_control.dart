@@ -17,7 +17,9 @@ class IntFieldControl extends StatelessWidget {
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: field.label,
-        suffixIcon: field.mandatory ? const RequiredView() : null,
+        suffixIcon: field.mandatory && field.result.isEmpty
+            ? const RequiredView()
+            : null,
       ),
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
