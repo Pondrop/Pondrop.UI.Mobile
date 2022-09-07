@@ -39,6 +39,10 @@
     "@stores": {},
     "store": "Store",
     "@store": {},
+    "task": "Task",
+    "@task": {},
+    "tasks": "Tasks",
+    "@tasks": {},
     "accessCamera": "Access camera",
     "@accessCamera": {},
     "accessCameraDescription": "We need to use your camera to take photos of produces and shelves",
@@ -100,6 +104,14 @@
     },
     "itemFailedPleaseTryAgain": "{item} failed. Please try again.",
     "@itemFailedPleaseTryAgain": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "noItemFound": "No {item} found",
+    "@noItemFound": {
         "placeholders": {
             "item": {
                 "type" : "String"

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/shared/view/bottom_loader.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
@@ -29,55 +30,75 @@ class _StoresListState extends State<StoresList> {
       color: Theme.of(context).primaryColor,
       onRefresh: () {
         final bloc = context.read<StoreBloc>()..add(const StoreRefreshed());
-        return bloc.stream.firstWhere((e) => e.status != StoreStatus.refreshing);
+        return bloc.stream
+            .firstWhere((e) => e.status != StoreStatus.refreshing);
       },
       child: BlocBuilder<StoreBloc, StoreState>(
-        buildWhen: (previous, current) => current.status != StoreStatus.refreshing,
+        buildWhen: (previous, current) =>
+            current.status != StoreStatus.refreshing,
         builder: (context, state) {
           if (state.status == StoreStatus.initial) {
             return const Center(child: CircularProgressIndicator());
           }
 
           if (state.status == StoreStatus.failure || state.stores.isEmpty) {
-            return const Center(child: Text('No stores found'));
+            return _noStoresFound();
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
-            itemBuilder: (BuildContext context, int index) {
-              Widget getItem(int idx, List<Store> stores) {
-                return  idx >= stores.length
-                  ? const BottomLoader()
-                  : StoreListItem(store: stores[index]);
-              }
-
-              if (index == 0) {
-                return Column(children: [
-                  // The header
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.all(15),
-                    child: Text(widget.header,
-                        style: TextStyle(
-                            color: Colors.grey[800],
-                            letterSpacing: 0.5,
-                            fontSize: 12.0,
-                            fontWeight: FontWeight.bold)),
-                  ),
-                  getItem(index, state.stores)
-                ]);
-              }
-
-              return getItem(index, state.stores);
-            },
-            itemCount: state.hasReachedMax
-                ? state.stores.length
-                : state.stores.length + 1,
-            controller: _scrollController,
-          );
+          return _storesList(state);
         },
       ),
     );
+  }
+
+  ListView _storesList(StoreState state) {
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
+      itemBuilder: (BuildContext context, int index) {
+        Widget getItem(int idx, List<Store> stores) {
+          return idx >= stores.length
+              ? const BottomLoader()
+              : StoreListItem(store: stores[index]);
+        }
+
+        if (index == 0) {
+          return Column(children: [
+            // The header
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.all(15),
+              child: Text(widget.header,
+                  style: TextStyle(
+                      color: Colors.grey[800],
+                      letterSpacing: 0.5,
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.bold)),
+            ),
+            getItem(index, state.stores)
+          ]);
+        }
+
+        return getItem(index, state.stores);
+      },
+      itemCount:
+          state.hasReachedMax ? state.stores.length : state.stores.length + 1,
+      controller: _scrollController,
+    );
+  }
+
+  Widget _noStoresFound() {
+    return LayoutBuilder(builder: (context, constraints) {
+      final l10n = context.l10n;
+      return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: Center(
+                child: Text(l10n.noItemFound(l10n.stores.toLowerCase()))),
+          ));
+    });
   }
 
   @override
