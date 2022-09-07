@@ -33,7 +33,7 @@ class SubmissionRepository {
     if (user?.accessToken.isNotEmpty == true) {
       final result = submission.toSubmissionResultDto();
       
-      for (final i in result.steps.expand((e) => e.fields)) {
+      for (final i in result.steps.expand((e) => e.fields.expand((e) => e.values))) {
         final path = i.photoPathValue ?? '';
         if (path.isNotEmpty) {
           final file = File(path);

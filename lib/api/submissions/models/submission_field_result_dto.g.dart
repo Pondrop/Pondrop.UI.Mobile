@@ -10,20 +10,16 @@ SubmissionFieldResultDto _$SubmissionFieldResultDtoFromJson(
         Map<String, dynamic> json) =>
     SubmissionFieldResultDto(
       templateFieldId: json['templateFieldId'] as String,
-      stringValue: json['stringValue'] as String?,
-      intValue: json['intValue'] as int?,
-      doubleValue: (json['doubleValue'] as num?)?.toDouble(),
-    )
-      ..photoFileName = json['photoFileName'] as String?
-      ..photoDataBase64 = json['photoDataBase64'] as String?;
+      values: (json['values'] as List<dynamic>?)
+              ?.map((e) => SubmissionFieldResultValueDto.fromJson(
+                  e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+    );
 
 Map<String, dynamic> _$SubmissionFieldResultDtoToJson(
         SubmissionFieldResultDto instance) =>
     <String, dynamic>{
       'templateFieldId': instance.templateFieldId,
-      'stringValue': instance.stringValue,
-      'intValue': instance.intValue,
-      'doubleValue': instance.doubleValue,
-      'photoFileName': instance.photoFileName,
-      'photoDataBase64': instance.photoDataBase64,
+      'values': instance.values.map((e) => e.toJson()).toList(),
     };

@@ -53,10 +53,14 @@ extension StoreSubmissionResultMapping on StoreSubmission {
                 fields: step.fields
                     .map((field) => SubmissionFieldResultDto(
                           templateFieldId: field.fieldId,
-                          stringValue: field.result.stringValue,
-                          intValue: field.result.intValue,
-                          doubleValue: field.result.doubleValue,
-                          photoPathValue: field.result.photoPathValue,
+                          values: [
+                            SubmissionFieldResultValueDto(
+                              stringValue: field.result.stringValue,
+                              intValue: field.result.intValue,
+                              doubleValue: field.result.doubleValue,
+                              photoPathValue: field.result.photoPathValue,
+                            )
+                          ]
                         ))
                     .toList(),
               ))
