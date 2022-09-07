@@ -28,7 +28,7 @@ class SubmissionApi {
       final headers = Map<String, String>.from(_requestHeaders)
         ..addAll({'Authorization': 'Bearer ${accessToken ?? ""}'});
 
-      final response = await _httpClient.get(Uri.https(_baseUrl, '/Submission'),
+      final response = await _httpClient.get(Uri.https(_baseUrl, '/SubmissionTemplate'),
           headers: headers);
 
       if (response.statusCode == 200) {
