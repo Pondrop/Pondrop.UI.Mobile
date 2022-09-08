@@ -35,7 +35,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: taskTemplatesBloc,
-          child: const Scaffold(body: TaskTemplates()),
+          child: Scaffold(body: TaskTemplates(visit: FakeStoreVisits.fakeVist())),
         ),
       );
 

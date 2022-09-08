@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:pondrop/api/extensions/extensions.dart';
 
 class AuthApi {
   AuthApi({http.Client? httpClient})
@@ -18,14 +19,16 @@ class AuthApi {
     required String email,
     required String password,
   }) async {
-    final resp = await _httpClient.post(
+    final response = await _httpClient.post(
       Uri.https(_authority, '/Auth/shopper/signin'),
       headers: _requestHeaders,
       body: jsonEncode(<String, String>{
         'email' : email
       }));
+
+    response.ensureSuccessStatusCode();
    
-    final decodedBody = jsonDecode(resp.body);
+    final decodedBody = jsonDecode(response.body);
     final accessToken = decodedBody['accessToken'] as String? ?? '';
 
     return accessToken;

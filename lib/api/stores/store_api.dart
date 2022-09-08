@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:pondrop/api/extensions/extensions.dart';
 import 'package:pondrop/api/stores/models/store_dto.dart';
 
 class StoreApi {
@@ -35,15 +36,9 @@ class StoreApi {
     final response =
         await _httpClient.get(uri, headers: headers);
 
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      return StoreSearchResultDto.fromJson(jsonDecode(response.body));
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load stores');
-    }
+    response.ensureSuccessStatusCode();
+
+    return StoreSearchResultDto.fromJson(jsonDecode(response.body));
   }
 
   Map<String, String> _getCommonHeaders(String accessToken) {

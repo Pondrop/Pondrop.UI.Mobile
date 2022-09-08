@@ -15,6 +15,7 @@ class StoreSubmissionState extends Equatable {
   const StoreSubmissionState({
     this.previousAction = SubmissionStatus.initial,
     this.status = SubmissionStatus.initial,
+    required this.visit,
     required this.submission,
     this.currentStepIdx = -1,
   });
@@ -22,6 +23,7 @@ class StoreSubmissionState extends Equatable {
   final SubmissionStatus previousAction;
   final SubmissionStatus status;
 
+  final StoreVisitDto visit;
   final StoreSubmission submission;
   final int currentStepIdx;
 
@@ -46,6 +48,7 @@ class StoreSubmissionState extends Equatable {
   }) {
     return StoreSubmissionState(
       previousAction: status,
+      visit: visit,
       status: action ?? status,
       submission: submission ?? this.submission,
       currentStepIdx : currentStepIdx ?? this.currentStepIdx,

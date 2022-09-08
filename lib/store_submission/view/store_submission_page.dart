@@ -2,12 +2,12 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/app/app.dart';
 import 'package:pondrop/dialogs/dialogs.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
-import 'package:pondrop/store_report/store_report.dart';
 import 'package:pondrop/store_submission/view/camera_access_view.dart';
 import 'package:pondrop/store_submission/view/submission_field_view.dart';
 import 'package:pondrop/style/style.dart';
@@ -17,14 +17,15 @@ import 'fields/fields.dart';
 import 'submission_summary_list_view.dart';
 
 class StoreSubmissionPage extends StatelessWidget {
-  const StoreSubmissionPage({Key? key, required this.submission})
+  const StoreSubmissionPage({Key? key, required this.visit, required this.submission})
       : super(key: key);
 
-  static Route route(StoreSubmission submission) {
+  static Route route(StoreVisitDto visit, StoreSubmission submission) {
     return MaterialPageRoute<void>(
-        builder: (_) => StoreSubmissionPage(submission: submission));
+        builder: (_) => StoreSubmissionPage(visit: visit, submission: submission));
   }
 
+  final StoreVisitDto visit;
   final StoreSubmission submission;
 
   @override
@@ -32,6 +33,7 @@ class StoreSubmissionPage extends StatelessWidget {
     final l10n = context.l10n;
     return BlocProvider(
       create: (context) => StoreSubmissionBloc(
+        visit: visit,
         submission: submission,
         submissionRepository:
             RepositoryProvider.of<SubmissionRepository>(context),

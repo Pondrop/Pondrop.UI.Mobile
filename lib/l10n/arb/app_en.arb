@@ -127,5 +127,9 @@
                 "type" : "String"
             }
         }
-    }
+    },
+    "somethingWentWrong": "Something went wrong",
+    "@somethingWentWrong": {},
+    "pleaseTryAgain": "Please try again.",
+    "@pleaseTryAgain": {}
 }

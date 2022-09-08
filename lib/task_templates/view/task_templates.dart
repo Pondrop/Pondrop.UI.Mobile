@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
+import 'package:pondrop/store_report/bloc/store_report_bloc.dart';
 import 'package:pondrop/store_report/store_report.dart';
 import 'package:pondrop/store_submission/store_submission.dart';
 
 import '../bloc/task_templates_bloc.dart';
 
 class TaskTemplates extends StatelessWidget {
-  const TaskTemplates({Key? key}) : super(key: key);
+  const TaskTemplates({Key? key, required this.visit}) : super(key: key);
+
+  final StoreVisitDto visit;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +48,7 @@ class TaskTemplates extends StatelessWidget {
                     showCupertinoModalBottomSheet(
                       context: context,
                       builder: (context) => StoreSubmissionPage(
+                        visit: visit,
                         submission: item.toStoreSubmission(),
                       ),
                       enableDrag: false,

@@ -40,10 +40,10 @@ extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
 }
 
 extension StoreSubmissionResultMapping on StoreSubmission {
-  SubmissionResultDto toSubmissionResultDto() {
+  SubmissionResultDto toSubmissionResultDto(String storeVisitId) {
     return SubmissionResultDto(
       submissionTemplateId: templateId,
-      storeVisitId: const Uuid().v4(),
+      storeVisitId: storeVisitId,
       steps: steps
           .map((step) => SubmissionStepResultDto(
                 templateStepId: step.stepId,

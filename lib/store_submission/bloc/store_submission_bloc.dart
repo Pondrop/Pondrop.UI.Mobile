@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 
@@ -14,12 +15,13 @@ part 'store_submission_state.dart';
 class StoreSubmissionBloc
     extends Bloc<StoreSubmissionEvent, StoreSubmissionState> {
   StoreSubmissionBloc({
+    required StoreVisitDto visit,
     required StoreSubmission submission,
     required SubmissionRepository submissionRepository,
     required LocationRepository locationRepository,
   }): _submissionRepository = submissionRepository,
       _locationRepository = locationRepository,
-      super(StoreSubmissionState(submission: submission)) {
+      super(StoreSubmissionState(visit: visit, submission: submission)) {
     on<StoreSubmissionNextEvent>(_onNext);
     on<StoreSubmissionFieldResultEvent>(_onResult);
   }
@@ -79,7 +81,7 @@ class StoreSubmissionBloc
         await _goToNextStep(emit);
         break;
       case SubmissionStatus.submitting:
-        if (await _submissionRepository.submitResult(state.submission)) {
+        if (await _submissionRepository.submitResult(state.visit.id, state.submission)) {
           emit(state.copyWith(action: SubmissionStatus.submitSuccess));
         } else {
           emit(state.copyWith(action: SubmissionStatus.submitFailed));
