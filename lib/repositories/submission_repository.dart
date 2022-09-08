@@ -57,8 +57,7 @@ class SubmissionRepository {
     return null;
   }
 
-  Future<StoreVisitDto?> endStoreVisit(
-      String visitId, LatLng? location) async {
+  Future<StoreVisitDto?> endStoreVisit(String visitId, LatLng? location) async {
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
@@ -74,20 +73,23 @@ class SubmissionRepository {
     return null;
   }
 
-  Future<bool> submitResult(String storeVisitId, StoreSubmission submission) async {
+  Future<bool> submitResult(
+      String storeVisitId, StoreSubmission submission) async {
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
       final result = submission.toSubmissionResultDto(storeVisitId);
 
-      for (final i
-          in result.steps.expand((e) => e.fields.expand((e) => e.values))) {
-        final path = i.photoPathValue ?? '';
-        if (path.isNotEmpty) {
-          final file = File(path);
-          if (await file.exists()) {
-            i.photoFileName = p.basename(path);
-            i.photoDataBase64 = _toBase64(await _readFileBytes(file));
+      for (final field in result.steps.expand((e) => e.fields)) {
+        for (var i = 0; i < field.values.length; i++) {
+          final result = field.values[i];
+          final path = result.photoPathValue ?? '';
+          if (path.isNotEmpty) {
+            final file = File(path);
+            if (await file.exists()) {
+              result.photoFileName = '${field.templateFieldId}_${i + 1}${p.extension(path)}';
+              result.photoDataBase64 = _toBase64(await _readFileBytes(file));
+            }
           }
         }
       }

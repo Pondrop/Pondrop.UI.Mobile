@@ -12,15 +12,19 @@ class MockStoreRepository extends Mock implements StoreRepository {}
 
 class MockSubmissionRepository extends Mock implements SubmissionRepository {}
 
+class MockLocationRepository extends Mock implements LocationRepository {}
+
 void main() {
   late StoreRepository storeRepository;
   late SubmissionRepository submissionRepository;
+  late LocationRepository locationRepository;
 
   late Store store;
 
   setUp(() {
     storeRepository = MockStoreRepository();
     submissionRepository = MockSubmissionRepository();
+    locationRepository = MockLocationRepository();
 
     store = const Store(
         id: 'ID',
@@ -41,6 +45,10 @@ void main() {
     testWidgets('renders a Store Report page', (tester) async {
       when(() => submissionRepository.submissions)
           .thenAnswer((invocation) => Stream.fromIterable([]));
+      when(() => submissionRepository.startStoreVisit(any(), any()))
+          .thenAnswer((invocation) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((invocation) => Future.value(null));
 
       await tester.pumpAppWithRoute((settings) {
         return MaterialPageRoute(
@@ -49,6 +57,7 @@ void main() {
               return MultiRepositoryProvider(providers: [
                 RepositoryProvider.value(value: storeRepository),
                 RepositoryProvider.value(value: submissionRepository),
+                RepositoryProvider.value(value: locationRepository),                
               ], child: const StoreReportPage());
             });
       });

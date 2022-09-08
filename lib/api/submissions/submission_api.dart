@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'package:pondrop/api/extensions/extensions.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
 
 class SubmissionApi {
@@ -26,66 +27,61 @@ class SubmissionApi {
 
     final headers = _getCommonHeaders(accessToken);
 
-    final response = await _httpClient.get(Uri.https(_baseUrl, '/SubmissionTemplate'),
-        headers: headers);
+    final response = await _httpClient
+        .get(Uri.https(_baseUrl, '/SubmissionTemplate'), headers: headers);
 
-    if (response.statusCode == 200) {
-      Iterable jsonList = json.decode(response.body);
-      final submissionTemplates = jsonList
-          .map((model) => SubmissionTemplateDto.fromJson(model))
-          .toList();
+    response.ensureSuccessStatusCode();
 
-      _localTemplates[accessToken] = submissionTemplates;
+    Iterable jsonList = json.decode(response.body);
+    final submissionTemplates =
+        jsonList.map((model) => SubmissionTemplateDto.fromJson(model)).toList();
 
-      return submissionTemplates;
-    } else {
-      throw Exception('Failed to load submission templates, with status code "${response.statusCode}"');
-    }
+    _localTemplates[accessToken] = submissionTemplates;
+
+    return submissionTemplates;
   }
 
   Future<StoreVisitDto> startStoreVisit(
       String accessToken, String storeId, LatLng? location) async {
     final json = jsonEncode({
-      'storeId' : storeId,
-      'latitude' : location?.latitude ?? 0,
-      'longitude' : location?.longitude ?? 0,
+      'storeId': storeId,
+      'latitude': location?.latitude ?? 0,
+      'longitude': location?.longitude ?? 0,
     });
 
     final headers = _getCommonHeaders(accessToken);
 
-    final response = await _httpClient.post(Uri.https(_baseUrl, '/StoreVisit/create'),
+    final response = await _httpClient.post(
+        Uri.https(_baseUrl, '/StoreVisit/create'),
         headers: headers,
         body: json);
 
-    if (response.statusCode == 201) {
-      final storeVisit = StoreVisitDto.fromJson(jsonDecode(response.body));
-      return storeVisit;
-    } else {
-      throw Exception('Failed to create store visit, with status code "${response.statusCode}"');
-    }
+    response.ensureSuccessStatusCode();
+
+    final storeVisit = StoreVisitDto.fromJson(jsonDecode(response.body));
+    return storeVisit;
   }
 
   Future<StoreVisitDto> endStoreVisit(
       String accessToken, String visitId, LatLng? location) async {
     final json = jsonEncode({
-      'id' : visitId,
-      'shopModeStatus' : 'Completed',
-      'latitude' : location?.latitude ?? 0,
-      'longitude' : location?.longitude ?? 0,
+      'id': visitId,
+      'shopModeStatus': 'Completed',
+      'latitude': location?.latitude ?? 0,
+      'longitude': location?.longitude ?? 0,
     });
 
     final headers = _getCommonHeaders(accessToken);
 
-    final response = await _httpClient.put(Uri.https(_baseUrl, '/StoreVisit/update'),
+    final response = await _httpClient.put(
+        Uri.https(_baseUrl, '/StoreVisit/update'),
         headers: headers,
         body: json);
 
-    if (response.statusCode == 201) {
-      final storeVisit = StoreVisitDto.fromJson(jsonDecode(response.body));
-      return storeVisit;
-    } else {
-      throw Exception('Failed to create store visit, with status code "${response.statusCode}"');
-    }
+    response.ensureSuccessStatusCode();
+
+    final storeVisit = StoreVisitDto.fromJson(jsonDecode(response.body));
+    return storeVisit;
   }
 
   Future<void> submitResult(
