@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/api/submissions/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 
 import '../bloc/task_templates_bloc.dart';
 import 'task_templates.dart';
 
 class TaskTemplatesPage extends StatelessWidget {
-  const TaskTemplatesPage({Key? key}) : super(key: key);
+  const TaskTemplatesPage({Key? key, required this.visit}) : super(key: key);
 
-  static Route route() {
+  static Route route(StoreVisitDto visit) {
     return PageRouteBuilder<void>(
-        pageBuilder: (_, __, ___) => const TaskTemplatesPage(),
+        pageBuilder: (_, __, ___) => TaskTemplatesPage(visit: visit),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(0, 1);
           const end = Offset.zero;
@@ -24,6 +25,8 @@ class TaskTemplatesPage extends StatelessWidget {
         transitionDuration: const Duration(milliseconds: 300),        
         reverseTransitionDuration: Duration.zero);
   }
+
+  final StoreVisitDto visit;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +52,7 @@ class TaskTemplatesPage extends StatelessWidget {
                     Navigator.of(context).pop();
                   })),
           body: Builder(builder: (context) {
-            return const TaskTemplates();
+            return TaskTemplates(visit: visit,);
           })),
     );
   }

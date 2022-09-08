@@ -26,51 +26,85 @@ class StoreReportPage extends StatelessWidget {
     return BlocProvider(
         create: (_) => StoreReportBloc(
               store: ModalRoute.of(context)!.settings.arguments as Store,
+              locationRepository:
+                  RepositoryProvider.of<LocationRepository>(context),
               submissionRepository:
                   RepositoryProvider.of<SubmissionRepository>(context),
             ),
-        child: Scaffold(
-          appBar: AppBar(
-              elevation: 0,
-              title: Text(
-                l10n.storeActivity,
-                style: const TextStyle(
-                    fontSize: 18.0, fontWeight: FontWeight.w500),
-              ),
-              centerTitle: true),
-          body: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Material(
-                  color: Theme.of(context).appBarTheme.backgroundColor,
-                  elevation: 4,
-                  child: _storeHeader(context),
+        child: BlocListener<StoreReportBloc, StoreReportState>(
+          listener: (context, state) {
+            if (state.visitStatus == StoreReportVisitStatus.failed) {
+              showDialog(
+                context: context,
+                builder: (_) => _storeVisitFailed(context),
+              );
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(
+                elevation: 0,
+                title: Text(
+                  l10n.storeActivity,
+                  style: const TextStyle(
+                      fontSize: 18.0, fontWeight: FontWeight.w500),
                 ),
-                Expanded(
-                  child: BlocBuilder<StoreReportBloc, StoreReportState>(
-                      builder: (context, state) {
-                    return ListView.builder(
-                      itemBuilder: (BuildContext context, int index) =>
-                          StoreReportListItem(
-                        submissionTemplate: state.templates.firstWhere(
-                            (e) => e.id == state.submissions[index].templateId),
-                        submissionResult: state.submissions[index],
-                      ),
-                      itemCount: state.submissions.length,
+                centerTitle: true),
+            body: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Material(
+                    color: Theme.of(context).appBarTheme.backgroundColor,
+                    elevation: 4,
+                    child: _storeHeader(context),
+                  ),
+                  Expanded(
+                    child: BlocBuilder<StoreReportBloc, StoreReportState>(
+                        builder: (context, state) {
+                      return ListView.builder(
+                        itemBuilder: (BuildContext context, int index) =>
+                            StoreReportListItem(
+                          submissionTemplate: state.templates.firstWhere((e) =>
+                              e.id == state.submissions[index].templateId),
+                          submissionResult: state.submissions[index],
+                        ),
+                        itemCount: state.submissions.length,
+                      );
+                    }),
+                  )
+                ]),
+            floatingActionButton:
+                BlocBuilder<StoreReportBloc, StoreReportState>(
+              builder: (context, state) {
+                switch (state.visitStatus) {
+                  case StoreReportVisitStatus.starting:
+                    return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryLightColor,
+                            foregroundColor: Colors.black),
+                        onPressed: () {},
+                        child: const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(),
+                        ));
+                  case StoreReportVisitStatus.started:
+                    return ElevatedButton.icon(
+                      icon: const Icon(Icons.add),
+                      label: Text(l10n.addItem(l10n.task.toLowerCase())),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryLightColor,
+                          foregroundColor: Colors.black),
+                      onPressed: () async {
+                        await Navigator.of(context)
+                            .push(TaskTemplatesPage.route(state.visit!));
+                      },
                     );
-                  }),
-                )
-              ]),
-          floatingActionButton: ElevatedButton.icon(
-            icon: const Icon(Icons.add),
-            label: Text(l10n.addItem(l10n.task.toLowerCase())),
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryLightColor,
-                foregroundColor: Colors.black),
-            onPressed: () async {
-              await Navigator.of(context).push(TaskTemplatesPage.route());
-            },
+                  default:
+                    return const SizedBox.shrink();
+                }
+              },
+            ),
           ),
         ));
   }
@@ -114,5 +148,22 @@ class StoreReportPage extends StatelessWidget {
         ],
       );
     });
+  }
+
+  AlertDialog _storeVisitFailed(BuildContext context) {
+    final l10n = context.l10n;
+    return AlertDialog(
+      title: Text(l10n.somethingWentWrong),
+      content: Text(l10n.pleaseTryAgain),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+          child: Text(l10n.ok),
+        ),
+      ],
+    );
   }
 }

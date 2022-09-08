@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:latlong2/latlong.dart';
 import 'package:path/path.dart' as p;
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/models.dart';
@@ -27,18 +28,57 @@ class SubmissionRepository {
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
-      final templates = await _submissionApi.fetchTemplates(user!.accessToken);
-      return templates;
+      try {
+        final templates =
+            await _submissionApi.fetchTemplates(user!.accessToken);
+        return templates;
+      } catch (e) {
+        log(e.toString());
+      }
     }
 
     return const [];
   }
 
-  Future<bool> submitResult(StoreSubmission submission) async {
+  Future<StoreVisitDto?> startStoreVisit(
+      String storeId, LatLng? location) async {
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
-      final result = submission.toSubmissionResultDto();
+      try {
+        final storeVisit = await _submissionApi.startStoreVisit(
+            user!.accessToken, storeId, location);
+        return storeVisit;
+      } catch (e) {
+        log(e.toString());
+      }
+    }
+
+    return null;
+  }
+
+  Future<StoreVisitDto?> endStoreVisit(
+      String visitId, LatLng? location) async {
+    final user = await _userRepository.getUser();
+
+    if (user?.accessToken.isNotEmpty == true) {
+      try {
+        final storeVisit = await _submissionApi.endStoreVisit(
+            user!.accessToken, visitId, location);
+        return storeVisit;
+      } catch (e) {
+        log(e.toString());
+      }
+    }
+
+    return null;
+  }
+
+  Future<bool> submitResult(String storeVisitId, StoreSubmission submission) async {
+    final user = await _userRepository.getUser();
+
+    if (user?.accessToken.isNotEmpty == true) {
+      final result = submission.toSubmissionResultDto(storeVisitId);
 
       for (final i
           in result.steps.expand((e) => e.fields.expand((e) => e.values))) {

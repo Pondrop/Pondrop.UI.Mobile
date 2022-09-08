@@ -1,3 +1,5 @@
+export 'store_visit_dto.dart';
+
 export 'submission_template_dto.dart';
 export 'submission_template_step_dto.dart';
 export 'submission_template_field_dto.dart';

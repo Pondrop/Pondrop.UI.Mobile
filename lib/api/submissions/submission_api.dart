@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
 
 class SubmissionApi {
@@ -38,14 +39,57 @@ class SubmissionApi {
 
       return submissionTemplates;
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load data');
+      throw Exception('Failed to load submission templates, with status code "${response.statusCode}"');
+    }
+  }
+
+  Future<StoreVisitDto> startStoreVisit(
+      String accessToken, String storeId, LatLng? location) async {
+    final json = jsonEncode({
+      'storeId' : storeId,
+      'latitude' : location?.latitude ?? 0,
+      'longitude' : location?.longitude ?? 0,
+    });
+
+    final headers = _getCommonHeaders(accessToken);
+
+    final response = await _httpClient.post(Uri.https(_baseUrl, '/StoreVisit/create'),
+        headers: headers,
+        body: json);
+
+    if (response.statusCode == 201) {
+      final storeVisit = StoreVisitDto.fromJson(jsonDecode(response.body));
+      return storeVisit;
+    } else {
+      throw Exception('Failed to create store visit, with status code "${response.statusCode}"');
+    }
+  }
+
+  Future<StoreVisitDto> endStoreVisit(
+      String accessToken, String visitId, LatLng? location) async {
+    final json = jsonEncode({
+      'id' : visitId,
+      'shopModeStatus' : 'Completed',
+      'latitude' : location?.latitude ?? 0,
+      'longitude' : location?.longitude ?? 0,
+    });
+
+    final headers = _getCommonHeaders(accessToken);
+
+    final response = await _httpClient.put(Uri.https(_baseUrl, '/StoreVisit/update'),
+        headers: headers,
+        body: json);
+
+    if (response.statusCode == 201) {
+      final storeVisit = StoreVisitDto.fromJson(jsonDecode(response.body));
+      return storeVisit;
+    } else {
+      throw Exception('Failed to create store visit, with status code "${response.statusCode}"');
     }
   }
 
   Future<void> submitResult(
-      String? accessToken, SubmissionResultDto result) async {
+      String accessToken, SubmissionResultDto result) async {
     await Future.delayed(const Duration(seconds: 1));
     final json = jsonEncode(result);
     log(json);
