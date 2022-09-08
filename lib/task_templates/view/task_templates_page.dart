@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/repositories/repositories.dart';
 
 import '../bloc/task_templates_bloc.dart';
@@ -10,8 +9,20 @@ class TaskTemplatesPage extends StatelessWidget {
   const TaskTemplatesPage({Key? key}) : super(key: key);
 
   static Route route() {
-    return MaterialWithModalsPageRoute<void>(
-        builder: (_) => const TaskTemplatesPage());
+    return PageRouteBuilder<void>(
+        pageBuilder: (_, __, ___) => const TaskTemplatesPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0, 1);
+          const end = Offset.zero;
+          final tween = Tween(begin: begin, end: end);
+          final offsetAnimation = animation.drive(tween);
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 300),        
+        reverseTransitionDuration: Duration.zero);
   }
 
   @override

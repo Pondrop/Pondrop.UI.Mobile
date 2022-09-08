@@ -1,50 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/style/style.dart';
 import 'package:pondrop/task_templates/task_templates.dart';
 
 import '../bloc/store_report_bloc.dart';
+import 'store_report_list_item.dart';
 
 class StoreReportPage extends StatelessWidget {
   const StoreReportPage({Key? key}) : super(key: key);
 
+  static const routeName = '/stores/report';
   static Route route(Store store) {
     return MaterialWithModalsPageRoute<void>(
         builder: (_) => const StoreReportPage(),
-        settings: RouteSettings(arguments: store));
+        settings: RouteSettings(name: routeName, arguments: store));
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return BlocProvider(
         create: (_) => StoreReportBloc(
               store: ModalRoute.of(context)!.settings.arguments as Store,
-              storeRepository: RepositoryProvider.of<StoreRepository>(context),
+              submissionRepository:
+                  RepositoryProvider.of<SubmissionRepository>(context),
             ),
         child: Scaffold(
           appBar: AppBar(
               elevation: 0,
-              title: const Text(
-                'Store activity',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+              title: Text(
+                l10n.storeActivity,
+                style: const TextStyle(
+                    fontSize: 18.0, fontWeight: FontWeight.w500),
               ),
               centerTitle: true),
-          body:
-              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Material(
-              color: Theme.of(context).appBarTheme.backgroundColor,
-              elevation: 4,
-              child: _storeHeader(context),
-            )
-          ]),
+          body: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Material(
+                  color: Theme.of(context).appBarTheme.backgroundColor,
+                  elevation: 4,
+                  child: _storeHeader(context),
+                ),
+                Expanded(
+                  child: BlocBuilder<StoreReportBloc, StoreReportState>(
+                      builder: (context, state) {
+                    return ListView.builder(
+                      itemBuilder: (BuildContext context, int index) =>
+                          StoreReportListItem(
+                        submissionTemplate: state.templates.firstWhere(
+                            (e) => e.id == state.submissions[index].templateId),
+                        submissionResult: state.submissions[index],
+                      ),
+                      itemCount: state.submissions.length,
+                    );
+                  }),
+                )
+              ]),
           floatingActionButton: ElevatedButton.icon(
             icon: const Icon(Icons.add),
-            label: const Text('Add task'),
+            label: Text(l10n.addItem(l10n.task.toLowerCase())),
             style: ElevatedButton.styleFrom(
-                primary: AppColors.primaryLightColor, onPrimary: Colors.black),
+                backgroundColor: AppColors.primaryLightColor,
+                foregroundColor: Colors.black),
             onPressed: () async {
               await Navigator.of(context).push(TaskTemplatesPage.route());
             },

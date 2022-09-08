@@ -10,7 +10,7 @@ void main() {
 
   group('Task Templates Page', () {
     test('is routable', () {
-      expect(TaskTemplatesPage.route(), isA<MaterialPageRoute>());
+      expect(TaskTemplatesPage.route(), isA<PageRoute>());
     });
   });
 }

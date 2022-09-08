@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -15,6 +17,11 @@ class SubmissionRepository {
 
   final UserRepository _userRepository;
   final SubmissionApi _submissionApi;
+  final _controller = StreamController<StoreSubmission>.broadcast();
+
+  Stream<StoreSubmission> get submissions async* {
+    yield* _controller.stream;
+  }
 
   Future<List<SubmissionTemplateDto>> fetchTemplates() async {
     final user = await _userRepository.getUser();
@@ -32,8 +39,9 @@ class SubmissionRepository {
 
     if (user?.accessToken.isNotEmpty == true) {
       final result = submission.toSubmissionResultDto();
-      
-      for (final i in result.steps.expand((e) => e.fields.expand((e) => e.values))) {
+
+      for (final i
+          in result.steps.expand((e) => e.fields.expand((e) => e.values))) {
         final path = i.photoPathValue ?? '';
         if (path.isNotEmpty) {
           final file = File(path);
@@ -44,12 +52,19 @@ class SubmissionRepository {
         }
       }
 
-      await _submissionApi.submitResult(user!.accessToken, result);
-      return false;
+      try {
+        await _submissionApi.submitResult(user!.accessToken, result);
+        _controller.add(submission);
+        return true;
+      } catch (e) {
+        log(e.toString());
+      }
     }
 
     return false;
   }
+
+  void dispose() => _controller.close();
 
   Future<Uint8List> _readFileBytes(File file) async {
     final bytes = await file.readAsBytes();

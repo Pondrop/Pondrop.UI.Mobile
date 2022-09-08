@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/l10n/l10n.dart';
-import 'package:pondrop/task_templates/view/task_template_list_item.dart';
+import 'package:pondrop/models/models.dart';
+import 'package:pondrop/store_report/store_report.dart';
+import 'package:pondrop/store_submission/store_submission.dart';
 
 import '../bloc/task_templates_bloc.dart';
 
@@ -32,10 +35,21 @@ class TaskTemplates extends StatelessWidget {
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
-            itemBuilder: (BuildContext context, int index) =>
-                TaskTemplateListItem(
-                    submissionTemplate: state.templates[index]),
+            itemBuilder: (BuildContext context, int index) {
+              final item = state.templates[index];
+              return StoreReportListItem(
+                  submissionTemplate: item,
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    showCupertinoModalBottomSheet(
+                      context: context,
+                      builder: (context) => StoreSubmissionPage(
+                        submission: item.toStoreSubmission(),
+                      ),
+                      enableDrag: false,
+                    );
+                  });
+            },
             itemCount: state.templates.length,
           );
         },

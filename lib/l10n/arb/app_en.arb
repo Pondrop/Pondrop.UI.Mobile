@@ -76,7 +76,7 @@
     },
     "cameraAccessRequired": "Camera access required",
     "@cameraAccessRequired": {},
-    "pleaseEnableCameraAccess": "Please enable camera access in app settings, then press 'Okay'.",
+    "pleaseEnableCameraAccess": "Please enable camera access in app settings.",
     "@pleaseEnableCameraAccess": {},
     "openSettings": "Open settings",
     "@openSettings": {},
@@ -112,6 +112,16 @@
     },
     "noItemFound": "No {item} found",
     "@noItemFound": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "storeActivity": "Store activity",
+    "@storeActivity": {},
+    "addItem": "Add {item}",
+    "@addItem": {
         "placeholders": {
             "item": {
                 "type" : "String"

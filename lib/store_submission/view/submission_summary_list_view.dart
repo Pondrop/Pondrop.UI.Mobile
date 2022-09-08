@@ -16,8 +16,9 @@ class SubmissionSummaryListView extends StatelessWidget {
   final StoreSubmissionStep step;
 
   @override
-  Widget build(BuildContext context) {    
-    assert(step.isSummary, '"SubmissionSummaryListView" invalid state, current step must be summary');
+  Widget build(BuildContext context) {
+    assert(step.isSummary,
+        '"SubmissionSummaryListView" invalid state, current step must be summary');
     final state = context.read<StoreSubmissionBloc>().state;
     final currentStepIdx = max(0, state.currentStepIdx);
 
@@ -44,17 +45,12 @@ class SubmissionSummaryListView extends StatelessWidget {
 
     for (final i in step.fields.where((e) => !e.result.isEmpty)) {
       if (i.fieldType == SubmissionFieldType.photo) {
-        photoWidgets.add(Card(
-            clipBehavior: Clip.antiAlias,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Image.file(
-              File(i.result.photoPathValue!),
-              fit: BoxFit.cover,
-              width: 72,
-              height: 72,
-            )));
+        photoWidgets.add(_photoCard(Image.file(
+          File(i.result.photoPathValue!),
+          fit: BoxFit.cover,
+          width: 72,
+          height: 72,
+        )));
       } else {
         textWidgets.add(Text(
           i.label,
@@ -75,6 +71,14 @@ class SubmissionSummaryListView extends StatelessWidget {
           height: 8,
         ));
       }
+    }
+
+    if (photoWidgets.isEmpty) {
+      photoWidgets.add(_photoCard(const SizedBox(
+        width: 72,
+        height: 72,
+        child: Center(child: Icon(Icons.no_photography_outlined)),
+      )));
     }
 
     return Padding(
@@ -115,6 +119,15 @@ class SubmissionSummaryListView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _photoCard(Widget child) {
+    return Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: child);
   }
 
   Widget _summaryFieldItem(BuildContext context, StoreSubmissionField field) {

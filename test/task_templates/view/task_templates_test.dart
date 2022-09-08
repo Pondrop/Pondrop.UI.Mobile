@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pondrop/store_report/store_report.dart';
 import 'package:pondrop/task_templates/bloc/task_templates_bloc.dart';
-import 'package:pondrop/task_templates/view/task_template_list_item.dart';
 import 'package:pondrop/task_templates/view/task_templates.dart';
 
 import '../../helpers/helpers.dart';
@@ -42,7 +42,7 @@ void main() {
       await tester.pump();
 
       expect(find.byType(ListView), findsOneWidget);
-      expect(find.byType(TaskTemplateListItem), findsOneWidget);
+      expect(find.byType(StoreReportListItem), findsOneWidget);
       expect(find.text(templates.first.title), findsOneWidget);
     });
   });
