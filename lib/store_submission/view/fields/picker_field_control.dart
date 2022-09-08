@@ -35,7 +35,7 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: widget.field.label,
-        suffixIcon: widget.field.mandatory
+        suffixIcon: widget.field.mandatory && widget.field.result.isEmpty
             ? const RequiredView()
             : null,
       ),
@@ -58,7 +58,9 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
                 overflow: TextOverflow.ellipsis,
               ))));
           final currentIdx = widget.field.result.stringValue?.isNotEmpty == true
-              ? widget.field.pickerValues!.indexOf(widget.field.result.stringValue!) + 1
+              ? widget.field.pickerValues!
+                      .indexOf(widget.field.result.stringValue!) +
+                  1
               : 0;
 
           showCupertinoModalPopup(
@@ -69,8 +71,9 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
                   color: Colors.white,
                   child: CupertinoPicker(
                     onSelectedItemChanged: (value) {
-                      final stringValue =
-                          value == 0 ? null : widget.field.pickerValues![value - 1];
+                      final stringValue = value == 0
+                          ? null
+                          : widget.field.pickerValues![value - 1];
                       final bloc = context.read<StoreSubmissionBloc>();
                       bloc.add(StoreSubmissionFieldResultEvent(
                           stepId: widget.field.stepId,

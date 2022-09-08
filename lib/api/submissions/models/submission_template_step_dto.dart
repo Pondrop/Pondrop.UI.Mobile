@@ -9,12 +9,13 @@ class SubmissionTemplateStepDto {
   SubmissionTemplateStepDto({
     required this.id,
     required this.title,
-    required this.instructions,
-    required this.instructionsContinueButton,
+    this.instructions = '',
+    this.instructionsContinueButton = '',
     this.instructionsSkipButton = '',
-    required this.instructionsIconCodePoint,
-    required this.instructionsIconFontFamily,
+    this.instructionsIconCodePoint = 0,
+    this.instructionsIconFontFamily = '',
     required this.fields,
+    this.isSummary = false,
   });
 
   @JsonKey(name: 'id')
@@ -31,6 +32,8 @@ class SubmissionTemplateStepDto {
   final int instructionsIconCodePoint;
   @JsonKey(name: 'instructionsIconFontFamily')
   final String instructionsIconFontFamily;
+  @JsonKey(name: 'isSummary')
+  final bool isSummary;
 
   @JsonKey(name: 'fields')
   final List<SubmissionTemplateFieldDto> fields;

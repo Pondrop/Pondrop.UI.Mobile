@@ -1,9 +1,12 @@
-import 'dart:math';
+import 'dart:developer' as dev;
+import 'dart:math' as math;
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pondrop/models/models.dart';
+import 'package:pondrop/repositories/repositories.dart';
 
 part 'store_submission_event.dart';
 part 'store_submission_state.dart';
@@ -12,10 +15,17 @@ class StoreSubmissionBloc
     extends Bloc<StoreSubmissionEvent, StoreSubmissionState> {
   StoreSubmissionBloc({
     required StoreSubmission submission,
-  }) : super(StoreSubmissionState(submission: submission)) {
+    required SubmissionRepository submissionRepository,
+    required LocationRepository locationRepository,
+  }): _submissionRepository = submissionRepository,
+      _locationRepository = locationRepository,
+      super(StoreSubmissionState(submission: submission)) {
     on<StoreSubmissionNextEvent>(_onNext);
     on<StoreSubmissionFieldResultEvent>(_onResult);
   }
+
+  final SubmissionRepository _submissionRepository;
+  final LocationRepository _locationRepository;
 
   void _onResult(StoreSubmissionFieldResultEvent event,
       Emitter<StoreSubmissionState> emit) {
@@ -38,7 +48,7 @@ class StoreSubmissionBloc
         {
           final cameraStatus = await Permission.camera.status;
           if (cameraStatus.isGranted) {
-            _goToNextStep(emit);
+            await _goToNextStep(emit);
           } else {
             emit(state.copyWith(action: SubmissionStatus.cameraRequest));
           }
@@ -48,7 +58,7 @@ class StoreSubmissionBloc
         {
           final cameraStatus = await Permission.camera.request();
           if (cameraStatus.isGranted) {
-            _goToNextStep(emit);
+            await _goToNextStep(emit);
           } else {
             emit(state.copyWith(action: SubmissionStatus.cameraRejected));
           }
@@ -56,7 +66,7 @@ class StoreSubmissionBloc
         break;
       case SubmissionStatus.cameraRejected:
         if (await Permission.camera.isGranted) {
-          _goToNextStep(emit);
+          await _goToNextStep(emit);
         } else {
           emit(state.copyWith(action: SubmissionStatus.cameraRequest));
         }
@@ -65,21 +75,38 @@ class StoreSubmissionBloc
         emit(state.copyWith(action: SubmissionStatus.stepSubmission));
         break;
       case SubmissionStatus.stepSubmission:
-        _goToNextStep(emit);
+      case SubmissionStatus.submitFailed:
+        await _goToNextStep(emit);
         break;
-      case SubmissionStatus.summary:
-        emit(state.copyWith(action: SubmissionStatus.submitted));
+      case SubmissionStatus.submitting:
+        if (await _submissionRepository.submitResult(state.submission)) {
+          emit(state.copyWith(action: SubmissionStatus.submitSuccess));
+        } else {
+          emit(state.copyWith(action: SubmissionStatus.submitFailed));
+        }
         break;
       default:
         break;
     }
   }
 
-  void _goToNextStep(Emitter<StoreSubmissionState> emit) {
+  Future<void> _goToNextStep(Emitter<StoreSubmissionState> emit) async {
     final nextStepIdx = state.currentStepIdx + 1;
 
     if (nextStepIdx < state.numOfSteps) {
+      Position? lastKnown;
+
+      try {
+        lastKnown = await _locationRepository.getLastKnownPosition();
+      } on Exception {
+        dev.log('Unable to determine last know location');
+      }
+
       final nextStep = state.submission.steps[nextStepIdx];
+      
+      nextStep.latitude = lastKnown?.latitude ?? 0;
+      nextStep.longitude = lastKnown?.longitude ?? 0;
+      nextStep.started = DateTime.now();
 
       if (nextStep.instructionsContinueButton.isNotEmpty) {
         emit(state.copyWith(
@@ -94,7 +121,7 @@ class StoreSubmissionBloc
       }
     } else {
       emit(state.copyWith(
-        action: SubmissionStatus.summary,
+        action: SubmissionStatus.submitting,
       ));
     }
   }

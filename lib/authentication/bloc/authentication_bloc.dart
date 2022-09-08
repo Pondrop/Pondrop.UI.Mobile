@@ -68,7 +68,13 @@ class AuthenticationBloc
     AuthenticationLogoutRequested event,
     Emitter<AuthenticationState> emit,
   ) async {
-    await _authenticationRepository.signOut(state.user.accessToken);
+    emit(state.copyWith(isLoggingOut: true));
+
+    try {
+      await _authenticationRepository.signOut(state.user.accessToken);
+    } on Exception {
+      emit(state.copyWith(isLoggingOut: false));
+    }    
   }
 
   Future<User?> _tryGetUser() async {

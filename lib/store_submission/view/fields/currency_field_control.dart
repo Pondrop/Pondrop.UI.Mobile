@@ -53,7 +53,7 @@ class _CurrencyFieldControlState extends State<CurrencyFieldControl> {
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
             labelText: widget.field.label,
-            suffixIcon: widget.field.mandatory
+            suffixIcon: widget.field.mandatory && widget.field.result.isEmpty
                 ? const RequiredView()
                 : null,
           ),

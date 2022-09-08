@@ -37,6 +37,12 @@
     "@profile": {},
     "stores": "Stores",
     "@stores": {},
+    "store": "Store",
+    "@store": {},
+    "task": "Task",
+    "@task": {},
+    "tasks": "Tasks",
+    "@tasks": {},
     "accessCamera": "Access camera",
     "@accessCamera": {},
     "accessCameraDescription": "We need to use your camera to take photos of produces and shelves",
@@ -70,8 +76,56 @@
     },
     "cameraAccessRequired": "Camera access required",
     "@cameraAccessRequired": {},
-    "pleaseEnableCameraAccess": "Please enable camera access in app settings, then press 'Okay'.",
+    "pleaseEnableCameraAccess": "Please enable camera access in app settings.",
     "@pleaseEnableCameraAccess": {},
     "openSettings": "Open settings",
-    "@openSettings": {}
+    "@openSettings": {},
+    "logOut": "Log out",
+    "@logOut": {},
+    "loggingOut": "Logging out",
+    "@loggingOut": {},
+    "itemEllipsis": "{item}...",
+    "@itemEllipsis": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "submitting": "Submitting",
+    "@Submitting": {},
+    "selectAItem": "Select a {item}",
+    "@selectAItem": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "itemFailedPleaseTryAgain": "{item} failed. Please try again.",
+    "@itemFailedPleaseTryAgain": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "noItemFound": "No {item} found",
+    "@noItemFound": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "storeActivity": "Store activity",
+    "@storeActivity": {},
+    "addItem": "Add {item}",
+    "@addItem": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    }
 }

@@ -7,7 +7,7 @@ import 'package:pondrop/repositories/repositories.dart';
 void main() {
   final locationRepository = LocationRepository(geoCode: GeoCode());
   final userRepository = UserRepository(secureStorage: const FlutterSecureStorage());
-  final storeRepository = StoreRepository();
+  final storeRepository = StoreRepository(userRepository: userRepository);
   final authenticationRepository = AuthenticationRepository(userRepository: userRepository);
   
   bootstrap(() => App(

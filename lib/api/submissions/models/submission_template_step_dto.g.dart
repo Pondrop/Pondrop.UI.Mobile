@@ -11,15 +11,18 @@ SubmissionTemplateStepDto _$SubmissionTemplateStepDtoFromJson(
     SubmissionTemplateStepDto(
       id: json['id'] as String,
       title: json['title'] as String,
-      instructions: json['instructions'] as String,
-      instructionsContinueButton: json['instructionsContinueButton'] as String,
+      instructions: json['instructions'] as String? ?? '',
+      instructionsContinueButton:
+          json['instructionsContinueButton'] as String? ?? '',
       instructionsSkipButton: json['instructionsSkipButton'] as String? ?? '',
-      instructionsIconCodePoint: json['instructionsIconCodePoint'] as int,
-      instructionsIconFontFamily: json['instructionsIconFontFamily'] as String,
+      instructionsIconCodePoint: json['instructionsIconCodePoint'] as int? ?? 0,
+      instructionsIconFontFamily:
+          json['instructionsIconFontFamily'] as String? ?? '',
       fields: (json['fields'] as List<dynamic>)
           .map((e) =>
               SubmissionTemplateFieldDto.fromJson(e as Map<String, dynamic>))
           .toList(),
+      isSummary: json['isSummary'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$SubmissionTemplateStepDtoToJson(
@@ -32,5 +35,6 @@ Map<String, dynamic> _$SubmissionTemplateStepDtoToJson(
       'instructionsSkipButton': instance.instructionsSkipButton,
       'instructionsIconCodePoint': instance.instructionsIconCodePoint,
       'instructionsIconFontFamily': instance.instructionsIconFontFamily,
+      'isSummary': instance.isSummary,
       'fields': instance.fields.map((e) => e.toJson()).toList(),
     };

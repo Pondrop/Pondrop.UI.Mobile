@@ -4,6 +4,7 @@ class AuthenticationState extends Equatable {
   const AuthenticationState._({
     this.status = AuthenticationStatus.unknown,
     this.user = User.empty,
+    this.isLoggingOut = false,
   });
 
   const AuthenticationState.unknown() : this._();
@@ -16,7 +17,20 @@ class AuthenticationState extends Equatable {
 
   final AuthenticationStatus status;
   final User user;
+  final bool isLoggingOut;
+
+  AuthenticationState copyWith({
+    AuthenticationStatus? status,
+    User? user,
+    bool? isLoggingOut,
+  }) {
+    return AuthenticationState._(
+      status: status ?? this.status,
+      user: user ?? this.user,
+      isLoggingOut: isLoggingOut ?? this.isLoggingOut,
+    );
+  }
 
   @override
-  List<Object> get props => [status, user];
+  List<Object> get props => [status, user, isLoggingOut];
 }

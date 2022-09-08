@@ -17,7 +17,9 @@ class TextFieldControl extends StatelessWidget {
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: field.label,
-        suffixIcon: field.mandatory ? const RequiredView() : null,
+        suffixIcon: field.mandatory && field.result.isEmpty
+            ? const RequiredView()
+            : null,
       ),
       keyboardType: field.fieldType == SubmissionFieldType.multilineText
           ? TextInputType.multiline

@@ -6,8 +6,9 @@ enum SubmissionStatus {
   cameraRejected,
   stepInstructions,
   stepSubmission,
-  summary,
-  submitted,
+  submitting,
+  submitFailed,
+  submitSuccess,
 }
 
 class StoreSubmissionState extends Equatable {
@@ -20,15 +21,20 @@ class StoreSubmissionState extends Equatable {
   
   final SubmissionStatus previousAction;
   final SubmissionStatus status;
+
   final StoreSubmission submission;
   final int currentStepIdx;
 
   int get numOfSteps =>
     submission.steps.length;
   StoreSubmissionStep get currentStep =>
-    submission.steps[min(max(0, currentStepIdx), numOfSteps - 1)];
+    submission.steps[math.min(math.max(0, currentStepIdx), numOfSteps - 1)];
   bool get currentStepComplete =>
     currentStep.isComplete;
+  bool get isLastStep =>
+    currentStepIdx == numOfSteps - 1;
+  bool get lastStepHasMandatoryFields =>
+    submission.steps.last.fields.any((e) => e.mandatory);
 
   bool get hasAnyResults =>
     submission.steps.any((step) => step.fields.any((field) => !field.result.isEmpty));
@@ -39,8 +45,8 @@ class StoreSubmissionState extends Equatable {
     int? currentStepIdx,
   }) {
     return StoreSubmissionState(
-      previousAction: this.status,
-      status: action ?? this.status,
+      previousAction: status,
+      status: action ?? status,
       submission: submission ?? this.submission,
       currentStepIdx : currentStepIdx ?? this.currentStepIdx,
     );

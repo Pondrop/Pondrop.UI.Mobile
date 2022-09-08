@@ -10,31 +10,30 @@ class StoreApi {
       : _httpClient = httpClient ?? http.Client();
 
   static const String _baseUrl =
-      'https://pondropsearchstandard.search.windows.net/';
-  static const Map<String, String> _requestHeaders = {
-    'Content-type': 'application/json',
-    'api-key': 't9qQq8k9bXhsR4VoCbJAIHYwkBrSTpE03KMKR3Kp6MAzSeAyv0pe'
-  };
+      'store-service.ashyocean-bde16918.australiaeast.azurecontainerapps.io';
 
   final http.Client _httpClient;
 
-  Future<StoreSearchResultDto> searchStores({
+  Future<StoreSearchResultDto> searchStores(
+    String accessToken, {
     String keyword = '',
     int skipIdx = 0,
     Position? sortByPosition,
   }) async {
-    var url =
-        '${_baseUrl}indexes/azuresql-index-stores/docs?api-version=2021-04-30-Preview&search=$keyword*&\$top=20&\$skip=$skipIdx&';
+    final queryParams = { 
+      'search' : '$keyword*',
+      '\$top' : '20',
+      '\$skip' : '$skipIdx',
+      '\$orderby' : sortByPosition != null
+        ? 'geo.distance(locationsort, geography\'POINT(${sortByPosition.longitude} ${sortByPosition.latitude})\') asc'
+        : '\$orderby=Provider,Name asc&'
+    };
 
-    if (sortByPosition != null) {
-      url +=
-          '\$orderby=geo.distance(locationsort, geography\'POINT(${sortByPosition.longitude} ${sortByPosition.latitude})\') asc&';
-    } else {
-      url += '\$orderby=Provider,Name asc&';
-    }
+    final uri = Uri.https(_baseUrl, "/Store/search", queryParams);  
+    final headers = _getCommonHeaders(accessToken);
 
     final response =
-        await _httpClient.get(Uri.parse(url), headers: _requestHeaders);
+        await _httpClient.get(uri, headers: headers);
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -45,5 +44,12 @@ class StoreApi {
       // then throw an exception.
       throw Exception('Failed to load stores');
     }
+  }
+
+  Map<String, String> _getCommonHeaders(String accessToken) {
+    return {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer $accessToken'
+    };
   }
 }

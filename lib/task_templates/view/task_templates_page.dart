@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/repositories/repositories.dart';
 
 import '../bloc/task_templates_bloc.dart';
@@ -10,35 +9,48 @@ class TaskTemplatesPage extends StatelessWidget {
   const TaskTemplatesPage({Key? key}) : super(key: key);
 
   static Route route() {
-    return MaterialWithModalsPageRoute<void>(
-        builder: (_) => const TaskTemplatesPage());
+    return PageRouteBuilder<void>(
+        pageBuilder: (_, __, ___) => const TaskTemplatesPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0, 1);
+          const end = Offset.zero;
+          final tween = Tween(begin: begin, end: end);
+          final offsetAnimation = animation.drive(tween);
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 300),        
+        reverseTransitionDuration: Duration.zero);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (_) => TaskTemplatesBloc(
-              submissionRepository: SubmissionRepository(),
-              userRepository: context.read<UserRepository>(),
-            )..add(const TaskTemplatesFetched()),
-        child: Scaffold(
-            appBar: AppBar(
-                elevation: 0,
-                title: const Text(
-                  'Select a task',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
-                ),
-                centerTitle: true,
-                leading: IconButton(
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.black,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    })),
-            body: Builder(builder: (context) {
-              return const TaskTemplates();
-            })));
+      create: (_) => TaskTemplatesBloc(
+        submissionRepository:
+            RepositoryProvider.of<SubmissionRepository>(context),
+      )..add(const TaskTemplatesFetched()),
+      child: Scaffold(
+          appBar: AppBar(
+              elevation: 0,
+              title: const Text(
+                'Select a task',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+              ),
+              centerTitle: true,
+              leading: IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })),
+          body: Builder(builder: (context) {
+            return const TaskTemplates();
+          })),
+    );
   }
 }

@@ -9,28 +9,17 @@ part of 'submission_field_result_dto.dart';
 SubmissionFieldResultDto _$SubmissionFieldResultDtoFromJson(
         Map<String, dynamic> json) =>
     SubmissionFieldResultDto(
-      fieldId: json['fieldId'] as String,
-      fieldType: $enumDecode(_$SubmissionFieldTypeEnumMap, json['fieldType']),
-      stringValue: json['stringValue'] as String?,
-      intValue: json['intValue'] as int?,
-      photoValue: json['photoValue'] as String?,
+      templateFieldId: json['templateFieldId'] as String,
+      values: (json['values'] as List<dynamic>?)
+              ?.map((e) => SubmissionFieldResultValueDto.fromJson(
+                  e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$SubmissionFieldResultDtoToJson(
         SubmissionFieldResultDto instance) =>
     <String, dynamic>{
-      'fieldId': instance.fieldId,
-      'fieldType': _$SubmissionFieldTypeEnumMap[instance.fieldType]!,
-      'stringValue': instance.stringValue,
-      'intValue': instance.intValue,
-      'photoValue': instance.photoValue,
+      'templateFieldId': instance.templateFieldId,
+      'values': instance.values.map((e) => e.toJson()).toList(),
     };
-
-const _$SubmissionFieldTypeEnumMap = {
-  SubmissionFieldType.photo: 'photo',
-  SubmissionFieldType.text: 'text',
-  SubmissionFieldType.multilineText: 'multilineText',
-  SubmissionFieldType.integer: 'integer',
-  SubmissionFieldType.currency: 'currency',
-  SubmissionFieldType.picker: 'picker',
-};

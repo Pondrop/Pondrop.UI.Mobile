@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pondrop/app/view/loading_overlay.dart';
 import 'package:pondrop/authentication/bloc/authentication_bloc.dart';
+import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/search_store/view/search_store_page.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
@@ -16,12 +18,14 @@ class StorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final email = context.read<AuthenticationBloc>().state.user.email;
 
     return Scaffold(
         appBar: AppBar(
-            title: const Text('Select a store',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500)),
+            title: Text(l10n.selectAItem(l10n.store.toLowerCase()),
+                style: const TextStyle(
+                    fontSize: 18.0, fontWeight: FontWeight.w500)),
             actions: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(right: 10.0),
@@ -54,25 +58,37 @@ class StorePage extends StatelessWidget {
                         .copyWith(fontSize: 12, fontWeight: FontWeight.w400)),
                 dense: true,
               ),
-              const ListTile(
-                leading: Icon(Icons.storefront),
-                title: Text('Shopping'),
+              ListTile(
+                leading: const Icon(Icons.storefront),
+                title: Text(l10n.shopping),
                 selected: true,
                 selectedColor: Colors.black,
-                selectedTileColor: Color(0x88C9E6FF),
+                selectedTileColor: const Color(0x88C9E6FF),
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.logout,
-                  color: Theme.of(context).errorColor,
+              BlocListener<AuthenticationBloc, AuthenticationState>(
+                listenWhen: (previous, current) =>
+                    previous.isLoggingOut != current.isLoggingOut,
+                listener: (context, state) {
+                  if (state.isLoggingOut) {
+                    LoadingOverlay.of(context)
+                        .show(l10n.itemEllipsis(l10n.loggingOut));
+                  } else {
+                    LoadingOverlay.of(context).hide();
+                  }
+                },
+                child: ListTile(
+                  leading: Icon(
+                    Icons.logout,
+                    color: Theme.of(context).errorColor,
+                  ),
+                  title: Text(
+                    l10n.logOut,
+                    style: TextStyle(color: Theme.of(context).errorColor),
+                  ),
+                  onTap: () => context
+                      .read<AuthenticationBloc>()
+                      .add(AuthenticationLogoutRequested()),
                 ),
-                title: Text(
-                  'Log out',
-                  style: TextStyle(color: Theme.of(context).errorColor),
-                ),
-                onTap: () => context
-                    .read<AuthenticationBloc>()
-                    .add(AuthenticationLogoutRequested()),
               ),
             ],
           ),
