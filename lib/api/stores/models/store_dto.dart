@@ -1,5 +1,7 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pondrop/api/stores/models/models.dart';
+import 'package:pondrop/api/stores/models/retailer_dto.dart';
 
 part 'store_dto.g.dart';
 part 'store_search_result_dto.dart';
@@ -9,96 +11,48 @@ class StoreDto {
   const StoreDto({
     required this.searchScore,
     required this.id,
-    required this.storeNo,
     required this.name,
-    required this.latitude,
-    required this.longitude,
-    required this.location,
-    required this.address,
-    required this.street,
-    required this.city,
-    required this.state,
-    required this.zipCode,
-    required this.phone,
-    required this.openHours,
-    required this.url,
-    required this.provider,
-    required this.updatedDate,
-    required this.country,
     required this.status,
-    required this.directionUrl,
-    required this.banner,
-    required this.stockTicker,
-    required this.fax,
+    required this.externalReferenceId,
+    required this.phone,
     required this.email,
-    required this.locations,
-    required this.keyphrases,
+    required this.openHours,
+    required this.retailerId,
+    required this.retailer,
+    required this.storeTypeId,
+    required this.updatedDate,
+    required this.directionUrl,
+    required this.addresses,
   });
 
   @JsonKey(name: '@search.score')
   final double searchScore;
-  @JsonKey(name: 'Id')
+  @JsonKey(name: 'id')
   final String id;
-  @JsonKey(name: 'StoreNo')
-  final int? storeNo;
-  @JsonKey(name: 'Name')
+  @JsonKey(name: 'externalReferenceId')
+  final String? externalReferenceId;
+  @JsonKey(name: 'name')
   final String name;
-  @JsonKey(name: 'Latitude')
-  final double latitude;
-  @JsonKey(name: 'Longitude')
-  final double longitude;
-  @JsonKey(name: 'Location')
-  final String? location;
-  @JsonKey(name: 'Address')
-  final String address;
-  @JsonKey(name: 'Street')
-  final String? street;
-  @JsonKey(name: 'City')
-  final String? city;
-  @JsonKey(name: 'State')
-  final String? state;
-  @JsonKey(name: 'Zip_Code')
-  final String? zipCode;
-  @JsonKey(name: 'Phone')
+  @JsonKey(name: 'status')
+  final String status;
+  @JsonKey(name: 'phone')
   final String? phone;
-  @JsonKey(name: 'OpenHours')
+  @JsonKey(name: 'openHours')
   final String? openHours;
-  @JsonKey(name: 'URL')
-  final String? url;
-  @JsonKey(name: 'Provider')
-  final String? provider;
-  @JsonKey(name: 'UpdatedDate')
+  @JsonKey(name: 'retailerId')
+  final String? retailerId;
+  @JsonKey(name: 'retailer')
+  final RetailerDto? retailer;
+  @JsonKey(name: 'storeTypeId')
+  final String? storeTypeId;
+  @JsonKey(name: 'updatedDate')
   final DateTime updatedDate;
-  @JsonKey(name: 'Country')
-  final String? country;
-  @JsonKey(name: 'Status')
-  final String? status;
-  @JsonKey(name: 'DirectionURL')
+  @JsonKey(name: 'directionURL')
   final String? directionUrl;
-  @JsonKey(name: 'Banner')
-  final String? banner;
-  @JsonKey(name: 'StockTicker')
-  final String? stockTicker;
-  @JsonKey(name: 'Fax')
-  final String? fax;
-  @JsonKey(name: 'Email')
+  @JsonKey(name: 'email')
   final String? email;
-  @JsonKey(name: 'locations')
-  final List<String>? locations;
-  @JsonKey(name: 'keyphrases')
-  final List<String>? keyphrases;
-
-  double distanceInMeters(Position? position) {
-    if (position == null) {
-      return -1;
-    }
-
-    return Geolocator.distanceBetween(
-      position.latitude,
-      position.longitude,
-      latitude,
-      longitude);
-  }
+  @JsonKey(name: 'addresses')
+  final List<AddressDto>? addresses;
 
   static StoreDto fromJson(Map<String, dynamic> json) =>
     _$StoreDtoFromJson(json);
@@ -106,3 +60,4 @@ class StoreDto {
   Map<String, dynamic> toJson() =>
     _$StoreDtoToJson(this);
 }
+
