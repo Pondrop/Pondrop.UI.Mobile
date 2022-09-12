@@ -7,13 +7,16 @@ import '../../bloc/store_submission_bloc.dart';
 import 'required_view.dart';
 
 class TextFieldControl extends StatelessWidget {
-  const TextFieldControl({super.key, required this.field});
+  const TextFieldControl(
+      {super.key, required this.field, this.readOnly = false});
 
   final StoreSubmissionField field;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      readOnly: readOnly,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: field.label,

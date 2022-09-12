@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/models.dart';
@@ -19,9 +20,9 @@ class StoreSubmissionBloc
     required StoreSubmission submission,
     required SubmissionRepository submissionRepository,
     required LocationRepository locationRepository,
-  }): _submissionRepository = submissionRepository,
-      _locationRepository = locationRepository,
-      super(StoreSubmissionState(visit: visit, submission: submission)) {
+  })  : _submissionRepository = submissionRepository,
+        _locationRepository = locationRepository,
+        super(StoreSubmissionState(visit: visit, submission: submission)) {
     on<StoreSubmissionNextEvent>(_onNext);
     on<StoreSubmissionFieldResultEvent>(_onResult);
   }
@@ -81,7 +82,12 @@ class StoreSubmissionBloc
         await _goToNextStep(emit);
         break;
       case SubmissionStatus.submitting:
-        if (await _submissionRepository.submitResult(state.visit.id, state.submission)) {
+        final position = await _locationRepository.getCurrentPosition();
+        if (await _submissionRepository.submitResult(
+            state.visit.id,
+            state.submission.copy(
+                location: LatLng(
+                    position?.latitude ?? 0, position?.longitude ?? 0)))) {
           emit(state.copyWith(action: SubmissionStatus.submitSuccess));
         } else {
           emit(state.copyWith(action: SubmissionStatus.submitFailed));
@@ -105,7 +111,7 @@ class StoreSubmissionBloc
       }
 
       final nextStep = state.submission.steps[nextStepIdx];
-      
+
       nextStep.latitude = lastKnown?.latitude ?? 0;
       nextStep.longitude = lastKnown?.longitude ?? 0;
       nextStep.started = DateTime.now();

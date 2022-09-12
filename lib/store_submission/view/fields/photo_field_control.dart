@@ -6,13 +6,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
+import 'package:pondrop/store_submission/view/fields/required_view.dart';
 
 import '../../bloc/store_submission_bloc.dart';
 
 class PhotoFieldControl extends StatelessWidget {
-  const PhotoFieldControl({super.key, required this.field});
+  const PhotoFieldControl(
+      {super.key, required this.field, this.readOnly = false});
 
   final StoreSubmissionField field;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -41,14 +44,22 @@ class PhotoFieldControl extends StatelessWidget {
                       height: 12,
                     ),
                     ElevatedButton(
-                      onPressed: () async {
-                        await takePhoto(
-                            context.read<StoreSubmissionBloc>(), field);
-                      },
+                      onPressed: !readOnly
+                          ? () async {
+                              await takePhoto(
+                                  context.read<StoreSubmissionBloc>(), field);
+                            }
+                          : null,
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           foregroundColor: Colors.white),
                       child: Text(l10n.takePhoto),
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    const RequiredView(
+                      padding: EdgeInsets.zero,
                     )
                   ]),
       ),
@@ -59,9 +70,7 @@ class PhotoFieldControl extends StatelessWidget {
       StoreSubmissionBloc bloc, StoreSubmissionField field) async {
     if (field.fieldType == SubmissionFieldType.photo) {
       final image = await ImagePicker().pickImage(
-        source: ImageSource.camera,
-        imageQuality: 65
-      );
+          source: ImageSource.camera, imageQuality: 65, maxWidth: 1512);
       if (image != null) {
         bloc.add(StoreSubmissionFieldResultEvent(
             stepId: field.stepId,

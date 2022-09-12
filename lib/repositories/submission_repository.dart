@@ -88,7 +88,7 @@ class SubmissionRepository {
             final file = File(path);
             if (await file.exists()) {
               result.photoFileName = '${field.templateFieldId}_${i + 1}${p.extension(path)}';
-              result.photoDataBase64 = _toBase64(await _readFileBytes(file));
+              result.photoBase64 = _toBase64(await _readFileBytes(file));
             }
           }
         }

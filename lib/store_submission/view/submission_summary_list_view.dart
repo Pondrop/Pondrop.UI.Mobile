@@ -1,42 +1,55 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/store_submission.dart';
 
-import '../bloc/store_submission_bloc.dart';
 import 'submission_field_view.dart';
 
 class SubmissionSummaryListView extends StatelessWidget {
-  const SubmissionSummaryListView({super.key, required this.step});
+  const SubmissionSummaryListView(
+      {super.key,
+      required this.submission,
+      required this.stepIdx,
+      this.readOnly = false});
 
-  final StoreSubmissionStep step;
+  final StoreSubmission submission;
+  final int stepIdx;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
+    final step = submission.steps[stepIdx];
+    final fields = step.fields;
+
     assert(step.isSummary,
         '"SubmissionSummaryListView" invalid state, current step must be summary');
-    final state = context.read<StoreSubmissionBloc>().state;
-    final currentStepIdx = max(0, state.currentStepIdx);
 
     return ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         controller: ModalScrollController.of(context),
         itemBuilder: (BuildContext context, int index) {
-          if (index < currentStepIdx) {
-            return _stepItem(context, state.submission.steps[index]);
+          if (index < stepIdx) {
+            if (submission.steps[index].fields.every((e) => e.result.isEmpty)) {
+              return const SizedBox.shrink();
+            }
+
+            return _stepItem(context, submission.steps[index]);
           }
 
-          final field = step.fields[index - currentStepIdx];
+          final field = fields[index - stepIdx];
           return _summaryFieldItem(context, field);
         },
         separatorBuilder: (context, index) {
-          return _itemSeparator(index, currentStepIdx, step.fields.length);
+          if (index < stepIdx &&
+              submission.steps[index].fields.every((e) => e.result.isEmpty)) {
+            return const SizedBox.shrink();
+          }
+
+          return _itemSeparator(index, stepIdx, fields.length);
         },
-        itemCount: currentStepIdx + step.fields.length);
+        itemCount: stepIdx + fields.length);
   }
 
   Widget _stepItem(BuildContext context, StoreSubmissionStep step) {
@@ -135,6 +148,7 @@ class SubmissionSummaryListView extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 16),
         child: SubmissionFieldView(
           field: field,
+          readOnly: readOnly,
         ));
   }
 

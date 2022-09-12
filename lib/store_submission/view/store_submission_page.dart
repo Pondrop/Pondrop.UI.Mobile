@@ -135,7 +135,7 @@ class StoreSubmissionPage extends StatelessWidget {
                                     }
                                   : null,
                               child: Text(
-                                state.isLastStep ? l10n.done : l10n.next,
+                                state.isLastStep ? l10n.send : l10n.next,
                                 style: AppStyles.linkTextStyle.copyWith(
                                     fontWeight: FontWeight.w500,
                                     color: state.currentStep.isComplete
@@ -159,7 +159,8 @@ class StoreSubmissionPage extends StatelessWidget {
 
                   if (state.currentStep.isSummary) {
                     return SubmissionSummaryListView(
-                      step: state.currentStep,
+                      submission: state.submission,
+                      stepIdx: state.currentStepIdx,
                     );
                   }
 

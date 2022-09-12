@@ -4,6 +4,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
+import 'package:pondrop/store_submission/view/store_submission_summary_page.dart';
 import 'package:pondrop/style/style.dart';
 import 'package:pondrop/task_templates/task_templates.dart';
 
@@ -67,6 +68,9 @@ class StoreReportPage extends StatelessWidget {
                           submissionTemplate: state.templates.firstWhere((e) =>
                               e.id == state.submissions[index].templateId),
                           submissionResult: state.submissions[index],
+                          onTap: () => Navigator.of(context).push(
+                              StoreSubmissionSummaryPage.route(
+                                  state.submissions[index])),
                         ),
                         itemCount: state.submissions.length,
                       );

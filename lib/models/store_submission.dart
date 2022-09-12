@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
-import 'package:uuid/uuid.dart';
 
 extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
   StoreSubmission toStoreSubmission() {
@@ -44,6 +44,8 @@ extension StoreSubmissionResultMapping on StoreSubmission {
     return SubmissionResultDto(
       submissionTemplateId: templateId,
       storeVisitId: storeVisitId,
+      latitude: latitude,
+      longitude: longitude,
       steps: steps
           .map((step) => SubmissionStepResultDto(
                 templateStepId: step.stepId,
@@ -52,16 +54,15 @@ extension StoreSubmissionResultMapping on StoreSubmission {
                 startedUtc: step.started.toUtc(),
                 fields: step.fields
                     .map((field) => SubmissionFieldResultDto(
-                          templateFieldId: field.fieldId,
-                          values: [
-                            SubmissionFieldResultValueDto(
-                              stringValue: field.result.stringValue,
-                              intValue: field.result.intValue,
-                              doubleValue: field.result.doubleValue,
-                              photoPathValue: field.result.photoPathValue,
-                            )
-                          ]
-                        ))
+                            templateFieldId: field.fieldId,
+                            values: [
+                              SubmissionFieldResultValueDto(
+                                stringValue: field.result.stringValue,
+                                intValue: field.result.intValue,
+                                doubleValue: field.result.doubleValue,
+                                photoPathValue: field.result.photoPathValue,
+                              )
+                            ]))
                     .toList(),
               ))
           .toList(),
@@ -88,10 +89,12 @@ class StoreSubmission extends Equatable {
 
   final List<StoreSubmissionStep> steps;
 
-  StoreSubmission copy() {
+  StoreSubmission copy({LatLng? location}) {
     return StoreSubmission(
       templateId: templateId,
       title: title,
+      latitude: location?.latitude ?? latitude,
+      longitude: location?.longitude ?? longitude,
       description: description,
       steps: steps.map((e) => e.copy()).toList(),
     );
@@ -138,7 +141,8 @@ class StoreSubmissionStep extends Equatable {
 
   final List<StoreSubmissionField> fields;
 
-  bool get isComplete => fields.every((e) => !e.mandatory || !e.result.isEmpty);
+  bool get isComplete => fields.isEmpty || fields.every((e) => !e.mandatory || !e.result.isEmpty);
+  bool get isEmpty => fields.isEmpty || fields.every((e) => e.result.isEmpty);
 
   StoreSubmissionStep copy() {
     return StoreSubmissionStep(
