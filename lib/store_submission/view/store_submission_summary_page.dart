@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pondrop/models/models.dart';
+import 'package:pondrop/styles/pondrop_styles.dart';
+import 'package:pondrop/styles/route_transitions.dart';
 
 import 'submission_summary_list_view.dart';
 
@@ -8,20 +10,8 @@ class StoreSubmissionSummaryPage extends StatelessWidget {
       : super(key: key);
 
   static Route route(StoreSubmission submission) {
-    return PageRouteBuilder<void>(
-        pageBuilder: (_, __, ___) => StoreSubmissionSummaryPage(submission: submission),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(0, 1);
-          const end = Offset.zero;
-          final tween = Tween(begin: begin, end: end);
-          final offsetAnimation = animation.drive(tween);
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 300),        
-        reverseTransitionDuration: Duration.zero);
+    return RouteTransitions.modalSlideRoute(
+        pageBuilder: (_) => StoreSubmissionSummaryPage(submission: submission));
   }
 
   final StoreSubmission submission;
@@ -33,9 +23,7 @@ class StoreSubmissionSummaryPage extends StatelessWidget {
             elevation: 0,
             title: Text(
               submission.title,
-              style:
-                  const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
-            ),
+              style: PondropStyles.appBarTitleTextStyle),
             centerTitle: true,
             leading: IconButton(
                 icon: const Icon(
@@ -46,6 +34,9 @@ class StoreSubmissionSummaryPage extends StatelessWidget {
                   Navigator.of(context).pop();
                 })),
         body: SubmissionSummaryListView(
-            submission: submission, stepIdx: submission.steps.length - 1, readOnly: true,));
+          submission: submission,
+          stepIdx: submission.steps.length - 1,
+          readOnly: true,
+        ));
   }
 }

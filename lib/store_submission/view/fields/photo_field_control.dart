@@ -7,6 +7,7 @@ import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/store_submission/view/fields/required_view.dart';
+import 'package:pondrop/styles/dims.dart';
 
 import '../../bloc/store_submission_bloc.dart';
 
@@ -41,7 +42,7 @@ class PhotoFieldControl extends StatelessWidget {
                       size: 48,
                     ),
                     const SizedBox(
-                      height: 12,
+                      height: Dims.large,
                     ),
                     ElevatedButton(
                       onPressed: !readOnly
@@ -56,11 +57,12 @@ class PhotoFieldControl extends StatelessWidget {
                       child: Text(l10n.takePhoto),
                     ),
                     const SizedBox(
-                      height: 12,
+                      height: Dims.large,
                     ),
-                    const RequiredView(
-                      padding: EdgeInsets.zero,
-                    )
+                    if (field.mandatory)
+                      const RequiredView(
+                        padding: EdgeInsets.zero,
+                      )
                   ]),
       ),
     );

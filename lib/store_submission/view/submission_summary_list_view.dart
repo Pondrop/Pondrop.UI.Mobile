@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/store_submission.dart';
+import 'package:pondrop/styles/styles.dart';
 
 import 'submission_field_view.dart';
 
@@ -26,8 +27,8 @@ class SubmissionSummaryListView extends StatelessWidget {
     assert(step.isSummary,
         '"SubmissionSummaryListView" invalid state, current step must be summary');
 
-    return ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+    return ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: Dims.large),
         controller: ModalScrollController.of(context),
         itemBuilder: (BuildContext context, int index) {
           if (index < stepIdx) {
@@ -35,19 +36,34 @@ class SubmissionSummaryListView extends StatelessWidget {
               return const SizedBox.shrink();
             }
 
-            return _stepItem(context, submission.steps[index]);
+            return Column(
+              children: [
+                if (index > 0)
+                  Divider(
+                      indent: Dims.large,
+                      height: Dims.small,
+                      thickness: 1,
+                      color: Colors.grey[400]),
+                _stepItem(context, submission.steps[index])
+              ],
+            );
           }
 
           final field = fields[index - stepIdx];
-          return _summaryFieldItem(context, field);
-        },
-        separatorBuilder: (context, index) {
-          if (index < stepIdx &&
-              submission.steps[index].fields.every((e) => e.result.isEmpty)) {
-            return const SizedBox.shrink();
-          }
-
-          return _itemSeparator(index, stepIdx, fields.length);
+          return Column(
+            children: [
+              if (index == stepIdx)
+                Padding(
+                  padding: Dims.xLargeBottomEdgeInsets,
+                  child: Divider(
+                      indent: Dims.large,
+                      height: Dims.small,
+                      thickness: 1,
+                      color: Colors.grey[400]),
+                ),
+              _summaryFieldItem(context, field)
+            ],
+          );
         },
         itemCount: stepIdx + fields.length);
   }
@@ -73,7 +89,7 @@ class SubmissionSummaryListView extends StatelessWidget {
               .copyWith(color: Colors.grey, fontWeight: FontWeight.w400),
         ));
         textWidgets.add(const SizedBox(
-          height: 2,
+          height: Dims.xSmall,
         ));
         textWidgets.add(Text(i.resultString,
             style: Theme.of(context)
@@ -81,7 +97,7 @@ class SubmissionSummaryListView extends StatelessWidget {
                 .bodyText1!
                 .copyWith(fontWeight: FontWeight.w400)));
         textWidgets.add(const SizedBox(
-          height: 8,
+          height: Dims.small,
         ));
       }
     }
@@ -95,7 +111,7 @@ class SubmissionSummaryListView extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: Dims.small),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +124,7 @@ class SubmissionSummaryListView extends StatelessWidget {
                 .copyWith(fontWeight: FontWeight.w400),
           ),
           const SizedBox(
-            height: 8,
+            height: Dims.small,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -120,7 +136,7 @@ class SubmissionSummaryListView extends StatelessWidget {
                 children: photoWidgets,
               ),
               const SizedBox(
-                width: 8,
+                width: Dims.small,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -145,20 +161,10 @@ class SubmissionSummaryListView extends StatelessWidget {
 
   Widget _summaryFieldItem(BuildContext context, StoreSubmissionField field) {
     return Padding(
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: Dims.largeBottomEdgeInsets,
         child: SubmissionFieldView(
           field: field,
           readOnly: readOnly,
         ));
-  }
-
-  Widget _itemSeparator(int idx, int stepsLength, int summaryFieldsLength) {
-    return idx > stepsLength
-        ? const SizedBox.shrink()
-        : Padding(
-            padding: EdgeInsets.only(bottom: idx == stepsLength - 1 ? 24 : 8),
-            child: Divider(
-                indent: 16, height: 1, thickness: 1, color: Colors.grey[400]),
-          );
   }
 }

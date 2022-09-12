@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/login/login.dart';
 import 'package:pondrop/repositories/repositories.dart';
+import 'package:pondrop/styles/styles.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -14,7 +15,6 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     return Scaffold(
       body: SafeArea(
         child: BlocProvider(
@@ -28,12 +28,12 @@ class LoginPage extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32),
+                padding: const EdgeInsets.symmetric(vertical: Dims.xxlarge),
                 child: SvgPicture.asset('assets/pondrop.svg'),
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  padding: Dims.largeEdgeInsets,
                   child: LoginForm(),
                 )
               ),

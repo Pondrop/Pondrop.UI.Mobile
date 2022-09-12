@@ -10,19 +10,21 @@ import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/store_submission/view/camera_access_view.dart';
 import 'package:pondrop/store_submission/view/submission_field_view.dart';
-import 'package:pondrop/style/style.dart';
+import 'package:pondrop/styles/styles.dart';
 
 import '../bloc/store_submission_bloc.dart';
 import 'fields/fields.dart';
 import 'submission_summary_list_view.dart';
 
 class StoreSubmissionPage extends StatelessWidget {
-  const StoreSubmissionPage({Key? key, required this.visit, required this.submission})
+  const StoreSubmissionPage(
+      {Key? key, required this.visit, required this.submission})
       : super(key: key);
 
   static Route route(StoreVisitDto visit, StoreSubmission submission) {
     return MaterialPageRoute<void>(
-        builder: (_) => StoreSubmissionPage(visit: visit, submission: submission));
+        builder: (_) =>
+            StoreSubmissionPage(visit: visit, submission: submission));
   }
 
   final StoreVisitDto visit;
@@ -96,7 +98,7 @@ class StoreSubmissionPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.all(8),
+                padding: Dims.smallEdgeInsets,
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -104,7 +106,7 @@ class StoreSubmissionPage extends StatelessWidget {
                       TextButton(
                         child: Text(
                           l10n.cancel,
-                          style: AppStyles.linkTextStyle,
+                          style: PondropStyles.linkTextStyle,
                         ),
                         onPressed: () {
                           Navigator.of(context).pop();
@@ -120,7 +122,7 @@ class StoreSubmissionPage extends StatelessWidget {
                               state.currentStep.title.isNotEmpty
                                   ? state.currentStep.title
                                   : state.submission.title,
-                              style: AppStyles.popupTitleTextStyle,
+                              style: PondropStyles.popupTitleTextStyle,
                             );
                           },
                         ),
@@ -136,7 +138,7 @@ class StoreSubmissionPage extends StatelessWidget {
                                   : null,
                               child: Text(
                                 state.isLastStep ? l10n.send : l10n.next,
-                                style: AppStyles.linkTextStyle.copyWith(
+                                style: PondropStyles.linkTextStyle.copyWith(
                                     fontWeight: FontWeight.w500,
                                     color: state.currentStep.isComplete
                                         ? null
@@ -168,7 +170,7 @@ class StoreSubmissionPage extends StatelessWidget {
 
                   for (final i in state.currentStep.fields) {
                     children.add(Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
+                      padding: Dims.largeBottomEdgeInsets,
                       child: SubmissionFieldView(
                         field: i,
                       ),
@@ -178,7 +180,7 @@ class StoreSubmissionPage extends StatelessWidget {
                   return SingleChildScrollView(
                       controller: ModalScrollController.of(context),
                       child: Padding(
-                          padding: const EdgeInsets.all(8),
+                          padding: Dims.smallEdgeInsets,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,8 +1,11 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
-class AppColors {
+class PondropColors {
   static const primaryColor = Color(0xFF006492);
   static const primaryLightColor = Color(0xFFC8E1FD);
+
+  static const selectedListItemColor = Color(0x88C9E6FF);
+
   static const errorColor = Color(0xFFBA1A1A);
   static const linkColor = Color(0xFF007AFF);
 }
