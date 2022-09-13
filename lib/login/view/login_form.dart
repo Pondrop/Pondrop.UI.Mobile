@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/login/login.dart';
+import 'package:pondrop/styles/styles.dart';
 
 class LoginForm extends StatelessWidget {
   LoginForm({super.key});
@@ -34,16 +35,16 @@ class LoginForm extends StatelessWidget {
               l10n.getStarted,
               style: Theme.of(context).textTheme.headline6,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: Dims.medium),
             Text(
               l10n.enterValidEmailToContinue,
               style: Theme.of(context).textTheme.bodyText1,
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: Dims.xlarge),
             _emailField(),
-            //const Padding(padding: EdgeInsets.all(12)),
+            //const Padding(padding: EdgeInsets.all(Dims.medium)),
             //_passwordField(),
-            //const Padding(padding: EdgeInsets.all(12)),
+            //const Padding(padding: EdgeInsets.all(Dims.medium)),
             const Spacer(),
             _loginButton(),
           ],

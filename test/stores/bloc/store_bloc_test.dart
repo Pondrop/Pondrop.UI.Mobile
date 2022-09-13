@@ -1,8 +1,10 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
+
+import '../../fake_data/fake_data.dart';
 
 class MockLocationRepository extends Mock implements LocationRepository {}
 
@@ -26,14 +28,114 @@ void main() {
         equals(const StoreState()));
     });
 
-    blocTest<StoreBloc, StoreState>(
-      'state is Failure',
-  
-      build: () => StoreBloc(
-          storeRepository: storeRepository,
-          locationRepository: locationRepository,),
-      act: (bloc) => bloc.add(const StoreFetched()),
-      expect: () => [const StoreState(status: StoreStatus.failure)],
-    );
-  });
+    test('emit stores when StoreFetched', () async {
+      final stores = [ FakeStore.fakeStore() ];
+
+      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+          .thenAnswer((invocation) => Future<Position?>.value(null));
+      when(() => storeRepository.fetchStores(any(), any(), any()))
+          .thenAnswer((invocation) => Future.value(stores));      
+
+      final bloc = StoreBloc(
+        storeRepository: storeRepository,
+        locationRepository: locationRepository,
+      );
+
+      bloc.add(const StoreFetched());
+
+      await bloc.stream.firstWhere((e) => e.status != StoreStatus.loading);
+
+      expect(bloc.state.status, StoreStatus.success);
+      expect(bloc.state.stores, stores);
+      expect(bloc.state.hasReachedMax, false);
+    });
+
+    test('emit stores when StoreFetched set hasReachedMax', () async {
+      final stores = [ FakeStore.fakeStore() ];
+
+      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+          .thenAnswer((invocation) => Future<Position?>.value(null));
+      when(() => storeRepository.fetchStores(any(), any(), any()))
+          .thenAnswer((invocation) => Future.value(stores));      
+
+      final bloc = StoreBloc(
+        storeRepository: storeRepository,
+        locationRepository: locationRepository,
+      );
+
+      bloc.add(const StoreFetched());
+      await bloc.stream.firstWhere((e) => e.status != StoreStatus.loading);
+
+      when(() => storeRepository.fetchStores(any(), any(), any()))
+          .thenAnswer((invocation) => Future.value(const []));
+
+      bloc.add(const StoreFetched());
+      await bloc.stream.firstWhere((e) => e.status != StoreStatus.loading);
+
+      verify(() => storeRepository.fetchStores(any(), any(), any())).called(2);
+
+      expect(bloc.state.status, StoreStatus.success);
+      expect(bloc.state.stores, stores);
+      expect(bloc.state.hasReachedMax, true);
+    });
+
+    test('emit failure when StoreFetched throws', () async {
+      final stores = [ FakeStore.fakeStore() ];
+
+      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+          .thenAnswer((invocation) => Future<Position?>.value(null));
+      when(() => storeRepository.fetchStores(any(), any(), any()))
+          .thenThrow(Exception());      
+
+      final bloc = StoreBloc(
+        storeRepository: storeRepository,
+        locationRepository: locationRepository,
+      );
+
+      bloc.add(const StoreFetched());
+      await bloc.stream.firstWhere((e) => e.status != StoreStatus.loading);
+
+      expect(bloc.state.status, StoreStatus.failure);
+    });
+
+    test('emit stores when StoreRefreshed', () async {
+      final stores = [ FakeStore.fakeStore() ];
+
+      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+          .thenAnswer((invocation) => Future<Position?>.value(null));
+      when(() => storeRepository.fetchStores(any(), any(), any()))
+          .thenAnswer((invocation) => Future.value(stores));      
+
+      final bloc = StoreBloc(
+        storeRepository: storeRepository,
+        locationRepository: locationRepository,
+      );
+
+      bloc.add(const StoreRefreshed());
+      await bloc.stream.firstWhere((e) => e.status != StoreStatus.loading);
+
+      expect(bloc.state.status, StoreStatus.success);
+      expect(bloc.state.stores, stores);
+      expect(bloc.state.hasReachedMax, false);
+    });
+
+    test('emit failure when StoreRefreshed throws', () async {
+      final stores = [ FakeStore.fakeStore() ];
+
+      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+          .thenAnswer((invocation) => Future<Position?>.value(null));
+      when(() => storeRepository.fetchStores(any(), any(), any()))
+          .thenThrow(Exception());
+
+      final bloc = StoreBloc(
+        storeRepository: storeRepository,
+        locationRepository: locationRepository,
+      );
+
+      bloc.add(const StoreRefreshed());
+      await bloc.stream.firstWhere((e) => e.status != StoreStatus.loading);
+
+      expect(bloc.state.status, StoreStatus.failure);
+    });
+  });  
 }

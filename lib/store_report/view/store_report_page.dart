@@ -4,7 +4,8 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
-import 'package:pondrop/style/style.dart';
+import 'package:pondrop/store_submission/view/store_submission_summary_page.dart';
+import 'package:pondrop/styles/styles.dart';
 import 'package:pondrop/task_templates/task_templates.dart';
 
 import '../bloc/store_report_bloc.dart';
@@ -45,8 +46,7 @@ class StoreReportPage extends StatelessWidget {
                 elevation: 0,
                 title: Text(
                   l10n.storeActivity,
-                  style: const TextStyle(
-                      fontSize: 18.0, fontWeight: FontWeight.w500),
+                  style: PondropStyles.appBarTitleTextStyle,
                 ),
                 centerTitle: true),
             body: Column(
@@ -67,6 +67,9 @@ class StoreReportPage extends StatelessWidget {
                           submissionTemplate: state.templates.firstWhere((e) =>
                               e.id == state.submissions[index].templateId),
                           submissionResult: state.submissions[index],
+                          onTap: () => Navigator.of(context).push(
+                              StoreSubmissionSummaryPage.route(
+                                  state.submissions[index])),
                         ),
                         itemCount: state.submissions.length,
                       );
@@ -80,7 +83,7 @@ class StoreReportPage extends StatelessWidget {
                   case StoreReportVisitStatus.starting:
                     return ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryLightColor,
+                            backgroundColor: PondropColors.primaryLightColor,
                             foregroundColor: Colors.black),
                         onPressed: () {},
                         child: const SizedBox(
@@ -93,7 +96,7 @@ class StoreReportPage extends StatelessWidget {
                       icon: const Icon(Icons.add),
                       label: Text(l10n.addItem(l10n.task.toLowerCase())),
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryLightColor,
+                          backgroundColor: PondropColors.primaryLightColor,
                           foregroundColor: Colors.black),
                       onPressed: () async {
                         await Navigator.of(context)
@@ -124,7 +127,7 @@ class StoreReportPage extends StatelessWidget {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
+              padding: const EdgeInsets.fromLTRB(0, Dims.small, 0, Dims.large),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

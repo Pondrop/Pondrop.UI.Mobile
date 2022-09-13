@@ -5,7 +5,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/search_store/search_store.dart';
 import 'package:pondrop/search_store/view/search_store_list.dart';
+import 'package:pondrop/search_store/view/search_store_list_item.dart';
 
+import '../../fake_data/fake_data.dart';
 import '../../helpers/helpers.dart';
 
 class MockLocationRepository extends Mock implements LocationRepository {}
@@ -26,12 +28,34 @@ void main() {
       expect(SearchStorePage.route(), isA<MaterialPageRoute>());
     });
 
-    testWidgets('renders a Search Store List', (tester) async {
+    testWidgets('renders a SearchStoresList', (tester) async {
       await tester.pumpApp(MultiRepositoryProvider(providers: [
         RepositoryProvider.value(value: storeRepository),
         RepositoryProvider.value(value: locationRepository),
       ], child: const SearchStorePage()));
       expect(find.byType(SearchStoresList), findsOneWidget);
+    });
+
+    testWidgets('renders a SearchStoreListItem', (tester) async {
+      const query = 'Flutter';
+
+      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+          .thenAnswer((_) => Future.value(null));
+      when(() => storeRepository.fetchStores(query, 0, any()))
+          .thenAnswer((_) => Future.value([FakeStore.fakeStore()]));
+      
+      await tester.pumpApp(MultiRepositoryProvider(providers: [
+        RepositoryProvider.value(value: storeRepository),
+        RepositoryProvider.value(value: locationRepository),
+      ], child: const SearchStorePage()));
+
+      await tester.enterText(find.byKey(SearchStorePage.searchTextFieldKey), query);
+      await tester.pumpAndSettle();
+
+      verify(() => storeRepository.fetchStores(query, 0, any())).called(1);
+
+      expect(find.byType(SearchStoresList), findsOneWidget);
+      expect(find.byType(SearchStoreListItem), findsOneWidget);
     });
   });
 }

@@ -5,6 +5,7 @@ import 'package:pondrop/models/models.dart';
 import 'package:pondrop/shared/view/bottom_loader.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
 import 'package:pondrop/stores/view/store_list_item.dart';
+import 'package:pondrop/styles/styles.dart';
 
 class StoresList extends StatefulWidget {
   final String header;
@@ -31,11 +32,11 @@ class _StoresListState extends State<StoresList> {
       onRefresh: () {
         final bloc = context.read<StoreBloc>()..add(const StoreRefreshed());
         return bloc.stream
-            .firstWhere((e) => e.status != StoreStatus.refreshing);
+            .firstWhere((e) => e.status != StoreStatus.loading);
       },
       child: BlocBuilder<StoreBloc, StoreState>(
         buildWhen: (previous, current) =>
-            current.status != StoreStatus.refreshing,
+            current.status != StoreStatus.loading,
         builder: (context, state) {
           if (state.status == StoreStatus.initial) {
             return const Center(child: CircularProgressIndicator());
@@ -66,7 +67,7 @@ class _StoresListState extends State<StoresList> {
             // The header
             Container(
               alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.symmetric(horizontal: Dims.large, vertical: Dims.medium),
               child: Text(widget.header,
                   style: TextStyle(
                       color: Colors.grey[800],

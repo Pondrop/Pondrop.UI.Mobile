@@ -5,7 +5,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pondrop/api/submission_api.dart';
-import 'package:pondrop/api/submissions/models/submission_template_dto.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 

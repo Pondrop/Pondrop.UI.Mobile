@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/search_store/bloc/search_store_bloc.dart';
 import 'package:pondrop/search_store/view/search_store_list_item.dart';
 import 'package:pondrop/shared/view/bottom_loader.dart';
+import 'package:pondrop/styles/styles.dart';
 
 class SearchStoresList extends StatefulWidget {
   final String header;
@@ -18,40 +20,41 @@ class _StoresListState extends State<SearchStoresList> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return BlocBuilder<SearchStoreBloc, SearchStoreState>(
       builder: (context, state) {
         switch (state.status) {
           case SearchStoreStatus.failure:
             return Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    children: const [
-                      SearchHeader(header: 'SEARCH RESULTS'),
-                      Padding(
-                          padding: EdgeInsets.only(top: 40),
-                          child: NoResultsFound())
-                    ],
-                  ));
+                padding: Dims.mediumTopEdgeInsets,
+                child: Column(
+                  children: [
+                    SearchHeader(header: l10n.searchResults.toUpperCase()),
+                    const Expanded(child: Center(child: NoResultsFound())),
+                  ],
+                ));
           case SearchStoreStatus.success:
             if (state.stores.isEmpty) {
               return Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    children: const [
-                      SearchHeader(header: 'SEARCH RESULTS'),
-                      Padding(
-                          padding: EdgeInsets.only(top: 40),
-                          child: NoResultsFound())
-                    ],
-                  ));
+                padding: Dims.mediumTopEdgeInsets,
+                child: Column(
+                  children: [
+                    SearchHeader(header: l10n.searchResults.toUpperCase()),
+                    const Padding(
+                        padding: Dims.xxLargeTopEdgeInsets,
+                        child: Center(child: NoResultsFound())),
+                  ],
+                ),
+              );
             }
             return ListView.builder(
-              padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
+              padding: const EdgeInsets.fromLTRB(
+                  0, Dims.large, Dims.xSmall, Dims.medium),
               itemBuilder: (BuildContext context, int index) {
                 if (index == 0) {
                   return Column(children: [
                     // The header
-                    const SearchHeader(header: "SEARCH RESULTS"),
+                    SearchHeader(header: l10n.searchResults.toUpperCase()),
                     index >= state.stores.length
                         ? const BottomLoader()
                         : SearchStoreListItem(store: state.stores[index])
@@ -65,7 +68,7 @@ class _StoresListState extends State<SearchStoresList> {
               controller: _scrollController,
             );
           case SearchStoreStatus.initial:
-            return const Center(child: Text(''));
+            return const SizedBox.shrink();
         }
       },
     );
@@ -79,16 +82,20 @@ class NoResultsFound extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      const Center(
-          child: Text(
-        'No results found',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-      )),
-      const Padding(
-          padding: const EdgeInsets.only(top: 5),
-          child: Center(child: Text('Try again using other search terms.'))),
-    ]);
+    final l10n = context.l10n;
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            l10n.noResultsFound,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+          ),
+          Padding(
+              padding: Dims.xSmallTopEdgeInsets,
+              child: Center(child: Text(l10n.tryAgainUsingOtherSearchTerms))),
+        ]);
   }
 }
 
@@ -104,7 +111,8 @@ class SearchHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topLeft,
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.symmetric(
+          horizontal: Dims.large, vertical: Dims.medium),
       child: Text(header,
           style: TextStyle(
               color: Colors.grey[800],

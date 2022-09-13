@@ -12,14 +12,6 @@ import 'package:stream_transform/stream_transform.dart';
 part 'store_event.dart';
 part 'store_state.dart';
 
-const throttleDuration = Duration(milliseconds: 100);
-
-EventTransformer<E> throttleDroppable<E>(Duration duration) {
-  return (events, mapper) {
-    return droppable<E>().call(events.throttle(duration), mapper);
-  };
-}
-
 class StoreBloc extends Bloc<StoreEvent, StoreState> {
   StoreBloc(
       {required StoreRepository storeRepository,
@@ -27,14 +19,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
       : _storeRepository = storeRepository,
         _locationRepository = locationRepository,
         super(const StoreState()) {
-    on<StoreFetched>(
-      _onStoreFetched,
-      transformer: throttleDroppable(throttleDuration),
-    );
-    on<StoreRefreshed>(
-      _onStoreRefresh,
-      transformer: throttleDroppable(throttleDuration),
-    );
+    on<StoreFetched>(_onStoreFetched);
+    on<StoreRefreshed>(_onStoreRefresh);
   }
 
   final StoreRepository _storeRepository;
@@ -44,17 +30,18 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     StoreFetched event,
     Emitter<StoreState> emit,
   ) async {
-    if (state.hasReachedMax) return;
+    if (state.hasReachedMax || state.status == StoreStatus.loading) {
+      return;
+    }
+
     try {
       if (state.status == StoreStatus.initial) {
-        Position? position;
-        if (await _locationRepository.isLocationServiceEnabled()) {
-         position = await _locationRepository
-            .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
-        }
+        emit(state.copyWith(status: StoreStatus.loading));
 
-        final stores =
-            await _storeRepository.fetchStores(sortByPosition: position);
+        final position = await _locationRepository
+            .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
+
+        final stores = await _storeRepository.fetchStores('', 0, position);
 
         emit(
           state.copyWith(
@@ -65,10 +52,14 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           ),
         );
       } else {
-        final stores = await _storeRepository.fetchStores(sortByPosition: state.position, skipIdx: state.stores.length);
+        emit(state.copyWith(status: StoreStatus.loading));
+
+        final stores = await _storeRepository.fetchStores(
+            '', state.stores.length, state.position);
 
         if (stores.isEmpty) {
-          emit(state.copyWith(hasReachedMax: true));
+          emit(
+              state.copyWith(status: StoreStatus.success, hasReachedMax: true));
         } else {
           emit(
             state.copyWith(
@@ -89,16 +80,16 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     StoreRefreshed event,
     Emitter<StoreState> emit,
   ) async {
-    if (state.status == StoreStatus.refreshing) {
+    if (state.status == StoreStatus.loading) {
       return;
     }
 
-    emit(state.copyWith(status: StoreStatus.refreshing));
+    emit(state.copyWith(status: StoreStatus.loading));
 
     try {
       final position = await _locationRepository
           .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
-      final stores = await _storeRepository.fetchStores(sortByPosition: position);
+      final stores = await _storeRepository.fetchStores('', 0, position);
 
       emit(
         state.copyWith(

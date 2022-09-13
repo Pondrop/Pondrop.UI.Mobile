@@ -11,11 +11,11 @@ class StoreRepository {
   final UserRepository _userRepository;
   final StoreApi _storeApi;
 
-  Future<List<Store>> fetchStores({
-    String keyword = '',
-    int skipIdx = 0,
+  Future<List<Store>> fetchStores(
+    String keyword,
+    int skipIdx,
     Position? sortByPosition,
-  }) async {
+  ) async {
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {

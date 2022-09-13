@@ -131,5 +131,26 @@
     "somethingWentWrong": "Something went wrong",
     "@somethingWentWrong": {},
     "pleaseTryAgain": "Please try again.",
-    "@pleaseTryAgain": {}
+    "@pleaseTryAgain": {},
+    "send": "Send",
+    "@send": {},
+    "itemHyphenItem": "{item1} - {item2}",
+    "@itemHyphenItem": {
+        "placeholders": {
+            "item1": {
+                "type" : "String"
+            },
+            "item2": {
+                "type" : "String"
+            }
+        }
+    },
+    "noResultsFound": "No results found",
+    "@noResultsFound": {},
+    "tryAgainUsingOtherSearchTerms": "Try again using other search terms.",
+    "@tryAgainUsingOtherSearchTerms": {},
+    "searchResults": "Search results",
+    "@searchResults": {},
+    "storesNearby": "Stores nearby",
+    "@storesNearby": {}
 }

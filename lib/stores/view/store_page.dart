@@ -8,6 +8,7 @@ import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/search_store/view/search_store_page.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
 import 'package:pondrop/stores/view/store_list.dart';
+import 'package:pondrop/styles/styles.dart';
 
 class StorePage extends StatelessWidget {
   const StorePage({super.key});
@@ -24,11 +25,10 @@ class StorePage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
             title: Text(l10n.selectAItem(l10n.store.toLowerCase()),
-                style: const TextStyle(
-                    fontSize: 18.0, fontWeight: FontWeight.w500)),
+                style: PondropStyles.appBarTitleTextStyle),
             actions: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(right: 10.0),
+                padding: Dims.mediumRightEdgeInsets,
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(context, SearchStorePage.route());
@@ -63,7 +63,7 @@ class StorePage extends StatelessWidget {
                 title: Text(l10n.shopping),
                 selected: true,
                 selectedColor: Colors.black,
-                selectedTileColor: const Color(0x88C9E6FF),
+                selectedTileColor: PondropColors.selectedListItemColor,
               ),
               BlocListener<AuthenticationBloc, AuthenticationState>(
                 listenWhen: (previous, current) =>
@@ -99,7 +99,7 @@ class StorePage extends StatelessWidget {
             locationRepository:
                 RepositoryProvider.of<LocationRepository>(context),
           )..add(const StoreFetched()),
-          child: const StoresList(null, 'STORES NEARBY'),
+          child: StoresList(null, l10n.storesNearby.toUpperCase()),
         ));
   }
 }

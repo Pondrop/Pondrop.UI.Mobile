@@ -41,39 +41,23 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
     final searchTerm = event.text;
 
     if (searchTerm.isEmpty) {
-      emit(
-          state.copyWith(
-            status: SearchStoreStatus.initial,
-            query: searchTerm,
-            stores: <Store>[],
-          ),
-        );
-
-        return;
+      emit(const SearchStoreState());
+      return;
     }
 
     try {
       final position = await _locationRepository
-        .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
-      final stores = await _storeService.fetchStores(keyword: searchTerm, sortByPosition: position);
+          .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
+      final stores = await _storeService.fetchStores(searchTerm, 0, position);
 
-      if (stores.isEmpty) {
-        emit(state.copyWith(
-            status: SearchStoreStatus.success,
-            query: searchTerm,
-            stores: <Store>[],
-            position: position,
-          ));
-      } else {
-        emit(
-          state.copyWith(
-            status: SearchStoreStatus.success,
-            query: searchTerm,
-            stores: stores,
-            position: position,
-          ),
-        );
-      }
+      emit(
+        state.copyWith(
+          status: SearchStoreStatus.success,
+          query: searchTerm,
+          stores: stores,
+          position: position,
+        ),
+      );
     } catch (ex) {
       emit(state.copyWith(status: SearchStoreStatus.failure));
     }

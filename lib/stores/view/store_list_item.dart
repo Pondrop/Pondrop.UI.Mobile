@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/store.dart';
 import 'package:pondrop/store_report/store_report.dart';
+import 'package:pondrop/styles/dims.dart';
 
 class StoreListItem extends StatelessWidget {
   const StoreListItem({super.key, required this.store});
@@ -9,6 +11,7 @@ class StoreListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final distanceString = store.getDistanceDisplayString();
 
     return InkWell(
@@ -16,25 +19,23 @@ class StoreListItem extends StatelessWidget {
           await Navigator.of(context).push(StoreReportPage.route(store));
         },
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 10, 0, 2),
+          padding: const EdgeInsets.fromLTRB(Dims.large, Dims.medium, 0, Dims.xSmall),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(store.displayName,
                   style: Theme.of(context)
                       .textTheme
-                      .bodyText1!
-                      .copyWith(
-                          fontSize: 16, fontWeight: FontWeight.w400)),
-              const SizedBox(height: 8),
+                      .titleMedium),
+              const SizedBox(height: Dims.small),
               Text(
                 distanceString.isNotEmpty
-                    ? '$distanceString - ${store.address}'
+                    ? l10n.itemHyphenItem(distanceString, store.address)
                     : store.address,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.caption,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: Dims.small),
               Divider(
                 thickness: 1,
                 height: 1,

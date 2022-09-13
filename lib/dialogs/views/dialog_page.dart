@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:pondrop/styles/styles.dart';
 
 class DialogConfig {
   const DialogConfig({
@@ -24,9 +25,8 @@ class DialogPage extends StatelessWidget {
   const DialogPage({super.key});
 
   static Route<bool> route(DialogConfig config) {
-    return PageRouteBuilder(
-        opaque: false,
-        pageBuilder: (_, __, ___) => const DialogPage(),
+    return RouteTransitions.modalTransparentDialogRoute<bool>(
+        pageBuilder: (_) => const DialogPage(),
         settings: RouteSettings(arguments: config));
   }
 
@@ -36,7 +36,7 @@ class DialogPage extends StatelessWidget {
 
     final children = <Widget>[];
     const separator = SizedBox(
-      height: 12,
+      height: Dims.medium,
     );
 
     if (config.title.isNotEmpty) {
@@ -52,7 +52,7 @@ class DialogPage extends StatelessWidget {
 
     if (config.iconData != null) {
       children.add(Padding(
-        padding: const EdgeInsets.all(6),
+        padding: Dims.smallEdgeInsets,
         child: Icon(
           config.iconData,
           color: Colors.white,
@@ -69,7 +69,7 @@ class DialogPage extends StatelessWidget {
               .headline6!
               .copyWith(color: Colors.white, fontWeight: FontWeight.w600)));
       children.add(const SizedBox(
-        height: 8,
+        height: Dims.small,
       ));
     }
 
@@ -83,16 +83,14 @@ class DialogPage extends StatelessWidget {
     }
 
     children.add(const SizedBox(
-      height: 24,
+      height: Dims.xxlarge,
     ));
     children.add(ElevatedButton(
       onPressed: () {
         Navigator.of(context).pop(true);
       },
-      style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white, foregroundColor: Colors.black),
-      child: Text(config.okayButtonText,
-          style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 18)),
+      style: PondropStyles.whiteElevatedButtonStyle,
+      child: Text(config.okayButtonText, style: PondropStyles.blackButtonTextStyle),
     ));
     children.add(separator);
 
@@ -116,7 +114,8 @@ class DialogPage extends StatelessWidget {
           sigmaY: 2,
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(18, 10, 18, 10),
+          padding: const EdgeInsets.symmetric(
+              horizontal: Dims.large, vertical: Dims.medium),
           child: Center(
             child: Card(
               shape: RoundedRectangleBorder(
@@ -125,8 +124,8 @@ class DialogPage extends StatelessWidget {
               color: Colors.black.withOpacity(0.75),
               child: Stack(children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: Dims.xlarge, vertical: Dims.large),
                   child: SingleChildScrollView(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -135,8 +134,8 @@ class DialogPage extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  left: 8,
-                  top: 8,
+                  left: Dims.small,
+                  top: Dims.xSmall,
                   child: IconButton(
                     onPressed: () {
                       Navigator.of(context).pop(null);

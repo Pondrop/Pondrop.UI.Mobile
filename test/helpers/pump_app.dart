@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pondrop/app/app.dart';
 import 'package:pondrop/l10n/l10n.dart';
 
 extension PumpApp on WidgetTester {
@@ -12,7 +13,7 @@ extension PumpApp on WidgetTester {
           GlobalMaterialLocalizations.delegate,
         ],
         supportedLocales: AppLocalizations.supportedLocales,
-        home: widget,
+        home: LoadingOverlay(child: widget),
       ),
     );
   }
