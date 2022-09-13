@@ -27,7 +27,7 @@ class StoreRepository {
               id: e.id,
               provider: e.name,
               name: e.name,
-              displayName: e.retailer!.name?.isNotEmpty == true
+              displayName: e.retailer != null && e.retailer!.name?.isNotEmpty == true
                   ? '${e.retailer!.name} ${e.name}'
                   : e.name,
               address: e.addressLine1 ?? '',
