@@ -5,7 +5,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
@@ -19,8 +18,10 @@ class StoreSubmissionBloc
     required StoreVisitDto visit,
     required StoreSubmission submission,
     required SubmissionRepository submissionRepository,
+    required CameraRepository cameraRepository,
     required LocationRepository locationRepository,
   })  : _submissionRepository = submissionRepository,
+        _cameraRepository = cameraRepository,
         _locationRepository = locationRepository,
         super(StoreSubmissionState(visit: visit, submission: submission)) {
     on<StoreSubmissionNextEvent>(_onNext);
@@ -28,6 +29,7 @@ class StoreSubmissionBloc
   }
 
   final SubmissionRepository _submissionRepository;
+  final CameraRepository _cameraRepository;
   final LocationRepository _locationRepository;
 
   void _onResult(StoreSubmissionFieldResultEvent event,
@@ -49,8 +51,7 @@ class StoreSubmissionBloc
     switch (state.status) {
       case SubmissionStatus.initial:
         {
-          final cameraStatus = await Permission.camera.status;
-          if (cameraStatus.isGranted) {
+          if (await _cameraRepository.isCameraEnabled()) {
             await _goToNextStep(emit);
           } else {
             emit(state.copyWith(action: SubmissionStatus.cameraRequest));
@@ -59,8 +60,7 @@ class StoreSubmissionBloc
         break;
       case SubmissionStatus.cameraRequest:
         {
-          final cameraStatus = await Permission.camera.request();
-          if (cameraStatus.isGranted) {
+          if (await _cameraRepository.request()) {
             await _goToNextStep(emit);
           } else {
             emit(state.copyWith(action: SubmissionStatus.cameraRejected));
@@ -68,7 +68,7 @@ class StoreSubmissionBloc
         }
         break;
       case SubmissionStatus.cameraRejected:
-        if (await Permission.camera.isGranted) {
+        if (await _cameraRepository.isCameraEnabled()) {
           await _goToNextStep(emit);
         } else {
           emit(state.copyWith(action: SubmissionStatus.cameraRequest));

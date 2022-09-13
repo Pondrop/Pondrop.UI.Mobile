@@ -32,11 +32,11 @@ class _StoresListState extends State<StoresList> {
       onRefresh: () {
         final bloc = context.read<StoreBloc>()..add(const StoreRefreshed());
         return bloc.stream
-            .firstWhere((e) => e.status != StoreStatus.refreshing);
+            .firstWhere((e) => e.status != StoreStatus.loading);
       },
       child: BlocBuilder<StoreBloc, StoreState>(
         buildWhen: (previous, current) =>
-            current.status != StoreStatus.refreshing,
+            current.status != StoreStatus.loading,
         builder: (context, state) {
           if (state.status == StoreStatus.initial) {
             return const Center(child: CircularProgressIndicator());

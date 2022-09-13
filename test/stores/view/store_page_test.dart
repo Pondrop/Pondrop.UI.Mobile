@@ -61,7 +61,6 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(StoresList), findsOneWidget);
-    });
-    
+    });    
   });
 }

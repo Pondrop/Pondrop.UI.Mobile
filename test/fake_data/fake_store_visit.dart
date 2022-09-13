@@ -1,7 +1,7 @@
 import 'package:pondrop/api/submission_api.dart';
 import 'package:uuid/uuid.dart';
 
-class FakeStoreVisits {
+class FakeStoreVisit {
   static StoreVisitDto fakeVist() {
     return StoreVisitDto(
       id: const Uuid().v4(),

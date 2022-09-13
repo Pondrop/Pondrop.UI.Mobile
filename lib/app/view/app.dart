@@ -31,6 +31,7 @@ class App extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: authenticationRepository),
         RepositoryProvider.value(value: userRepository),
+        RepositoryProvider.value(value: const CameraRepository()),
         RepositoryProvider.value(value: locationRepository),
         RepositoryProvider.value(value: storeRepository),
         RepositoryProvider(

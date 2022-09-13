@@ -7,8 +7,6 @@ abstract class SearchStoreEvent extends Equatable {
   const SearchStoreEvent();
 }
 
-class SearchStoreFetched extends SearchStoreEvent {}
-
 class TextChanged extends SearchStoreEvent {
   const TextChanged({required this.text});
 
@@ -16,7 +14,4 @@ class TextChanged extends SearchStoreEvent {
 
   @override
   List<Object> get props => [text];
-
-  @override
-  String toString() => 'TextChanged { text: $text }';
 }

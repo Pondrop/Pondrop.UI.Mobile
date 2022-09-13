@@ -9,6 +9,8 @@ import '../bloc/store_submission_bloc.dart';
 class CameraAccessView extends StatelessWidget {
   const CameraAccessView({Key? key}) : super(key: key);
 
+  static const okayButtonKey = Key('CameraAccessView_Okay_Button');
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -34,9 +36,14 @@ class CameraAccessView extends StatelessWidget {
         const SizedBox(
           height: Dims.xxlarge * 2,
         ),
-        ElevatedButton(onPressed: () {
-          context.read<StoreSubmissionBloc>().add(const StoreSubmissionNextEvent());
-        }, child: Text(l10n.okay)),
+        ElevatedButton(
+            key: okayButtonKey,
+            onPressed: () {
+              context
+                  .read<StoreSubmissionBloc>()
+                  .add(const StoreSubmissionNextEvent());
+            },
+            child: Text(l10n.okay)),
         const SizedBox(
           height: Dims.medium,
         ),

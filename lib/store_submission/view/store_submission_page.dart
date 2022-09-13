@@ -39,10 +39,12 @@ class StoreSubmissionPage extends StatelessWidget {
         submission: submission,
         submissionRepository:
             RepositoryProvider.of<SubmissionRepository>(context),
+        cameraRepository: RepositoryProvider.of<CameraRepository>(context),
         locationRepository: RepositoryProvider.of<LocationRepository>(context),
       )..add(const StoreSubmissionNextEvent()),
       child: BlocListener<StoreSubmissionBloc, StoreSubmissionState>(
         listener: (context, state) async {
+          final cameraRepository = RepositoryProvider.of<CameraRepository>(context);
           final bloc = context.read<StoreSubmissionBloc>();
           final navigator = Navigator.of(context);
 
@@ -88,7 +90,7 @@ class StoreSubmissionPage extends StatelessWidget {
               navigator.pop();
             } else if (okay == true) {
               await PhotoFieldControl.takePhoto(
-                  bloc, state.currentStep.fields.first);
+                  cameraRepository, bloc, state.currentStep.fields.first);
             }
           }
         },

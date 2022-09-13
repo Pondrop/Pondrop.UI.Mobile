@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
+import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/store_submission/view/fields/required_view.dart';
 import 'package:pondrop/styles/dims.dart';
 
@@ -48,7 +48,10 @@ class PhotoFieldControl extends StatelessWidget {
                       onPressed: !readOnly
                           ? () async {
                               await takePhoto(
-                                  context.read<StoreSubmissionBloc>(), field);
+                                  RepositoryProvider.of<CameraRepository>(
+                                      context),
+                                  context.read<StoreSubmissionBloc>(),
+                                  field);
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
@@ -68,11 +71,10 @@ class PhotoFieldControl extends StatelessWidget {
     );
   }
 
-  static Future<void> takePhoto(
+  static Future<void> takePhoto(CameraRepository cameraRepository,
       StoreSubmissionBloc bloc, StoreSubmissionField field) async {
     if (field.fieldType == SubmissionFieldType.photo) {
-      final image = await ImagePicker().pickImage(
-          source: ImageSource.camera, imageQuality: 65, maxWidth: 1512);
+      final image = await cameraRepository.takePhoto();
       if (image != null) {
         bloc.add(StoreSubmissionFieldResultEvent(
             stepId: field.stepId,
