@@ -8,22 +8,25 @@ part 'store_search_result_dto.dart';
 
 @JsonSerializable()
 class StoreDto {
-  const StoreDto({
-    required this.searchScore,
-    required this.id,
-    required this.name,
-    required this.status,
-    required this.externalReferenceId,
-    required this.phone,
-    required this.email,
-    required this.openHours,
-    required this.retailerId,
-    required this.retailer,
-    required this.storeTypeId,
-    required this.updatedDate,
-    required this.directionUrl,
-    required this.addresses,
-  });
+  const StoreDto(
+      {required this.searchScore,
+      required this.id,
+      required this.name,
+      required this.status,
+      required this.externalReferenceId,
+      required this.phone,
+      required this.email,
+      required this.openHours,
+      required this.retailerId,
+      required this.retailer,
+      required this.storeTypeId,
+      required this.addressLine1,
+      required this.suburb,
+      required this.state,
+      required this.postcode,
+      required this.country,
+      required this.latitude,
+      required this.longitude});
 
   @JsonKey(name: '@search.score')
   final double searchScore;
@@ -45,19 +48,35 @@ class StoreDto {
   final RetailerDto? retailer;
   @JsonKey(name: 'storeTypeId')
   final String? storeTypeId;
-  @JsonKey(name: 'updatedDate')
-  final DateTime updatedDate;
-  @JsonKey(name: 'directionURL')
-  final String? directionUrl;
   @JsonKey(name: 'email')
   final String? email;
-  @JsonKey(name: 'addresses')
-  final List<AddressDto>? addresses;
+  @JsonKey(name: 'addressLine1')
+  final String? addressLine1;
+  @JsonKey(name: 'suburb')
+  final String? suburb;
+  @JsonKey(name: 'state')
+  final String? state;
+  @JsonKey(name: 'postcode')
+  final String? postcode;
+  @JsonKey(name: 'country')
+  final String? country;
+  @JsonKey(name: 'latitude')
+  final double latitude;
+  @JsonKey(name: 'longitude')
+  final double longitude;
+
+    double distanceInMeters(Position? position) {
+    if (position == null) {
+      return -1;
+    }
+
+    return Geolocator.distanceBetween(
+        position.latitude, position.longitude, latitude, longitude);
+  }
+
 
   static StoreDto fromJson(Map<String, dynamic> json) =>
-    _$StoreDtoFromJson(json);
+      _$StoreDtoFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-    _$StoreDtoToJson(this);
+  Map<String, dynamic> toJson() => _$StoreDtoToJson(this);
 }
-

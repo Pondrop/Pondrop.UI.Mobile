@@ -26,7 +26,7 @@ class StoreApi {
       '\$top' : '20',
       '\$skip' : '$skipIdx',
       '\$orderby' : sortByPosition != null
-        ? 'geo.distance(locationsort, geography\'POINT(${sortByPosition.longitude} ${sortByPosition.latitude})\') asc'
+        ? 'geo.distance(locationSort, geography\'POINT(${sortByPosition.longitude} ${sortByPosition.latitude})\') asc'
         : '\$orderby=Provider,Name asc&'
     };
 

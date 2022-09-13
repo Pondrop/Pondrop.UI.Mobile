@@ -25,15 +25,15 @@ class StoreRepository {
       final stores = searchResult.value
           .map((e) => Store(
               id: e.id,
-              provider: e.name ?? '',
+              provider: e.name,
               name: e.name,
               displayName: e.retailer!.name?.isNotEmpty == true
                   ? '${e.retailer!.name} ${e.name}'
                   : e.name,
-              address: e.addresses?[0].addressLine1 ?? '',
-              latitude: e.addresses?[0].latitude ?? 0,
-              longitude: e.addresses?[0].longitude ?? 0,
-              lastKnowDistanceMetres: e.addresses?[0].distanceInMeters(sortByPosition) ?? 0))
+              address: e.addressLine1 ?? '',
+              latitude: e.latitude,
+              longitude: e.longitude,
+              lastKnowDistanceMetres: e.distanceInMeters(sortByPosition) ?? 0))
           .toList();
 
       return stores;

@@ -1,2 +1,2 @@
 export 'store_dto.dart';
-export 'address_dto.dart';
+export 'retailer_dto.dart';

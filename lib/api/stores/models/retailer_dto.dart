@@ -8,7 +8,7 @@ class RetailerDto {
       {required this.name,});
 
   @JsonKey(name: 'name')
-  final String name;
+  final String? name;
 
   static RetailerDto fromJson(Map<String, dynamic> json) =>
     _$RetailerDtoFromJson(json);

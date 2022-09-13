@@ -7,7 +7,7 @@ part of 'retailer_dto.dart';
 // **************************************************************************
 
 RetailerDto _$RetailerDtoFromJson(Map<String, dynamic> json) => RetailerDto(
-      name: json['name'] as String,
+      name: json['name'] as String?,
     );
 
 Map<String, dynamic> _$RetailerDtoToJson(RetailerDto instance) =>
