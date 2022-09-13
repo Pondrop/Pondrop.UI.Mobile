@@ -8,6 +8,8 @@ import '../bloc/search_store_bloc.dart';
 class SearchStorePage extends StatefulWidget {
   const SearchStorePage({Key? key}) : super(key: key);
 
+  static const searchTextFieldKey = Key('SearchStorePage_SearchText_Key');
+
   @override
   State<SearchStorePage> createState() => _SearchStoreState();
 
@@ -37,6 +39,7 @@ class _SearchStoreState extends State<SearchStorePage> {
   Builder _searchTextField() {
     return Builder(builder: (context) {
       return TextField(
+        key: SearchStorePage.searchTextFieldKey,
         style: const TextStyle(fontSize: 20, color: Colors.black),
         controller: _searchTextController,
         decoration: InputDecoration(

@@ -8,6 +8,11 @@ class HttpRequestException implements Exception {
 
   final int statusCode;
   final String body;
+
+  @override
+  String toString() {
+    return 'HttpRequestException($method : "$url", $statusCode)';
+  }
 }
 
 extension ResponseExtensions on Response {

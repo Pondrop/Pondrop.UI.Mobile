@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pondrop/styles/styles.dart';
 
 class BottomLoader extends StatelessWidget {
   const BottomLoader({super.key});
@@ -6,13 +7,16 @@ class BottomLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: SizedBox(
-        height: 24,
-        width: 24,
-        child: CircularProgressIndicator(
-            color: Theme.of(context).primaryColor,
-            strokeWidth: 1.5
-          ),
+      child: Padding(
+        padding: Dims.smallEdgeInsets,
+        child: SizedBox(
+          height: 24,
+          width: 24,
+          child: CircularProgressIndicator(
+              color: Theme.of(context).primaryColor,
+              strokeWidth: 1.5
+            ),
+        ),
       ),
     );
   }

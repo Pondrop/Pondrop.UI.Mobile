@@ -14,7 +14,7 @@ SubmissionFieldResultValueDto _$SubmissionFieldResultValueDtoFromJson(
       doubleValue: (json['doubleValue'] as num?)?.toDouble(),
     )
       ..photoFileName = json['photoFileName'] as String?
-      ..photoDataBase64 = json['photoDataBase64'] as String?;
+      ..photoBase64 = json['photoBase64'] as String?;
 
 Map<String, dynamic> _$SubmissionFieldResultValueDtoToJson(
         SubmissionFieldResultValueDto instance) =>
@@ -23,5 +23,5 @@ Map<String, dynamic> _$SubmissionFieldResultValueDtoToJson(
       'intValue': instance.intValue,
       'doubleValue': instance.doubleValue,
       'photoFileName': instance.photoFileName,
-      'photoDataBase64': instance.photoDataBase64,
+      'photoBase64': instance.photoBase64,
     };

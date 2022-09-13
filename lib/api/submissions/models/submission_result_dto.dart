@@ -9,6 +9,8 @@ class SubmissionResultDto {
   SubmissionResultDto({
     required this.submissionTemplateId,
     required this.storeVisitId,
+    this.latitude = 0,
+    this.longitude = 0,
     required this.steps,    
   });
 
@@ -17,6 +19,11 @@ class SubmissionResultDto {
 
   @JsonKey(name: 'storeVisitId')
   final String storeVisitId;
+
+  @JsonKey(name: 'latitude')
+  final double latitude;
+  @JsonKey(name: 'longitude')
+  final double longitude;
 
   @JsonKey(name: 'steps')
   final List<SubmissionStepResultDto> steps;

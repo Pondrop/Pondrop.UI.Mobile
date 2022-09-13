@@ -22,8 +22,8 @@ class SubmissionFieldResultValueDto {
   final String? photoPathValue;
   @JsonKey(name: 'photoFileName')
   String? photoFileName;
-  @JsonKey(name: 'photoDataBase64')
-  String? photoDataBase64;
+  @JsonKey(name: 'photoBase64')
+  String? photoBase64;
   
   static SubmissionFieldResultValueDto fromJson(Map<String, dynamic> json) =>
     _$SubmissionFieldResultValueDtoFromJson(json);

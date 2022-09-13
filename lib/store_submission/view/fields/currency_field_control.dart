@@ -8,9 +8,11 @@ import '../../bloc/store_submission_bloc.dart';
 import 'required_view.dart';
 
 class CurrencyFieldControl extends StatefulWidget {
-  const CurrencyFieldControl({super.key, required this.field});
+  const CurrencyFieldControl(
+      {super.key, required this.field, this.readOnly = false});
 
   final StoreSubmissionField field;
+  final bool readOnly;
 
   @override
   State<CurrencyFieldControl> createState() => _CurrencyFieldControlState();
@@ -50,6 +52,8 @@ class _CurrencyFieldControlState extends State<CurrencyFieldControl> {
         }
       },
       child: TextField(
+          key: Key(widget.field.fieldId),
+          readOnly: widget.readOnly,
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
             labelText: widget.field.label,

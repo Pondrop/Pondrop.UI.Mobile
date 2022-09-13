@@ -1,6 +1,6 @@
 part of 'store_bloc.dart';
 
-enum StoreStatus { initial, refreshing, success, failure }
+enum StoreStatus { initial, loading, success, failure }
 
 class StoreState extends Equatable {
   const StoreState({

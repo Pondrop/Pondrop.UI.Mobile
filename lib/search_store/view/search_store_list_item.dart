@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/store_report/store_report.dart';
+import 'package:pondrop/styles/styles.dart';
 
 class SearchStoreListItem extends StatelessWidget {
   const SearchStoreListItem({super.key, required this.store});
@@ -9,6 +11,7 @@ class SearchStoreListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final distanceString = store.getDistanceDisplayString();
 
     return InkWell(
@@ -16,12 +19,13 @@ class SearchStoreListItem extends StatelessWidget {
           await Navigator.of(context).push(StoreReportPage.route(store));
         },
         child: Padding(
-            padding: const EdgeInsets.fromLTRB(6, 10, 0, 2),
+            padding: const EdgeInsets.fromLTRB(
+                Dims.xSmall, Dims.medium, 0, Dims.xSmall),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: Dims.medium),
                   child: Icon(
                     Icons.search,
                     size: 22,
@@ -32,17 +36,16 @@ class SearchStoreListItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(store.displayName,
-                          style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                              fontSize: 16, fontWeight: FontWeight.w400)),
-                      const SizedBox(height: 8),
+                          style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: Dims.small),
                       Text(
                         distanceString.isNotEmpty
-                            ? '$distanceString - ${store.address}'
+                            ? l10n.itemHyphenItem(distanceString, store.address)
                             : store.address,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.caption,
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: Dims.small),
                       Divider(
                         thickness: 1,
                         height: 1,

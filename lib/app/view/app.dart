@@ -10,7 +10,7 @@ import 'package:pondrop/login/login.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/splash/view/splash_page.dart';
 import 'package:pondrop/stores/view/store_page.dart';
-import 'package:pondrop/style/style.dart';
+import 'package:pondrop/styles/styles.dart';
 
 class App extends StatelessWidget {
   const App(
@@ -31,6 +31,7 @@ class App extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: authenticationRepository),
         RepositoryProvider.value(value: userRepository),
+        RepositoryProvider.value(value: const CameraRepository()),
         RepositoryProvider.value(value: locationRepository),
         RepositoryProvider.value(value: storeRepository),
         RepositoryProvider(
@@ -76,11 +77,11 @@ class _AppViewState extends State<AppView> {
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,
           ),
-          primaryColor: AppColors.primaryColor,
+          primaryColor: PondropColors.primaryColor,
           colorScheme: ColorScheme.fromSwatch(
             primarySwatch: Colors.blueGrey,
-            accentColor: AppColors.primaryColor,
-            errorColor: AppColors.errorColor,
+            accentColor: PondropColors.primaryColor,
+            errorColor: PondropColors.errorColor,
           ),
           hintColor: Colors.black87,
           textTheme: TextTheme(
@@ -103,7 +104,7 @@ class _AppViewState extends State<AppView> {
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
               style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
+                  backgroundColor: PondropColors.primaryColor,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -112,19 +113,19 @@ class _AppViewState extends State<AppView> {
           textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                   textStyle: const TextStyle(
-                      color: AppColors.primaryColor,
+                      color: PondropColors.primaryColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w500))),
           inputDecorationTheme: const InputDecorationTheme(
-            floatingLabelStyle: TextStyle(color: AppColors.primaryColor),
+            floatingLabelStyle: TextStyle(color: PondropColors.primaryColor),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.primaryColor),
+              borderSide: BorderSide(color: PondropColors.primaryColor),
             ),
           ),
           textSelectionTheme:
-              const TextSelectionThemeData(cursorColor: AppColors.primaryColor),
+              const TextSelectionThemeData(cursorColor: PondropColors.primaryColor),
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-              selectedIconTheme: IconThemeData(color: AppColors.primaryColor))),
+              selectedIconTheme: IconThemeData(color: PondropColors.primaryColor))),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

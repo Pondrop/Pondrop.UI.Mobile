@@ -7,9 +7,11 @@ import '../../bloc/store_submission_bloc.dart';
 import 'required_view.dart';
 
 class PickerFieldControl extends StatefulWidget {
-  const PickerFieldControl({super.key, required this.field});
+  const PickerFieldControl(
+      {super.key, required this.field, this.readOnly = false});
 
   final StoreSubmissionField field;
+  final bool readOnly;
 
   @override
   State<PickerFieldControl> createState() => _PickerFieldControlState();
@@ -32,6 +34,7 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      key: Key(widget.field.fieldId),
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: widget.field.label,
@@ -42,55 +45,59 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
       controller: textController,
       focusNode: _AlwaysDisabledFocusNode(),
       readOnly: true,
-      onTap: () {
-        final currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus &&
-            currentFocus.focusedChild != null) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        }
+      onTap: !widget.readOnly
+          ? () {
+              final currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus &&
+                  currentFocus.focusedChild != null) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              }
 
-        if (widget.field.pickerValues != null) {
-          final items = [const Center(child: Text(' - '))];
-          items.addAll(widget.field.pickerValues!.map((e) => Center(
-                  child: Text(
-                e,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ))));
-          final currentIdx = widget.field.result.stringValue?.isNotEmpty == true
-              ? widget.field.pickerValues!
-                      .indexOf(widget.field.result.stringValue!) +
-                  1
-              : 0;
+              if (widget.field.pickerValues != null) {
+                final items = [const Center(child: Text(' - '))];
+                items.addAll(widget.field.pickerValues!.map((e) => Center(
+                        child: Text(
+                      e,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ))));
+                final currentIdx =
+                    widget.field.result.stringValue?.isNotEmpty == true
+                        ? widget.field.pickerValues!
+                                .indexOf(widget.field.result.stringValue!) +
+                            1
+                        : 0;
 
-          showCupertinoModalPopup(
-            context: context,
-            builder: (BuildContext builder) {
-              return Container(
-                  height: MediaQuery.of(context).copyWith().size.height * 0.25,
-                  color: Colors.white,
-                  child: CupertinoPicker(
-                    onSelectedItemChanged: (value) {
-                      final stringValue = value == 0
-                          ? null
-                          : widget.field.pickerValues![value - 1];
-                      final bloc = context.read<StoreSubmissionBloc>();
-                      bloc.add(StoreSubmissionFieldResultEvent(
-                          stepId: widget.field.stepId,
-                          fieldId: widget.field.fieldId,
-                          result: StoreSubmissionFieldResult(
-                              stringValue: stringValue)));
-                      textController.text = stringValue ?? '';
-                    },
-                    itemExtent: 36,
-                    scrollController:
-                        FixedExtentScrollController(initialItem: currentIdx),
-                    children: items,
-                  ));
-            },
-          );
-        }
-      },
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (BuildContext builder) {
+                    return Container(
+                        height: MediaQuery.of(context).copyWith().size.height *
+                            0.25,
+                        color: Colors.white,
+                        child: CupertinoPicker(
+                          onSelectedItemChanged: (value) {
+                            final stringValue = value == 0
+                                ? null
+                                : widget.field.pickerValues![value - 1];
+                            final bloc = context.read<StoreSubmissionBloc>();
+                            bloc.add(StoreSubmissionFieldResultEvent(
+                                stepId: widget.field.stepId,
+                                fieldId: widget.field.fieldId,
+                                result: StoreSubmissionFieldResult(
+                                    stringValue: stringValue)));
+                            textController.text = stringValue ?? '';
+                          },
+                          itemExtent: 36,
+                          scrollController: FixedExtentScrollController(
+                              initialItem: currentIdx),
+                          children: items,
+                        ));
+                  },
+                );
+              }
+            }
+          : null,
     );
   }
 }

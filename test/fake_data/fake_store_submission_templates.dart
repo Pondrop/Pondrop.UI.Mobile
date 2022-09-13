@@ -17,25 +17,32 @@ class FakeStoreSubmissionTemplates {
               instructions:
                   'Take a photo of the shelf ticket for the low stocked item',
               instructionsContinueButton: 'Okay',
+              instructionsSkipButton: 'Skip',
               instructionsIconCodePoint: 0xf353,
               instructionsIconFontFamily: 'MaterialIcons',
               fields: [
                 SubmissionTemplateFieldDto(
                     id: const Uuid().v4(),
                     label: '',
-                    mandatory: true,
+                    mandatory: false,
                     fieldType: SubmissionFieldType.photo,
                     maxValue: 1),
                 SubmissionTemplateFieldDto(
                   id: const Uuid().v4(),
+                  label: 'Name',
+                  mandatory: false,
+                  fieldType: SubmissionFieldType.text,
+                ),
+                SubmissionTemplateFieldDto(
+                  id: const Uuid().v4(),
                   label: 'Quantity',
-                  mandatory: true,
+                  mandatory: false,
                   fieldType: SubmissionFieldType.integer,
                 ),
                 SubmissionTemplateFieldDto(
                   id: const Uuid().v4(),
                   label: 'Ticket price',
-                  mandatory: true,
+                  mandatory: false,
                   fieldType: SubmissionFieldType.currency,
                 ),
                 SubmissionTemplateFieldDto(
@@ -50,23 +57,6 @@ class FakeStoreSubmissionTemplates {
                     mandatory: false,
                     fieldType: SubmissionFieldType.picker,
                     pickerValues: _shelvePickerValues()),
-              ]),
-          SubmissionTemplateStepDto(
-              id: const Uuid().v4(),
-              title: 'Location',
-              instructions:
-                  'Take a photo of the shelf for the low stocked product',
-              instructionsContinueButton: 'Got it!',
-              instructionsSkipButton: 'Skip',
-              instructionsIconCodePoint: 0xf86e,
-              instructionsIconFontFamily: 'MaterialIcons',
-              fields: [
-                SubmissionTemplateFieldDto(
-                    id: const Uuid().v4(),
-                    label: '',
-                    mandatory: true,
-                    fieldType: SubmissionFieldType.photo,
-                    maxValue: 1),
               ]),
           SubmissionTemplateStepDto(
               id: const Uuid().v4(),

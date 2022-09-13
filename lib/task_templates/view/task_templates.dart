@@ -4,7 +4,6 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
-import 'package:pondrop/store_report/bloc/store_report_bloc.dart';
 import 'package:pondrop/store_report/store_report.dart';
 import 'package:pondrop/store_submission/store_submission.dart';
 
@@ -45,6 +44,7 @@ class TaskTemplates extends StatelessWidget {
                   submissionTemplate: item,
                   onTap: () async {
                     Navigator.of(context).pop();
+
                     showCupertinoModalBottomSheet(
                       context: context,
                       builder: (context) => StoreSubmissionPage(

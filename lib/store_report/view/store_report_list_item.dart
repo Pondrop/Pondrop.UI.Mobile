@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/models.dart';
-import 'package:pondrop/style/app_colors.dart';
+import 'package:pondrop/styles/styles.dart';
 
 class StoreReportListItem extends StatelessWidget {
   const StoreReportListItem(
@@ -27,7 +27,7 @@ class StoreReportListItem extends StatelessWidget {
           onTap?.call();
         },
         child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: Dims.small),
             child: Column(
               children: [
                 const SizedBox(height: 8),
@@ -35,11 +35,12 @@ class StoreReportListItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: Dims.large),
                         child: Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: Dims.mediumEdgeInsets,
                           decoration: BoxDecoration(
-                              color: AppColors.primaryLightColor,
+                              color: PondropColors.primaryLightColor,
                               borderRadius: BorderRadius.circular(100)),
                           child: Icon(
                             IconData(submissionTemplate.iconCodePoint,
@@ -59,7 +60,7 @@ class StoreReportListItem extends StatelessWidget {
                                   .copyWith(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: Dims.small),
                           Text(
                             submissionTemplate.description,
                             style: Theme.of(context).textTheme.caption,
@@ -69,7 +70,8 @@ class StoreReportListItem extends StatelessWidget {
                     ),
                     if (photoCount > 0)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(6, 0, 12, 0),
+                        padding: const EdgeInsets.fromLTRB(
+                            Dims.small, 0, Dims.medium, 0),
                         child: Row(
                           children: [
                             const Icon(Icons.photo_library_outlined),
@@ -82,7 +84,7 @@ class StoreReportListItem extends StatelessWidget {
                       )
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: Dims.small),
                 Divider(
                   indent: 72,
                   thickness: 1,

@@ -36,7 +36,9 @@ class SubmissionApi {
     final submissionTemplates =
         jsonList.map((model) => SubmissionTemplateDto.fromJson(model)).toList();
 
-    _localTemplates[accessToken] = submissionTemplates;
+    if (submissionTemplates.isNotEmpty) {
+      _localTemplates[accessToken] = submissionTemplates;
+    }
 
     return submissionTemplates;
   }
@@ -86,9 +88,16 @@ class SubmissionApi {
 
   Future<void> submitResult(
       String accessToken, SubmissionResultDto result) async {
-    await Future.delayed(const Duration(seconds: 1));
     final json = jsonEncode(result);
-    log(json);
+
+    final headers = _getCommonHeaders(accessToken);
+
+    final response = await _httpClient.post(
+        Uri.https(_baseUrl, '/Submission/create'),
+        headers: headers,
+        body: json);
+
+    response.ensureSuccessStatusCode();
   }
 
   Map<String, String> _getCommonHeaders(String accessToken) {
