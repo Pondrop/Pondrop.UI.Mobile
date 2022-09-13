@@ -53,7 +53,7 @@ class LocationRepository {
 
   Future<Position?> getLastKnownPosition() async {
     if (await checkAndRequestPermissions()) {      
-      return Geolocator.getCurrentPosition();
+      return Geolocator.getLastKnownPosition();
     }
 
     return null;
@@ -72,7 +72,7 @@ class LocationRepository {
 
   Future<Position?> getLastKnownOrCurrentPosition([Duration? maxLastKnownAge]) async {
     if (await checkAndRequestPermissions()) {      
-      final lastKnownPosition = await getCurrentPosition();
+      final lastKnownPosition = await getLastKnownPosition();
       if (lastKnownPosition != null) {
         final isTooOld = 
           maxLastKnownAge != null &&
