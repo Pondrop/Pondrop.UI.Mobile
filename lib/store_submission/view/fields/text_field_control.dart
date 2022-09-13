@@ -15,8 +15,10 @@ class TextFieldControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      key: Key(field.fieldId),
       readOnly: readOnly,
+      initialValue: field.resultString,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: field.label,

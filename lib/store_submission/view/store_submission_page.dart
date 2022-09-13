@@ -21,6 +21,8 @@ class StoreSubmissionPage extends StatelessWidget {
       {Key? key, required this.visit, required this.submission})
       : super(key: key);
 
+  static const nextButtonKey = Key('StoreSubmissionPage_Next_Button');
+
   static Route route(StoreVisitDto visit, StoreSubmission submission) {
     return MaterialPageRoute<void>(
         builder: (_) =>
@@ -132,6 +134,7 @@ class StoreSubmissionPage extends StatelessWidget {
                       BlocBuilder<StoreSubmissionBloc, StoreSubmissionState>(
                         builder: (context, state) {
                           return TextButton(
+                              key: nextButtonKey,
                               onPressed: state.currentStep.isComplete
                                   ? () {
                                       context.read<StoreSubmissionBloc>().add(

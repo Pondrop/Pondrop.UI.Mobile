@@ -15,6 +15,7 @@ class IntFieldControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      key: Key(field.fieldId),
       readOnly: readOnly,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),

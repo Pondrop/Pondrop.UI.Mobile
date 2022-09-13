@@ -34,6 +34,7 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      key: Key(widget.field.fieldId),
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: widget.field.label,

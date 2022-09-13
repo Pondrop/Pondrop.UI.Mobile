@@ -37,5 +37,16 @@ void main() {
       
       expect(find.byType(TaskTemplates), findsOneWidget);
     });
+
+    testWidgets('renders TaskTemplates empty', (tester) async {
+      when(() => submissionRepository.fetchTemplates())
+          .thenAnswer((invocation) => Future.value([]));
+
+      await tester.pumpApp(MultiRepositoryProvider(providers: [
+        RepositoryProvider.value(value: submissionRepository),
+      ], child: TaskTemplatesPage(visit: FakeStoreVisit.fakeVist())));
+      
+      expect(find.byType(ListView), findsNothing);
+    });
   });
 }

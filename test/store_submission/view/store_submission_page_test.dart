@@ -8,6 +8,7 @@ import 'package:pondrop/models/store_submission.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/store_submission/store_submission.dart';
 import 'package:pondrop/store_submission/view/camera_access_view.dart';
+import 'package:pondrop/store_submission/view/submission_summary_list_view.dart';
 
 import '../../fake_data/fake_data.dart';
 import '../../helpers/helpers.dart';
@@ -106,6 +107,75 @@ void main() {
 
       expect(find.byType(DialogPage), findsOneWidget);
       expect(find.text(submission.steps.first.instructionsContinueButton), findsOneWidget);
+    });
+
+    testWidgets('edit fields & render SubmissionSummaryListView', (tester) async {
+      when(() => cameraRepository.isCameraEnabled())
+        .thenAnswer((_) => Future.value(true));
+      when(() => locationRepository.getLastKnownPosition())
+        .thenAnswer((_) => Future.value(null));
+
+      await tester.pumpApp(MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider.value(value: submissionRepository),
+          RepositoryProvider.value(value: cameraRepository),
+          RepositoryProvider.value(value: locationRepository),
+        ],
+        child: StoreSubmissionPage(visit: visit, submission: submission,))
+      );
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(submission.steps.first.instructionsSkipButton));
+      await tester.pumpAndSettle();
+
+      final step = submission.steps[0];
+      const textValue = 'Text value';
+      const doubleValue = '9.9';
+      const intValue = '6';
+
+      await tester.enterText(find.byKey(Key(step.fields.firstWhere((e) => e.fieldType == SubmissionFieldType.text).fieldId)), textValue);
+      await tester.enterText(find.byKey(Key(step.fields.firstWhere((e) => e.fieldType == SubmissionFieldType.currency).fieldId)), doubleValue);
+      await tester.enterText(find.byKey(Key(step.fields.firstWhere((e) => e.fieldType == SubmissionFieldType.integer).fieldId)), intValue);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SubmissionSummaryListView), findsOneWidget);
+      expect(find.text(textValue), findsOneWidget);
+    });
+
+    testWidgets('submit submission fails', (tester) async {
+      when(() => cameraRepository.isCameraEnabled())
+        .thenAnswer((_) => Future.value(true));
+      when(() => locationRepository.getLastKnownPosition())
+        .thenAnswer((_) => Future.value(null));
+      when(() => locationRepository.getCurrentPosition())
+        .thenAnswer((_) => Future.value(null));
+      when(() => submissionRepository.submitResult(visit.id, submission))
+        .thenAnswer((_) => Future.value(false));
+
+      await tester.pumpApp(MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider.value(value: submissionRepository),
+          RepositoryProvider.value(value: cameraRepository),
+          RepositoryProvider.value(value: locationRepository),
+        ],
+        child: StoreSubmissionPage(visit: visit, submission: submission,))
+      );
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(submission.steps.first.instructionsSkipButton));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
+      await tester.pumpAndSettle();
+
+      verify(() => submissionRepository.submitResult(visit.id, submission)).called(1);
+      expect(find.byType(SubmissionSummaryListView), findsOneWidget);
     });
   });
 }

@@ -52,6 +52,7 @@ class _CurrencyFieldControlState extends State<CurrencyFieldControl> {
         }
       },
       child: TextField(
+          key: Key(widget.field.fieldId),
           readOnly: widget.readOnly,
           decoration: InputDecoration(
             border: const OutlineInputBorder(),

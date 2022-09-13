@@ -6,7 +6,7 @@ import 'fields/fields.dart';
 
 class SubmissionFieldView extends StatelessWidget {
   SubmissionFieldView({required this.field, this.readOnly = false})
-      : super(key: Key(field.fieldId));
+      : super(key: Key('SubmissionFieldView_${field.fieldId}'));
 
   final StoreSubmissionField field;
   final bool readOnly;
