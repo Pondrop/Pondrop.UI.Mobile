@@ -11,7 +11,7 @@ class StoreApi {
       : _httpClient = httpClient ?? http.Client();
 
   static const String _baseUrl =
-      'localhost:7292';
+      'store-service.ashyocean-bde16918.australiaeast.azurecontainerapps.io';
 
   final http.Client _httpClient;
 
