@@ -78,6 +78,7 @@ class StoreSubmission extends Equatable {
     this.latitude = 0,
     this.longitude = 0,
     required this.steps,
+    this.submittedDate,
   });
 
   final String templateId;
@@ -89,7 +90,9 @@ class StoreSubmission extends Equatable {
 
   final List<StoreSubmissionStep> steps;
 
-  StoreSubmission copy({LatLng? location}) {
+  final DateTime? submittedDate;
+
+  StoreSubmission copy({LatLng? location, DateTime? submittedDate}) {
     return StoreSubmission(
       templateId: templateId,
       title: title,
@@ -97,6 +100,7 @@ class StoreSubmission extends Equatable {
       longitude: location?.longitude ?? longitude,
       description: description,
       steps: steps.map((e) => e.copy()).toList(),
+      submittedDate: submittedDate ?? this.submittedDate,
     );
   }
 

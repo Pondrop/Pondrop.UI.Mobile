@@ -10,6 +10,7 @@ import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/store_submission/view/camera_access_view.dart';
 import 'package:pondrop/store_submission/view/submission_field_view.dart';
+import 'package:pondrop/store_submission/view/submission_success_view.dart';
 import 'package:pondrop/styles/styles.dart';
 
 import '../bloc/store_submission_bloc.dart';
@@ -63,6 +64,7 @@ class StoreSubmissionPage extends StatelessWidget {
                 content: Text(l10n.itemFailedPleaseTryAgain(l10n.submitting))));
             return;
           } else if (state.status == SubmissionStatus.submitSuccess) {
+            await navigator.push(SubmissionSuccessView.route());
             navigator.pop();
             return;
           }

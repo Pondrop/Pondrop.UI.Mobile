@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pondrop/api/extensions/extensions.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/store_submission.dart';
 import 'package:pondrop/styles/styles.dart';
@@ -27,10 +28,25 @@ class SubmissionSummaryListView extends StatelessWidget {
     assert(step.isSummary,
         '"SubmissionSummaryListView" invalid state, current step must be summary');
 
+    final listViewLength = stepIdx + fields.length + 1;
+
     return ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: Dims.large),
         controller: ModalScrollController.of(context),
         itemBuilder: (BuildContext context, int index) {
+          if (index == listViewLength - 1) {
+            if (submission.submittedDate != null) {
+              return Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                      padding: Dims.xSmallEdgeInsets,
+                      child: Text(
+                          submission.submittedDate!.toShortString(context))));
+            }
+
+            return const SizedBox.shrink();
+          }
+
           if (index < stepIdx) {
             if (submission.steps[index].fields.every((e) => e.result.isEmpty)) {
               return const SizedBox.shrink();
@@ -65,7 +81,7 @@ class SubmissionSummaryListView extends StatelessWidget {
             ],
           );
         },
-        itemCount: stepIdx + fields.length);
+        itemCount: listViewLength);
   }
 
   Widget _stepItem(BuildContext context, StoreSubmissionStep step) {

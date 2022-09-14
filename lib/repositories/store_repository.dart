@@ -27,13 +27,13 @@ class StoreRepository {
               id: e.id,
               provider: e.name,
               name: e.name,
-              displayName: e.retailer != null && e.retailer!.name?.isNotEmpty == true
+              displayName: e.retailer?.name?.isNotEmpty == true
                   ? '${e.retailer!.name} ${e.name}'
                   : e.name,
-              address: '${e.addressLine1}, ${e.suburb}, ${e.state}, ${e.postcode}' ?? '',
+              address: '${e.addressLine1}, ${e.suburb}, ${e.state}, ${e.postcode}',
               latitude: e.latitude,
               longitude: e.longitude,
-              lastKnowDistanceMetres: e.distanceInMeters(sortByPosition) ?? 0))
+              lastKnowDistanceMetres: e.distanceInMeters(sortByPosition)))
           .toList();
 
       return stores;
