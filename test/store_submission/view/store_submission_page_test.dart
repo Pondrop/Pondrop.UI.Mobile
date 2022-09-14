@@ -8,6 +8,7 @@ import 'package:pondrop/models/store_submission.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/store_submission/store_submission.dart';
 import 'package:pondrop/store_submission/view/camera_access_view.dart';
+import 'package:pondrop/store_submission/view/submission_success_view.dart';
 import 'package:pondrop/store_submission/view/submission_summary_list_view.dart';
 
 import '../../fake_data/fake_data.dart';
@@ -143,6 +144,39 @@ void main() {
 
       expect(find.byType(SubmissionSummaryListView), findsOneWidget);
       expect(find.text(textValue), findsOneWidget);
+    });
+
+    testWidgets('submit submission success', (tester) async {
+      when(() => cameraRepository.isCameraEnabled())
+        .thenAnswer((_) => Future.value(true));
+      when(() => locationRepository.getLastKnownPosition())
+        .thenAnswer((_) => Future.value(null));
+      when(() => locationRepository.getCurrentPosition())
+        .thenAnswer((_) => Future.value(null));
+      when(() => submissionRepository.submitResult(visit.id, submission))
+        .thenAnswer((_) => Future.value(true));
+
+      await tester.pumpApp(MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider.value(value: submissionRepository),
+          RepositoryProvider.value(value: cameraRepository),
+          RepositoryProvider.value(value: locationRepository),
+        ],
+        child: StoreSubmissionPage(visit: visit, submission: submission,))
+      );
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(submission.steps.first.instructionsSkipButton));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
+      await tester.pumpAndSettle();
+
+      verify(() => submissionRepository.submitResult(visit.id, submission)).called(1);
+      expect(find.byType(SubmissionSuccessView), findsOneWidget);
     });
 
     testWidgets('submit submission fails', (tester) async {

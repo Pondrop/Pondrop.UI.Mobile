@@ -152,5 +152,17 @@
     "searchResults": "Search results",
     "@searchResults": {},
     "storesNearby": "Stores nearby",
-    "@storesNearby": {}
+    "@storesNearby": {},
+    "success": "Success",
+    "@Success": {},
+    "itemBang": "{item}!",
+    "@itemBang": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "thankYouForSupportingCommunity": "Thank you for helping support your local shopping community.",
+    "@thankYouForSupportingCommunity": {}
 }
