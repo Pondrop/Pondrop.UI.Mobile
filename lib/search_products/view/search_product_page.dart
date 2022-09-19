@@ -27,9 +27,8 @@ class _SearchProductPageState extends State<SearchProductPage> {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (_) => SearchProductBloc(
-              productRepository: ProductRepository(
-                  userRepository:
-                      RepositoryProvider.of<UserRepository>(context)),
+              productRepository:
+                  RepositoryProvider.of<ProductRepository>(context),
             ),
         child: Scaffold(
           appBar: AppBar(title: _searchTextField()),

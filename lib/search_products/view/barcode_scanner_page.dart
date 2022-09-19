@@ -4,18 +4,18 @@ import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/styles/styles.dart';
 
 class BarcodeScannerPage extends StatefulWidget {
-  const BarcodeScannerPage({Key? key, this.automaticallyReturnResult = true})
+  const BarcodeScannerPage({Key? key, this.automaticallyReturn = true})
       : super(key: key);
 
-  final bool automaticallyReturnResult;
+  final bool automaticallyReturn;
 
   @override
   _BarcodeScannerPageState createState() => _BarcodeScannerPageState();
 
-  static Route<String> route([bool automaticallyReturnResult = true]) {
+  static Route<String> route([bool automaticallyReturn = true]) {
     return MaterialPageRoute<String>(
         builder: (_) => BarcodeScannerPage(
-            automaticallyReturnResult: automaticallyReturnResult));
+            automaticallyReturn: automaticallyReturn));
   }
 }
 
@@ -29,7 +29,8 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    const iconSize = 32.0;
+    final l10n = context.l10n;    
     final overlayHeight = MediaQuery.of(context).size.height * 0.2;
     final overlayColor = Colors.black.withOpacity(0.5);
 
@@ -71,7 +72,7 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
                 }
               },
             ),
-            iconSize: 32.0,
+            iconSize: iconSize,
             onPressed: () => controller.toggleTorch(),
           ),
         ],
@@ -88,7 +89,7 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
                     this.barcode = barcode.rawValue;
                   });
 
-                  if (widget.automaticallyReturnResult &&
+                  if (widget.automaticallyReturn &&
                       this.barcode?.isNotEmpty == true) {
                     Navigator.pop(context, this.barcode);
                   }
@@ -107,7 +108,7 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
                   alignment: Alignment.bottomCenter,
                   height: overlayHeight,
                   color: overlayColor,
-                  child: !widget.automaticallyReturnResult
+                  child: !widget.automaticallyReturn
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -138,7 +139,7 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
                                               ? Colors.green
                                               : Colors.grey,
                                         ),
-                                        iconSize: 32.0,
+                                        iconSize: iconSize,
                                         onPressed: barcode?.isNotEmpty == true
                                             ? () =>
                                                 Navigator.pop(context, barcode)
@@ -153,7 +154,7 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
                                               ? Colors.red
                                               : Colors.grey,
                                         ),
-                                        iconSize: 32.0,
+                                        iconSize: iconSize,
                                         onPressed: barcode?.isNotEmpty == true
                                             ? () => setState(() {
                                                   barcode = null;

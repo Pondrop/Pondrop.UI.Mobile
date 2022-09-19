@@ -58,5 +58,27 @@ void main() {
       expect(find.byType(SearchStoreList), findsOneWidget);
       expect(find.byType(SearchStoreListItem), findsOneWidget);
     });
+
+    testWidgets('renders a Empty list', (tester) async {
+      const query = 'Flutter';
+
+      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+          .thenAnswer((_) => Future.value(null));
+      when(() => storeRepository.fetchStores(query, 0, any()))
+          .thenAnswer((_) => Future.value(const Tuple2([], false)));
+      
+      await tester.pumpApp(MultiRepositoryProvider(providers: [
+        RepositoryProvider.value(value: storeRepository),
+        RepositoryProvider.value(value: locationRepository),
+      ], child: const SearchStorePage()));
+
+      await tester.enterText(find.byKey(SearchStorePage.searchTextFieldKey), query);
+      await tester.pumpAndSettle();
+
+      verify(() => storeRepository.fetchStores(query, 0, any())).called(1);
+
+      expect(find.byType(SearchStoreList), findsOneWidget);
+      expect(find.byType(NoResultsFound), findsOneWidget);
+    });
   });
 }

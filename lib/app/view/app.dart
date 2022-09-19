@@ -36,6 +36,10 @@ class App extends StatelessWidget {
         RepositoryProvider.value(value: storeRepository),
         RepositoryProvider(
             create: (context) => SubmissionRepository(
+                userRepository:
+                    RepositoryProvider.of<UserRepository>(context))),
+        RepositoryProvider(
+            create: (context) => ProductRepository(
                 userRepository: RepositoryProvider.of<UserRepository>(context)))
       ],
       child: MultiBlocProvider(
@@ -122,10 +126,11 @@ class _AppViewState extends State<AppView> {
               borderSide: BorderSide(color: PondropColors.primaryColor),
             ),
           ),
-          textSelectionTheme:
-              const TextSelectionThemeData(cursorColor: PondropColors.primaryColor),
+          textSelectionTheme: const TextSelectionThemeData(
+              cursorColor: PondropColors.primaryColor),
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-              selectedIconTheme: IconThemeData(color: PondropColors.primaryColor))),
+              selectedIconTheme:
+                  IconThemeData(color: PondropColors.primaryColor))),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
