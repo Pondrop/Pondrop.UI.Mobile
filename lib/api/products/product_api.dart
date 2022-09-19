@@ -1,36 +1,32 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:pondrop/api/extensions/extensions.dart';
-import 'package:pondrop/api/stores/models/store_dto.dart';
+import 'package:pondrop/api/products/models/models.dart';
 
-class StoreApi {
-  StoreApi({http.Client? httpClient})
+class ProductApi {
+  ProductApi({http.Client? httpClient})
       : _httpClient = httpClient ?? http.Client();
 
   static const String _baseUrl =
-      'store-service.ashyocean-bde16918.australiaeast.azurecontainerapps.io';
+      'pondropsearchstandard.search.windows.net';
 
   final http.Client _httpClient;
 
-  Future<StoreSearchResultDto> searchStores(
+  Future<ProductSearchResultDto> searchProducts(
     String accessToken, {
     String keyword = '',
     int skipIdx = 0,
-    Position? sortByPosition,
   }) async {
-    final queryParams = { 
+    final queryParams = {
+      'api-version' : '2021-04-30-Preview',
       'search' : '$keyword*',
       '\$top' : '20',
       '\$skip' : '$skipIdx',
-      '\$orderby' : sortByPosition != null
-        ? 'geo.distance(locationSort, geography\'POINT(${sortByPosition.longitude} ${sortByPosition.latitude})\') asc'
-        : '\$orderby=retailer,name asc&'
     };
 
-    final uri = Uri.https(_baseUrl, "/Store/search", queryParams);  
+    final uri = Uri.https(_baseUrl, "/indexes/azuresql-index-allproducts/docs", queryParams);  
     final headers = _getCommonHeaders(accessToken);
 
     final response =
@@ -38,13 +34,14 @@ class StoreApi {
 
     response.ensureSuccessStatusCode();
 
-    return StoreSearchResultDto.fromJson(jsonDecode(response.body));
+    return ProductSearchResultDto.fromJson(jsonDecode(response.body));
   }
 
   Map<String, String> _getCommonHeaders(String accessToken) {
     return {
       'Content-type': 'application/json',
-      'Authorization': 'Bearer $accessToken'
+      'Authorization': 'Bearer $accessToken',
+      'api-key': 't9qQq8k9bXhsR4VoCbJAIHYwkBrSTpE03KMKR3Kp6MAzSeAyv0pe'
     };
   }
 }

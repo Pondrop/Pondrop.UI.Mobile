@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/search_store/view/search_store_list.dart';
 
@@ -32,12 +33,13 @@ class _SearchStoreState extends State<SearchStorePage> {
         child: Scaffold(
           appBar:
               AppBar(title: _searchTextField()),
-          body: const SearchStoresList(null, 'SEARCH RESULTS'),
+          body: SearchStoreList(null, context.l10n.searchResults.toUpperCase()),
         ));
   }
 
   Builder _searchTextField() {
     return Builder(builder: (context) {
+      final l10n = context.l10n;
       return TextField(
         key: SearchStorePage.searchTextFieldKey,
         style: const TextStyle(fontSize: 20, color: Colors.black),
@@ -47,7 +49,7 @@ class _SearchStoreState extends State<SearchStorePage> {
               builder: (context, state) {
                 if (state.query.isNotEmpty) {
                   return IconButton(
-                    tooltip: 'Clear',
+                    tooltip: l10n.clear,
                     focusColor: Colors.black,
                     color: Colors.black,
                     icon: const Icon(Icons.clear),
@@ -63,7 +65,7 @@ class _SearchStoreState extends State<SearchStorePage> {
                 return const SizedBox.shrink();
               },
             ),
-            hintText: 'Search',
+            hintText: l10n.search,
             hintStyle: TextStyle(fontSize: 20, color: Colors.grey[500]),
             border: InputBorder.none,
             focusedBorder: InputBorder.none),

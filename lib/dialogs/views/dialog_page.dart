@@ -83,7 +83,7 @@ class DialogPage extends StatelessWidget {
     }
 
     children.add(const SizedBox(
-      height: Dims.xxlarge,
+      height: Dims.xxLarge,
     ));
     children.add(ElevatedButton(
       onPressed: () {
@@ -125,7 +125,7 @@ class DialogPage extends StatelessWidget {
               child: Stack(children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: Dims.xlarge, vertical: Dims.large),
+                      horizontal: Dims.xLarge, vertical: Dims.large),
                   child: SingleChildScrollView(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

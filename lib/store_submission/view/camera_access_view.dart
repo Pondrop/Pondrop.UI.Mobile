@@ -14,47 +14,50 @@ class CameraAccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Column(
-      children: [
-        const Spacer(),
-        SvgPicture.asset('assets/camera_access.svg'),
-        const SizedBox(
-          height: Dims.large,
-        ),
-        Text(
-          l10n.accessCamera,
-          style: Theme.of(context).textTheme.headline5,
-        ),
-        const SizedBox(
-          height: Dims.medium,
-        ),
-        Text(
-          l10n.accessCameraDescription,
-          style: Theme.of(context).textTheme.bodyText1,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(
-          height: Dims.xxlarge * 2,
-        ),
-        ElevatedButton(
-            key: okayButtonKey,
+    return Padding(
+      padding: Dims.xxLargeEdgeInsets,
+      child: Column(
+        children: [
+          const Spacer(),
+          SvgPicture.asset('assets/camera_access.svg'),
+          const SizedBox(
+            height: Dims.large,
+          ),
+          Text(
+            l10n.accessCamera,
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          const SizedBox(
+            height: Dims.medium,
+          ),
+          Text(
+            l10n.accessCameraDescription,
+            style: Theme.of(context).textTheme.bodyText1,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: Dims.xxLarge * 2,
+          ),
+          ElevatedButton(
+              key: okayButtonKey,
+              onPressed: () {
+                context
+                    .read<StoreSubmissionBloc>()
+                    .add(const StoreSubmissionNextEvent());
+              },
+              child: Text(l10n.okay)),
+          const SizedBox(
+            height: Dims.medium,
+          ),
+          TextButton(
+            child: Text(l10n.notNow),
             onPressed: () {
-              context
-                  .read<StoreSubmissionBloc>()
-                  .add(const StoreSubmissionNextEvent());
+              Navigator.of(context).pop();
             },
-            child: Text(l10n.okay)),
-        const SizedBox(
-          height: Dims.medium,
-        ),
-        TextButton(
-          child: Text(l10n.notNow),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        const Spacer(),
-      ],
+          ),
+          const Spacer(),
+        ],
+      ),
     );
   }
 }

@@ -164,5 +164,27 @@
         }
     },
     "thankYouForSupportingCommunity": "Thank you for helping support your local shopping community.",
-    "@thankYouForSupportingCommunity": {}
+    "@thankYouForSupportingCommunity": {},
+    "products": "Products",
+    "@products": {},
+    "product": "Product",
+    "@product": {},
+    "clear": "Clear",
+    "@clear": {},
+    "search": "Search",
+    "@search": {},
+    "barcode": "Barcode",
+    "@barcode": {},
+    "searchProductNameOrBarcode": "Search product name or barcode",
+    "@searchProductNameOrBarcode": {},
+    "itemSearch": "{item} search",
+    "@itemSearch": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "barcodeScan": "Barcode scan",
+    "@barcodeScan": {}
 }

@@ -40,7 +40,7 @@ class LoginForm extends StatelessWidget {
               l10n.enterValidEmailToContinue,
               style: Theme.of(context).textTheme.bodyText1,
             ),
-            const SizedBox(height: Dims.xlarge),
+            const SizedBox(height: Dims.xLarge),
             _emailField(),
             //const Padding(padding: EdgeInsets.all(Dims.medium)),
             //_passwordField(),

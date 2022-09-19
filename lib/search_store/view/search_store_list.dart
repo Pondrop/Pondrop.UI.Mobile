@@ -6,16 +6,16 @@ import 'package:pondrop/search_store/view/search_store_list_item.dart';
 import 'package:pondrop/shared/view/bottom_loader.dart';
 import 'package:pondrop/styles/styles.dart';
 
-class SearchStoresList extends StatefulWidget {
+class SearchStoreList extends StatefulWidget {
   final String header;
 
-  const SearchStoresList(Key? key, this.header) : super(key: key);
+  const SearchStoreList(Key? key, this.header) : super(key: key);
 
   @override
-  State<SearchStoresList> createState() => _StoresListState();
+  State<SearchStoreList> createState() => _SearchStoreListState();
 }
 
-class _StoresListState extends State<SearchStoresList> {
+class _SearchStoreListState extends State<SearchStoreList> {
   final _scrollController = ScrollController();
 
   @override

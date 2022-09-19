@@ -5,6 +5,7 @@ import 'package:pondrop/app/view/loading_overlay.dart';
 import 'package:pondrop/authentication/bloc/authentication_bloc.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/repositories/repositories.dart';
+import 'package:pondrop/search_products/search_product.dart';
 import 'package:pondrop/search_store/view/search_store_page.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
 import 'package:pondrop/stores/view/store_list.dart';
@@ -64,6 +65,26 @@ class StorePage extends StatelessWidget {
                 selected: true,
                 selectedColor: Colors.black,
                 selectedTileColor: PondropColors.selectedListItemColor,
+              ),
+              ListTile(
+                leading: const Icon(Icons.local_offer_outlined),
+                title: Text(l10n.products),
+                selectedColor: Colors.black,
+                iconColor: Colors.black,
+                selectedTileColor: PondropColors.selectedListItemColor,
+                onTap: () {
+                  Navigator.of(context).push(SearchProductPage.route());
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.shopping_cart_checkout),
+                title: Text(l10n.barcodeScan),
+                selectedColor: Colors.black,
+                iconColor: Colors.black,
+                selectedTileColor: PondropColors.selectedListItemColor,
+                onTap: () {
+                  Navigator.of(context).push(BarcodeScannerPage.route(false));
+                },
               ),
               BlocListener<AuthenticationBloc, AuthenticationState>(
                 listenWhen: (previous, current) =>

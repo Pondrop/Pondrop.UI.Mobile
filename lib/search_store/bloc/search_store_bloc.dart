@@ -54,7 +54,7 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
         state.copyWith(
           status: SearchStoreStatus.success,
           query: searchTerm,
-          stores: stores,
+          stores: stores.item1,
           position: position,
         ),
       );

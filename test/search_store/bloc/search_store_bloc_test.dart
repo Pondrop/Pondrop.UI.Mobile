@@ -1,9 +1,9 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/search_store/bloc/search_store_bloc.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../fake_data/fake_store.dart';
 
@@ -50,7 +50,7 @@ void main() {
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenAnswer((invocation) => Future.value(stores));
+          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
       
 
       final bloc = SearchStoreBloc(

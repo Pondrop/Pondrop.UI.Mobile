@@ -28,7 +28,7 @@ class LoginPage extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: Dims.xxlarge),
+                padding: const EdgeInsets.symmetric(vertical: Dims.xxLarge),
                 child: SvgPicture.asset('assets/pondrop.svg'),
               ),
               Expanded(

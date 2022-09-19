@@ -53,7 +53,7 @@ class SubmissionSuccessView extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(
-              height: Dims.xxlarge * 2,
+              height: Dims.xxLarge * 2,
             ),
             ElevatedButton(
                 key: okayButtonKey,

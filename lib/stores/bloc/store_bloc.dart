@@ -35,41 +35,23 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     }
 
     try {
-      if (state.status == StoreStatus.initial) {
-        emit(state.copyWith(status: StoreStatus.loading));
+      emit(state.copyWith(status: StoreStatus.loading));
 
-        final position = await _locationRepository
-            .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
+      final position = state.stores.isEmpty
+          ? await _locationRepository
+              .getLastKnownOrCurrentPosition(const Duration(minutes: 1))
+          : state.position;
+      final stores =
+          await _storeRepository.fetchStores('', state.stores.length, position);
 
-        final stores = await _storeRepository.fetchStores('', 0, position);
-
-        emit(
-          state.copyWith(
-            status: StoreStatus.success,
-            stores: stores,
-            position: position,
-            hasReachedMax: false,
-          ),
-        );
-      } else {
-        emit(state.copyWith(status: StoreStatus.loading));
-
-        final stores = await _storeRepository.fetchStores(
-            '', state.stores.length, state.position);
-
-        if (stores.isEmpty) {
-          emit(
-              state.copyWith(status: StoreStatus.success, hasReachedMax: true));
-        } else {
-          emit(
-            state.copyWith(
-              status: StoreStatus.success,
-              stores: List.of(state.stores)..addAll(stores),
-              hasReachedMax: false,
-            ),
-          );
-        }
-      }
+      emit(
+        state.copyWith(
+          status: StoreStatus.success,
+          stores: List.of(state.stores)..addAll(stores.item1),
+          position: position,
+          hasReachedMax: !stores.item2,
+        ),
+      );
     } catch (ex) {
       log(ex.toString());
       emit(state.copyWith(status: StoreStatus.failure));
@@ -94,9 +76,9 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
       emit(
         state.copyWith(
           status: StoreStatus.success,
-          stores: stores,
+          stores: List.of(state.stores)..addAll(stores.item1),
           position: position,
-          hasReachedMax: false,
+          hasReachedMax: !stores.item2,
         ),
       );
     } catch (ex) {

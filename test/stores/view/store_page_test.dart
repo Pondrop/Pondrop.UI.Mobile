@@ -8,6 +8,7 @@ import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/stores/view/store_list.dart';
 import 'package:pondrop/stores/view/store_list_item.dart';
 import 'package:pondrop/stores/view/store_page.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../fake_data/fake_data.dart';
 import '../../helpers/helpers.dart';
@@ -79,7 +80,7 @@ void main() {
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenAnswer((_) => Future.value([FakeStore.fakeStore()]));
+          .thenAnswer((_) => Future.value(Tuple2([FakeStore.fakeStore()], false)));
 
       await tester.pumpApp(MultiRepositoryProvider(
           providers: [

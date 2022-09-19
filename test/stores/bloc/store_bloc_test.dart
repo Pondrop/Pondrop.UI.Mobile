@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/stores/bloc/store_bloc.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../fake_data/fake_data.dart';
 
@@ -34,7 +35,7 @@ void main() {
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenAnswer((invocation) => Future.value(stores));      
+          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));      
 
       final bloc = StoreBloc(
         storeRepository: storeRepository,
@@ -56,7 +57,7 @@ void main() {
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenAnswer((invocation) => Future.value(stores));      
+          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));      
 
       final bloc = StoreBloc(
         storeRepository: storeRepository,
@@ -67,7 +68,7 @@ void main() {
       await bloc.stream.firstWhere((e) => e.status != StoreStatus.loading);
 
       when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenAnswer((invocation) => Future.value(const []));
+          .thenAnswer((invocation) => Future.value(const Tuple2([], false)));
 
       bloc.add(const StoreFetched());
       await bloc.stream.firstWhere((e) => e.status != StoreStatus.loading);
@@ -104,7 +105,7 @@ void main() {
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenAnswer((invocation) => Future.value(stores));      
+          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));      
 
       final bloc = StoreBloc(
         storeRepository: storeRepository,
