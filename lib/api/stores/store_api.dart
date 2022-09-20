@@ -23,7 +23,6 @@ class StoreApi {
   }) async {
     final queryParams = { 
       'search' : '$keyword*',
-      '\$top' : '20',
       '\$skip' : '$skipIdx',
       '\$orderby' : sortByPosition != null
         ? 'geo.distance(locationSort, geography\'POINT(${sortByPosition.longitude} ${sortByPosition.latitude})\') asc'

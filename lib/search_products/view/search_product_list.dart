@@ -26,39 +26,46 @@ class _SearchProductListState extends State<SearchProductList> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return BlocBuilder<SearchProductBloc, SearchProductState>(
-      builder: (context, state) {
-        switch (state.status) {
-          case SearchProductStatus.failure:
-            return const Center(child: NoResultsFound());
-          case SearchProductStatus.loading:
-          case SearchProductStatus.success:
-            if (state.products.isEmpty && state.status != SearchProductStatus.loading) {
-              return const Center(child: NoResultsFound());
-            }
-
-            return ListView.builder(
-              padding: const EdgeInsets.fromLTRB(
-                  0, Dims.large, Dims.xSmall, Dims.medium),
-              itemBuilder: (BuildContext context, int index) {
-                if (index >= state.products.length) {
-                  return const BottomLoader();
-                }
-
-                return index >= state.products.length
-                    ? const BottomLoader()
-                    : SearchProductListItem(product: state.products[index]);
-              },
-              itemCount: state.hasReachedMax
-                  ? state.products.length
-                  : state.products.length + 1,
-              controller: _scrollController,
-            );
-          case SearchProductStatus.initial:
-            return const SizedBox.shrink();
-        }
+    return RefreshIndicator(
+      color: Theme.of(context).primaryColor,
+      onRefresh: () {
+        final bloc = context.read<SearchProductBloc>()..add(const SearchProductRefreshed());
+        return bloc.stream.firstWhere((e) => e.status != SearchProductStatus.loading);
       },
+      child: BlocBuilder<SearchProductBloc, SearchProductState>(
+        builder: (context, state) {
+          switch (state.status) {
+            case SearchProductStatus.failure:
+              return const Center(child: NoResultsFound());
+            case SearchProductStatus.loading:
+            case SearchProductStatus.success:
+              if (state.products.isEmpty &&
+                  state.status != SearchProductStatus.loading) {
+                return const Center(child: NoResultsFound());
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.fromLTRB(
+                    0, Dims.large, Dims.xSmall, Dims.medium),
+                itemBuilder: (BuildContext context, int index) {
+                  if (index >= state.products.length) {
+                    return const BottomLoader();
+                  }
+
+                  return index >= state.products.length
+                      ? const BottomLoader()
+                      : SearchProductListItem(product: state.products[index]);
+                },
+                itemCount: state.hasReachedMax
+                    ? state.products.length
+                    : state.products.length + 1,
+                controller: _scrollController,
+              );
+            case SearchProductStatus.initial:
+              return const SizedBox.shrink();
+          }
+        },
+      ),
     );
   }
 

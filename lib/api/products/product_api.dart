@@ -22,7 +22,6 @@ class ProductApi {
     final queryParams = {
       'api-version' : '2021-04-30-Preview',
       'search' : '$keyword*',
-      '\$top' : '20',
       '\$skip' : '$skipIdx',
     };
 

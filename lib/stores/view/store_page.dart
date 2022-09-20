@@ -77,7 +77,7 @@ class StorePage extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.shopping_cart_checkout),
+                leading: SvgPicture.asset('assets/barcode_scanner.svg'),
                 title: Text(l10n.barcodeScan),
                 selectedColor: Colors.black,
                 iconColor: Colors.black,

@@ -11,7 +11,7 @@ void main() {
 
   group('Barcode Scanner', () {
     test('is routable', () {
-      expect(BarcodeScannerPage.route(), isA<MaterialPageRoute>());
+      expect(BarcodeScannerPage.route(), isA<PageRoute>());
     });
 
     testWidgets('renders a MobileScanner', (tester) async {

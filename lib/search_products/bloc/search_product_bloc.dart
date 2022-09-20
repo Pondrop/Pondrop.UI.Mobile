@@ -36,20 +36,18 @@ class SearchProductBloc extends Bloc<SearchProductEvent, SearchProductState> {
     }
 
     try {
-      if (state.status == SearchProductStatus.initial) {
-        emit(state.copyWith(status: SearchProductStatus.loading));
+      emit(state.copyWith(status: SearchProductStatus.loading));
 
-        final products = await _productRepository.fetchProducts(
-            state.query, state.products.length);
+      final products = await _productRepository.fetchProducts(
+          state.query, state.products.length);
 
-        emit(
-          state.copyWith(
-            status: SearchProductStatus.success,
-            products: List.of(state.products)..addAll(products.item1),
-            hasReachedMax: !products.item2,
-          ),
-        );
-      }
+      emit(
+        state.copyWith(
+          status: SearchProductStatus.success,
+          products: List.of(state.products)..addAll(products.item1),
+          hasReachedMax: !products.item2,
+        ),
+      );
     } catch (ex) {
       log(ex.toString());
       emit(state.copyWith(status: SearchProductStatus.failure));
@@ -86,7 +84,7 @@ class SearchProductBloc extends Bloc<SearchProductEvent, SearchProductState> {
       TextChanged event, Emitter<SearchProductState> emit) async {
     emit(const SearchProductState().copyWith(query: event.text));
 
-    if (event.text.length <= 3) {
+    if (event.text.length < 3) {
       return;
     }
 

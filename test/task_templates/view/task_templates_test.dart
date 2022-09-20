@@ -10,7 +10,9 @@ import 'package:pondrop/task_templates/view/task_templates.dart';
 import '../../helpers/helpers.dart';
 import '../../fake_data/fake_data.dart';
 
-class MockTaskTemplatesBloc extends MockBloc<TaskTemplatesEvent, TaskTemplatesState> implements TaskTemplatesBloc {}
+class MockTaskTemplatesBloc
+    extends MockBloc<TaskTemplatesEvent, TaskTemplatesState>
+    implements TaskTemplatesBloc {}
 
 void main() {
   late TaskTemplatesBloc taskTemplatesBloc;
@@ -20,22 +22,74 @@ void main() {
   });
 
   group('Task Templates', () {
-        testWidgets('renders a Task Templates list', (tester) async {
-      final templates = FakeStoreSubmissionTemplates.fakeTemplates();
-
-      when(() => taskTemplatesBloc.state).thenReturn(const TaskTemplatesState());
+    testWidgets('renders a CircularProgressIndicator', (tester) async {
+      when(() => taskTemplatesBloc.state)
+          .thenReturn(const TaskTemplatesState());
       whenListen(
         taskTemplatesBloc,
         Stream.fromIterable([
-          const TaskTemplatesState(status: TaskTemplateStatus.refreshing),
-          TaskTemplatesState(status: TaskTemplateStatus.success, templates: templates),
+          const TaskTemplatesState(status: TaskTemplateStatus.initial),
         ]),
       );
 
       await tester.pumpApp(
         BlocProvider.value(
           value: taskTemplatesBloc,
-          child: Scaffold(body: TaskTemplates(visit: FakeStoreVisit.fakeVist())),
+          child:
+              Scaffold(body: TaskTemplates(visit: FakeStoreVisit.fakeVist())),
+        ),
+      );
+
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(ListView), findsNothing);
+    });
+
+    testWidgets('renders nothing', (tester) async {
+      when(() => taskTemplatesBloc.state)
+          .thenReturn(const TaskTemplatesState());
+      whenListen(
+        taskTemplatesBloc,
+        Stream.fromIterable([
+          const TaskTemplatesState(status: TaskTemplateStatus.refreshing),
+          const TaskTemplatesState(
+              status: TaskTemplateStatus.failure, templates: []),
+        ]),
+      );
+
+      await tester.pumpApp(
+        BlocProvider.value(
+          value: taskTemplatesBloc,
+          child:
+              Scaffold(body: TaskTemplates(visit: FakeStoreVisit.fakeVist())),
+        ),
+      );
+
+      await tester.pump();
+
+      expect(find.byType(ListView), findsNothing);
+    });
+
+    testWidgets('renders a Task Templates list', (tester) async {
+      final templates = FakeStoreSubmissionTemplates.fakeTemplates();
+
+      when(() => taskTemplatesBloc.state)
+          .thenReturn(const TaskTemplatesState());
+      whenListen(
+        taskTemplatesBloc,
+        Stream.fromIterable([
+          const TaskTemplatesState(status: TaskTemplateStatus.refreshing),
+          TaskTemplatesState(
+              status: TaskTemplateStatus.success, templates: templates),
+        ]),
+      );
+
+      await tester.pumpApp(
+        BlocProvider.value(
+          value: taskTemplatesBloc,
+          child:
+              Scaffold(body: TaskTemplates(visit: FakeStoreVisit.fakeVist())),
         ),
       );
 
