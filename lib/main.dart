@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geocode/geocode.dart';
-import 'package:pondrop/app/app.dart';
+import 'package:pondrop/features/app/app.dart';
 import 'package:pondrop/bootstrap.dart';
 import 'package:pondrop/repositories/repositories.dart';
 
