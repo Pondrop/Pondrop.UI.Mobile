@@ -2,6 +2,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:pondrop/api/stores/store_api.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
+import 'package:tuple/tuple.dart';
 
 class StoreRepository {
   StoreRepository({required UserRepository userRepository, StoreApi? storeApi})
@@ -11,7 +12,7 @@ class StoreRepository {
   final UserRepository _userRepository;
   final StoreApi _storeApi;
 
-  Future<List<Store>> fetchStores(
+  Future<Tuple2<List<Store>, bool>> fetchStores(
     String keyword,
     int skipIdx,
     Position? sortByPosition,
@@ -36,9 +37,9 @@ class StoreRepository {
               lastKnowDistanceMetres: e.distanceInMeters(sortByPosition)))
           .toList();
 
-      return stores;
+      return Tuple2(stores, searchResult.odataNextLink.isNotEmpty);
     }
 
-    return const [];
+    return const Tuple2([], false);
   }
 }

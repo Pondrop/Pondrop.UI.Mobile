@@ -51,11 +51,14 @@ dependencies:
   json_annotation: ^4.6.0
   jwt_decode: ^0.3.1
   latlong2: ^0.8.1
+  mobile_scanner: ^2.0.0
   modal_bottom_sheet: ^2.1.2
+  package_info_plus: ^1.4.3+1
   path: ^1.8.2
   permission_handler: ^10.0.0
   shared_preferences: ^2.0.15
   stream_transform: ^2.0.0
+  tuple: ^2.0.0
   uuid: ^3.0.6
 
 dev_dependencies:
@@ -93,6 +96,7 @@ flutter:
     - assets/camera_access.svg
     - assets/hand_success.svg
     - assets/pondrop.svg
+    - assets/barcode_scanner.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

@@ -36,6 +36,13 @@ class Store extends Equatable {
   }
 
   @override
-  List<Object> get props =>
-      [id, provider, name, address, latitude, longitude, lastKnowDistanceMetres];
+  List<Object> get props => [
+        id,
+        provider,
+        name,
+        address,
+        latitude,
+        longitude,
+        lastKnowDistanceMetres
+      ];
 }
