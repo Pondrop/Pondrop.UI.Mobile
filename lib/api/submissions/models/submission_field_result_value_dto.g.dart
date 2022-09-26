@@ -12,10 +12,10 @@ SubmissionFieldResultValueDto _$SubmissionFieldResultValueDtoFromJson(
       stringValue: json['stringValue'] as String?,
       intValue: json['intValue'] as int?,
       doubleValue: (json['doubleValue'] as num?)?.toDouble(),
-      itemId: json['selectedItemId'] as String?,
-      itemName: json['selectedItemName'] as String?,
-      itemType: $enumDecodeNullable(
-          _$SubmissionFieldItemTypeEnumMap, json['SubmissionFieldSearchType']),
+      itemValue: json['itemValue'] == null
+          ? null
+          : SubmissionFieldResultValueItemDto.fromJson(
+              json['itemValue'] as Map<String, dynamic>),
     )
       ..photoFileName = json['photoFileName'] as String?
       ..photoBase64 = json['photoBase64'] as String?;
@@ -26,14 +26,7 @@ Map<String, dynamic> _$SubmissionFieldResultValueDtoToJson(
       'stringValue': instance.stringValue,
       'intValue': instance.intValue,
       'doubleValue': instance.doubleValue,
-      'selectedItemId': instance.itemId,
-      'selectedItemName': instance.itemName,
-      'SubmissionFieldSearchType':
-          _$SubmissionFieldItemTypeEnumMap[instance.itemType],
+      'itemValue': instance.itemValue?.toJson(),
       'photoFileName': instance.photoFileName,
       'photoBase64': instance.photoBase64,
     };
-
-const _$SubmissionFieldItemTypeEnumMap = {
-  SubmissionFieldItemType.products: 'products',
-};

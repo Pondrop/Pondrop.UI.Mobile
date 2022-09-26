@@ -34,6 +34,7 @@ Map<String, dynamic> _$SubmissionTemplateFieldDtoToJson(
     };
 
 const _$SubmissionFieldTypeEnumMap = {
+  SubmissionFieldType.unknown: 'unknown',
   SubmissionFieldType.photo: 'photo',
   SubmissionFieldType.text: 'text',
   SubmissionFieldType.multilineText: 'multilineText',
@@ -44,5 +45,6 @@ const _$SubmissionFieldTypeEnumMap = {
 };
 
 const _$SubmissionFieldItemTypeEnumMap = {
+  SubmissionFieldItemType.unknown: 'unknown',
   SubmissionFieldItemType.products: 'products',
 };

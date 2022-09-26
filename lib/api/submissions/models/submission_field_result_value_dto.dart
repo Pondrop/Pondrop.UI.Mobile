@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-
-import 'submission_template_field_dto.dart';
+import 'package:pondrop/api/submissions/models/models.dart';
 
 part 'submission_field_result_value_dto.g.dart';
 
@@ -11,9 +10,7 @@ class SubmissionFieldResultValueDto {
     this.intValue,
     this.doubleValue,
     this.photoPathValue,
-    this.itemId,
-    this.itemName,
-    this.itemType,
+    this.itemValue
   });
 
   @JsonKey(name: 'stringValue')
@@ -23,12 +20,8 @@ class SubmissionFieldResultValueDto {
   @JsonKey(name: 'doubleValue')
   final double? doubleValue;
 
-  @JsonKey(name: 'itemId')
-  final String? itemId;
-  @JsonKey(name: 'itemName')
-  final String? itemName;
-  @JsonKey(name: 'itemType')
-  final SubmissionFieldItemType? itemType;
+  @JsonKey(name: 'itemValue')
+  final SubmissionFieldResultValueItemDto? itemValue;
 
   @JsonKey(ignore: true)
   final String? photoPathValue;

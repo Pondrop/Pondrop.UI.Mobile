@@ -63,9 +63,13 @@ extension StoreSubmissionResultMapping on StoreSubmission {
                                 intValue: field.result.intValue,
                                 doubleValue: field.result.doubleValue,
                                 photoPathValue: field.result.photoPathValue,
-                                itemId: field.result.item?.item1,
-                                itemName: field.result.item?.item2,
-                                itemType: field.itemType,
+                                itemValue: field.itemType != null &&
+                                        field.result.item != null
+                                    ? SubmissionFieldResultValueItemDto(
+                                        itemId: field.result.item!.item1,
+                                        itemName: field.result.item!.item2,
+                                        itemType: field.itemType!)
+                                    : null,
                               )
                             ]))
                     .toList(),
