@@ -42,6 +42,7 @@ class StoreSubmissionBloc
     field.result.intValue = event.result.intValue;
     field.result.doubleValue = event.result.doubleValue;
     field.result.photoPathValue = event.result.photoPathValue;
+    field.result.item = event.result.item;
 
     emit(state.copyWith(submission: newSubmission));
   }

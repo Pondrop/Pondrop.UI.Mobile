@@ -29,6 +29,13 @@ class FakeStoreSubmissionTemplates {
                     maxValue: 1),
                 SubmissionTemplateFieldDto(
                   id: const Uuid().v4(),
+                  label: 'Product',
+                  mandatory: false,
+                  fieldType: SubmissionFieldType.search,
+                  itemType: SubmissionFieldItemType.products
+                ),
+                SubmissionTemplateFieldDto(
+                  id: const Uuid().v4(),
                   label: 'Name',
                   mandatory: false,
                   fieldType: SubmissionFieldType.text,

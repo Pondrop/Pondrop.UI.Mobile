@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
+import 'package:tuple/tuple.dart';
 
 extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
   StoreSubmission toStoreSubmission() {
@@ -31,6 +32,7 @@ extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
                         fieldType: field.fieldType,
                         maxValue: field.maxValue,
                         pickerValues: field.pickerValues,
+                        itemType: field.itemType,
                         result: StoreSubmissionFieldResult()))
                     .toList(),
               ))
@@ -61,6 +63,9 @@ extension StoreSubmissionResultMapping on StoreSubmission {
                                 intValue: field.result.intValue,
                                 doubleValue: field.result.doubleValue,
                                 photoPathValue: field.result.photoPathValue,
+                                itemId: field.result.item?.item1,
+                                itemName: field.result.item?.item2,
+                                itemType: field.itemType,
                               )
                             ]))
                     .toList(),
@@ -145,7 +150,8 @@ class StoreSubmissionStep extends Equatable {
 
   final List<StoreSubmissionField> fields;
 
-  bool get isComplete => fields.isEmpty || fields.every((e) => !e.mandatory || !e.result.isEmpty);
+  bool get isComplete =>
+      fields.isEmpty || fields.every((e) => !e.mandatory || !e.result.isEmpty);
   bool get isEmpty => fields.isEmpty || fields.every((e) => e.result.isEmpty);
 
   StoreSubmissionStep copy() {
@@ -189,6 +195,7 @@ class StoreSubmissionField extends Equatable {
       required this.fieldType,
       this.maxValue,
       this.pickerValues,
+      this.itemType,
       required this.result});
 
   final String templateId;
@@ -200,6 +207,7 @@ class StoreSubmissionField extends Equatable {
 
   final int? maxValue;
   final List<String>? pickerValues;
+  final SubmissionFieldItemType? itemType;
 
   final StoreSubmissionFieldResult result;
 
@@ -215,6 +223,10 @@ class StoreSubmissionField extends Equatable {
         return NumberFormat.simpleCurrency().format(result.doubleValue ?? 0);
       case SubmissionFieldType.integer:
         return result.intValue?.toString() ?? '';
+      case SubmissionFieldType.search:
+        return result.item?.item2 ?? result.item?.item1 ?? '';
+      default:
+        return '';
     }
   }
 
@@ -228,6 +240,7 @@ class StoreSubmissionField extends Equatable {
         fieldType: fieldType,
         maxValue: maxValue,
         pickerValues: pickerValues,
+        itemType: itemType,
         result: result.copy());
   }
 
@@ -239,6 +252,7 @@ class StoreSubmissionField extends Equatable {
         fieldType,
         maxValue,
         pickerValues,
+        itemType,
         result,
       ];
 }
@@ -249,6 +263,7 @@ class StoreSubmissionFieldResult extends Equatable {
     this.intValue,
     this.doubleValue,
     this.photoPathValue,
+    this.item,
   });
 
   String? stringValue;
@@ -256,11 +271,14 @@ class StoreSubmissionFieldResult extends Equatable {
   double? doubleValue;
   String? photoPathValue;
 
+  Tuple2<String, String>? item;
+
   bool get isEmpty =>
       stringValue == null &&
       intValue == null &&
       doubleValue == null &&
-      photoPathValue == null;
+      photoPathValue == null &&
+      item == null;
 
   StoreSubmissionFieldResult copy() {
     return StoreSubmissionFieldResult(
@@ -268,6 +286,7 @@ class StoreSubmissionFieldResult extends Equatable {
       intValue: intValue,
       doubleValue: doubleValue,
       photoPathValue: photoPathValue,
+      item: item,
     );
   }
 
@@ -277,5 +296,6 @@ class StoreSubmissionFieldResult extends Equatable {
         intValue,
         doubleValue,
         photoPathValue,
+        item,
       ];
 }

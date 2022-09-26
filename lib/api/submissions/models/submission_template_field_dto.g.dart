@@ -17,6 +17,8 @@ SubmissionTemplateFieldDto _$SubmissionTemplateFieldDtoFromJson(
       pickerValues: (json['pickerValues'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      itemType: $enumDecodeNullable(
+          _$SubmissionFieldItemTypeEnumMap, json['itemType']),
     );
 
 Map<String, dynamic> _$SubmissionTemplateFieldDtoToJson(
@@ -28,6 +30,7 @@ Map<String, dynamic> _$SubmissionTemplateFieldDtoToJson(
       'fieldType': _$SubmissionFieldTypeEnumMap[instance.fieldType]!,
       'maxValue': instance.maxValue,
       'pickerValues': instance.pickerValues,
+      'itemType': _$SubmissionFieldItemTypeEnumMap[instance.itemType],
     };
 
 const _$SubmissionFieldTypeEnumMap = {
@@ -37,4 +40,9 @@ const _$SubmissionFieldTypeEnumMap = {
   SubmissionFieldType.integer: 'integer',
   SubmissionFieldType.currency: 'currency',
   SubmissionFieldType.picker: 'picker',
+  SubmissionFieldType.search: 'search',
+};
+
+const _$SubmissionFieldItemTypeEnumMap = {
+  SubmissionFieldItemType.products: 'products',
 };
