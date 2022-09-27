@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pondrop/features/styles/styles.dart';
 import 'package:pondrop/l10n/l10n.dart';
+import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/features/search_products/bloc/search_product_bloc.dart';
 import 'package:pondrop/features/search_products/search_product.dart';
 import 'package:pondrop/features/search_products/widgets/search_product_list.dart';
 
 class SearchProductPage extends StatefulWidget {
-  const SearchProductPage({Key? key}) : super(key: key);
+  const SearchProductPage({Key? key, this.productRepository}) : super(key: key);
 
   static const searchTextFieldKey = Key('SearchProductPage_SearchText_Key');
+
+  final ProductRepository? productRepository;
 
   @override
   State<SearchProductPage> createState() => _SearchProductPageState();
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => const SearchProductPage());
+  static Route<List<Product>> route({ProductRepository? productRepository}) {
+    return RouteTransitions.modalSlideRoute<List<Product>>(
+        pageBuilder: (_) => SearchProductPage(productRepository: productRepository,));
   }
 }
 
@@ -28,7 +33,7 @@ class _SearchProductPageState extends State<SearchProductPage> {
     return BlocProvider(
         create: (_) => SearchProductBloc(
               productRepository:
-                  RepositoryProvider.of<ProductRepository>(context),
+                  widget.productRepository ?? RepositoryProvider.of<ProductRepository>(context),
             ),
         child: Scaffold(
           appBar: AppBar(title: _searchTextField()),

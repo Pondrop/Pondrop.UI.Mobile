@@ -25,6 +25,10 @@ class SubmissionFieldView extends StatelessWidget {
         return CurrencyFieldControl(field: field, readOnly: readOnly,);
       case SubmissionFieldType.picker:
         return PickerFieldControl(field: field, readOnly: readOnly,);
+      case SubmissionFieldType.search:
+        return SearchFieldControl(field: field, readOnly: readOnly,);
+      default:
+        return const SizedBox.shrink();
     }
   }
 }

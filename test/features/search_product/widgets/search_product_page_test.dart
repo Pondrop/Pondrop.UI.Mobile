@@ -22,7 +22,7 @@ void main() {
 
   group('Search Product', () {
     test('is routable', () {
-      expect(SearchProductPage.route(), isA<MaterialPageRoute>());
+      expect(SearchProductPage.route(), isA<PageRoute>());
     });
 
     testWidgets('renders a SearchProductList', (tester) async {

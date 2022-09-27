@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pondrop/api/submissions/models/models.dart';
 
 part 'submission_field_result_value_dto.g.dart';
 
@@ -9,6 +10,7 @@ class SubmissionFieldResultValueDto {
     this.intValue,
     this.doubleValue,
     this.photoPathValue,
+    this.itemValue
   });
 
   @JsonKey(name: 'stringValue')
@@ -17,6 +19,10 @@ class SubmissionFieldResultValueDto {
   final int? intValue;
   @JsonKey(name: 'doubleValue')
   final double? doubleValue;
+
+  // TODO: REMOVE IGNORE ONCE IDs ARE FROM COSMOS
+  @JsonKey(ignore: true, name: 'itemValue')
+  final SubmissionFieldResultValueItemDto? itemValue;
 
   @JsonKey(ignore: true)
   final String? photoPathValue;

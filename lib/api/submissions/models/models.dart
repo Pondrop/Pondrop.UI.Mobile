@@ -8,3 +8,4 @@ export 'submission_result_dto.dart';
 export 'submission_step_result_dto.dart';
 export 'submission_field_result_dto.dart';
 export 'submission_field_result_value_dto.dart';
+export 'submission_field_result_value_item_dto.dart';

@@ -2,7 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'submission_template_field_dto.g.dart';
 
-enum SubmissionFieldType { photo, text, multilineText, integer, currency, picker }
+enum SubmissionFieldType { unknown, photo, text, multilineText, integer, currency, picker, search, }
+enum SubmissionFieldItemType { unknown, products, }
 
 @JsonSerializable(explicitToJson: true)
 class SubmissionTemplateFieldDto {
@@ -13,6 +14,7 @@ class SubmissionTemplateFieldDto {
     required this.fieldType,
     this.maxValue,
     this.pickerValues,
+    this.itemType,
   });
 
   @JsonKey(name: 'id')
@@ -28,6 +30,8 @@ class SubmissionTemplateFieldDto {
   final int? maxValue;
   @JsonKey(name: 'pickerValues')
   final List<String>? pickerValues;
+  @JsonKey(name: 'itemType')
+  final SubmissionFieldItemType? itemType;
   
   static SubmissionTemplateFieldDto fromJson(Map<String, dynamic> json) =>
     _$SubmissionTemplateFieldDtoFromJson(json);

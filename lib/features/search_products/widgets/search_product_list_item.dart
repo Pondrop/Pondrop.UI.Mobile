@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/features/styles/styles.dart';
 
@@ -10,11 +9,9 @@ class SearchProductListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
     return InkWell(
         onTap: () async {
-          //await Navigator.of(context).push(StoreReportPage.route(store));
+          Navigator.of(context).pop([product]);
         },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(

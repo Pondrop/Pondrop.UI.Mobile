@@ -4,24 +4,33 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/features/dialogs/dialogs.dart';
+import 'package:pondrop/features/search_products/search_product.dart';
+import 'package:pondrop/features/search_products/widgets/search_product_list_item.dart';
+import 'package:pondrop/features/store_submission/widgets/fields/fields.dart';
 import 'package:pondrop/models/store_submission.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/features/store_submission/store_submission.dart';
 import 'package:pondrop/features/store_submission/widgets/camera_access_view.dart';
 import 'package:pondrop/features/store_submission/widgets/submission_success_view.dart';
 import 'package:pondrop/features/store_submission/widgets/submission_summary_list_view.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../../fake_data/fake_data.dart';
 import '../../../helpers/helpers.dart';
 
 class MockCameraRepository extends Mock implements CameraRepository {}
+
 class MockLocationRepository extends Mock implements LocationRepository {}
+
 class MockSubmissionRepository extends Mock implements SubmissionRepository {}
+
+class MockProductRepository extends Mock implements ProductRepository {}
 
 void main() {
   late CameraRepository cameraRepository;
   late LocationRepository locationRepository;
   late SubmissionRepository submissionRepository;
+  late ProductRepository productRepository;
 
   late StoreVisitDto visit;
   late StoreSubmission submission;
@@ -30,6 +39,7 @@ void main() {
     cameraRepository = MockCameraRepository();
     locationRepository = MockLocationRepository();
     submissionRepository = MockSubmissionRepository();
+    productRepository = MockProductRepository();
 
     visit = FakeStoreVisit.fakeVist();
     submission =
@@ -38,25 +48,26 @@ void main() {
 
   group('Store Submission Page', () {
     test('is routable', () {
-      expect(
-          StoreSubmissionPage.route(visit, submission),
+      expect(StoreSubmissionPage.route(visit, submission),
           isA<MaterialPageRoute>());
     });
 
     testWidgets('renders camera request view', (tester) async {
       when(() => cameraRepository.isCameraEnabled())
-        .thenAnswer((_) => Future.value(false));
+          .thenAnswer((_) => Future.value(false));
       when(() => locationRepository.getLastKnownPosition())
-        .thenAnswer((_) => Future.value(null));
+          .thenAnswer((_) => Future.value(null));
 
       await tester.pumpApp(MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider.value(value: submissionRepository),
-          RepositoryProvider.value(value: cameraRepository),
-          RepositoryProvider.value(value: locationRepository),
-        ],
-        child: StoreSubmissionPage(visit: visit, submission: submission,))
-      );
+          providers: [
+            RepositoryProvider.value(value: submissionRepository),
+            RepositoryProvider.value(value: cameraRepository),
+            RepositoryProvider.value(value: locationRepository),
+          ],
+          child: StoreSubmissionPage(
+            visit: visit,
+            submission: submission,
+          )));
 
       await tester.pumpAndSettle();
 
@@ -65,20 +76,22 @@ void main() {
 
     testWidgets('request camera access', (tester) async {
       when(() => cameraRepository.isCameraEnabled())
-        .thenAnswer((_) => Future.value(false));
+          .thenAnswer((_) => Future.value(false));
       when(() => cameraRepository.request())
-        .thenAnswer((_) => Future.value(false));
+          .thenAnswer((_) => Future.value(false));
       when(() => locationRepository.getLastKnownPosition())
-        .thenAnswer((_) => Future.value(null));
+          .thenAnswer((_) => Future.value(null));
 
       await tester.pumpApp(MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider.value(value: submissionRepository),
-          RepositoryProvider.value(value: cameraRepository),
-          RepositoryProvider.value(value: locationRepository),
-        ],
-        child: StoreSubmissionPage(visit: visit, submission: submission,))
-      );
+          providers: [
+            RepositoryProvider.value(value: submissionRepository),
+            RepositoryProvider.value(value: cameraRepository),
+            RepositoryProvider.value(value: locationRepository),
+          ],
+          child: StoreSubmissionPage(
+            visit: visit,
+            submission: submission,
+          )));
 
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(CameraAccessView.okayButtonKey));
@@ -91,42 +104,49 @@ void main() {
 
     testWidgets('renders first step dialog', (tester) async {
       when(() => cameraRepository.isCameraEnabled())
-        .thenAnswer((_) => Future.value(true));
+          .thenAnswer((_) => Future.value(true));
       when(() => locationRepository.getLastKnownPosition())
-        .thenAnswer((_) => Future.value(null));
+          .thenAnswer((_) => Future.value(null));
 
       await tester.pumpApp(MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider.value(value: submissionRepository),
-          RepositoryProvider.value(value: cameraRepository),
-          RepositoryProvider.value(value: locationRepository),
-        ],
-        child: StoreSubmissionPage(visit: visit, submission: submission,))
-      );
+          providers: [
+            RepositoryProvider.value(value: submissionRepository),
+            RepositoryProvider.value(value: cameraRepository),
+            RepositoryProvider.value(value: locationRepository),
+          ],
+          child: StoreSubmissionPage(
+            visit: visit,
+            submission: submission,
+          )));
 
       await tester.pumpAndSettle();
 
       expect(find.byType(DialogPage), findsOneWidget);
-      expect(find.text(submission.steps.first.instructionsContinueButton), findsOneWidget);
+      expect(find.text(submission.steps.first.instructionsContinueButton),
+          findsOneWidget);
     });
 
-    testWidgets('edit fields & render SubmissionSummaryListView', (tester) async {
+    testWidgets('edit fields & render SubmissionSummaryListView',
+        (tester) async {
       when(() => cameraRepository.isCameraEnabled())
-        .thenAnswer((_) => Future.value(true));
+          .thenAnswer((_) => Future.value(true));
       when(() => locationRepository.getLastKnownPosition())
-        .thenAnswer((_) => Future.value(null));
+          .thenAnswer((_) => Future.value(null));
 
       await tester.pumpApp(MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider.value(value: submissionRepository),
-          RepositoryProvider.value(value: cameraRepository),
-          RepositoryProvider.value(value: locationRepository),
-        ],
-        child: StoreSubmissionPage(visit: visit, submission: submission,))
-      );
+          providers: [
+            RepositoryProvider.value(value: submissionRepository),
+            RepositoryProvider.value(value: cameraRepository),
+            RepositoryProvider.value(value: locationRepository),
+          ],
+          child: StoreSubmissionPage(
+            visit: visit,
+            submission: submission,
+          )));
 
       await tester.pumpAndSettle();
-      await tester.tap(find.text(submission.steps.first.instructionsSkipButton));
+      await tester
+          .tap(find.text(submission.steps.first.instructionsSkipButton));
       await tester.pumpAndSettle();
 
       final step = submission.steps[0];
@@ -134,9 +154,21 @@ void main() {
       const doubleValue = '9.9';
       const intValue = '6';
 
-      await tester.enterText(find.byKey(Key(step.fields.firstWhere((e) => e.fieldType == SubmissionFieldType.text).fieldId)), textValue);
-      await tester.enterText(find.byKey(Key(step.fields.firstWhere((e) => e.fieldType == SubmissionFieldType.currency).fieldId)), doubleValue);
-      await tester.enterText(find.byKey(Key(step.fields.firstWhere((e) => e.fieldType == SubmissionFieldType.integer).fieldId)), intValue);
+      await tester.enterText(
+          find.byKey(Key(step.fields
+              .firstWhere((e) => e.fieldType == SubmissionFieldType.text)
+              .fieldId)),
+          textValue);
+      await tester.enterText(
+          find.byKey(Key(step.fields
+              .firstWhere((e) => e.fieldType == SubmissionFieldType.currency)
+              .fieldId)),
+          doubleValue);
+      await tester.enterText(
+          find.byKey(Key(step.fields
+              .firstWhere((e) => e.fieldType == SubmissionFieldType.integer)
+              .fieldId)),
+          intValue);
       await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
@@ -148,25 +180,28 @@ void main() {
 
     testWidgets('submit submission success', (tester) async {
       when(() => cameraRepository.isCameraEnabled())
-        .thenAnswer((_) => Future.value(true));
+          .thenAnswer((_) => Future.value(true));
       when(() => locationRepository.getLastKnownPosition())
-        .thenAnswer((_) => Future.value(null));
+          .thenAnswer((_) => Future.value(null));
       when(() => locationRepository.getCurrentPosition())
-        .thenAnswer((_) => Future.value(null));
+          .thenAnswer((_) => Future.value(null));
       when(() => submissionRepository.submitResult(visit.id, submission))
-        .thenAnswer((_) => Future.value(true));
+          .thenAnswer((_) => Future.value(true));
 
       await tester.pumpApp(MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider.value(value: submissionRepository),
-          RepositoryProvider.value(value: cameraRepository),
-          RepositoryProvider.value(value: locationRepository),
-        ],
-        child: StoreSubmissionPage(visit: visit, submission: submission,))
-      );
+          providers: [
+            RepositoryProvider.value(value: submissionRepository),
+            RepositoryProvider.value(value: cameraRepository),
+            RepositoryProvider.value(value: locationRepository),
+          ],
+          child: StoreSubmissionPage(
+            visit: visit,
+            submission: submission,
+          )));
 
       await tester.pumpAndSettle();
-      await tester.tap(find.text(submission.steps.first.instructionsSkipButton));
+      await tester
+          .tap(find.text(submission.steps.first.instructionsSkipButton));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
@@ -175,31 +210,35 @@ void main() {
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
       await tester.pumpAndSettle();
 
-      verify(() => submissionRepository.submitResult(visit.id, submission)).called(1);
+      verify(() => submissionRepository.submitResult(visit.id, submission))
+          .called(1);
       expect(find.byType(SubmissionSuccessView), findsOneWidget);
     });
 
     testWidgets('submit submission fails', (tester) async {
       when(() => cameraRepository.isCameraEnabled())
-        .thenAnswer((_) => Future.value(true));
+          .thenAnswer((_) => Future.value(true));
       when(() => locationRepository.getLastKnownPosition())
-        .thenAnswer((_) => Future.value(null));
+          .thenAnswer((_) => Future.value(null));
       when(() => locationRepository.getCurrentPosition())
-        .thenAnswer((_) => Future.value(null));
+          .thenAnswer((_) => Future.value(null));
       when(() => submissionRepository.submitResult(visit.id, submission))
-        .thenAnswer((_) => Future.value(false));
+          .thenAnswer((_) => Future.value(false));
 
       await tester.pumpApp(MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider.value(value: submissionRepository),
-          RepositoryProvider.value(value: cameraRepository),
-          RepositoryProvider.value(value: locationRepository),
-        ],
-        child: StoreSubmissionPage(visit: visit, submission: submission,))
-      );
+          providers: [
+            RepositoryProvider.value(value: submissionRepository),
+            RepositoryProvider.value(value: cameraRepository),
+            RepositoryProvider.value(value: locationRepository),
+          ],
+          child: StoreSubmissionPage(
+            visit: visit,
+            submission: submission,
+          )));
 
       await tester.pumpAndSettle();
-      await tester.tap(find.text(submission.steps.first.instructionsSkipButton));
+      await tester
+          .tap(find.text(submission.steps.first.instructionsSkipButton));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
@@ -208,8 +247,65 @@ void main() {
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
       await tester.pumpAndSettle();
 
-      verify(() => submissionRepository.submitResult(visit.id, submission)).called(1);
+      verify(() => submissionRepository.submitResult(visit.id, submission))
+          .called(1);
       expect(find.byType(SubmissionSummaryListView), findsOneWidget);
+    });
+
+    testWidgets('product search', (tester) async {
+      final product = FakeProduct.fakeProduct();
+
+      when(() => cameraRepository.isCameraEnabled())
+          .thenAnswer((_) => Future.value(true));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
+      when(() => productRepository.fetchProducts(any(), 0))
+          .thenAnswer((_) => Future.value(Tuple2([product], false)));
+
+      await tester.pumpApp(MultiRepositoryProvider(
+          providers: [
+            RepositoryProvider.value(value: submissionRepository),
+            RepositoryProvider.value(value: cameraRepository),
+            RepositoryProvider.value(value: locationRepository),
+            RepositoryProvider.value(value: productRepository),
+          ],
+          child: StoreSubmissionPage(
+            visit: visit,
+            submission: submission,
+          )));
+
+      await tester.pumpAndSettle();
+      await tester
+          .tap(find.text(submission.steps.first.instructionsSkipButton));
+      await tester.pumpAndSettle();
+
+      final step = submission.steps[0];
+      final searchField = step.fields.firstWhere((e) =>
+          e.fieldType == SubmissionFieldType.search &&
+          e.itemType == SubmissionFieldItemType.products);
+      final searchButtonKey =
+          SearchFieldControl.getSearchButtonKey(searchField.fieldId);
+
+      await tester.tap(find.byKey(searchButtonKey));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SearchProductPage), findsOneWidget);
+
+      await tester.enterText(
+          find.byKey(SearchProductPage.searchTextFieldKey), 'search term');
+
+      await tester.pump(const Duration(milliseconds: 350));
+
+      await tester.tap(find.byType(SearchProductListItem));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(searchButtonKey), findsNothing);
+      expect(find.text(product.name), findsOneWidget);
+
+      await tester.tap(find
+          .byKey(SearchFieldControl.getClearButtonKey(searchField.fieldId)));
+      await tester.pumpAndSettle();
+      expect(find.byKey(searchButtonKey), findsOneWidget);
     });
   });
 }
