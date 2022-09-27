@@ -44,22 +44,24 @@ class _SearchProductListState extends State<SearchProductList> {
                 return const Center(child: NoResultsFound());
               }
 
-              return ListView.builder(
-                padding: const EdgeInsets.fromLTRB(
-                    0, Dims.large, Dims.xSmall, Dims.medium),
-                itemBuilder: (BuildContext context, int index) {
-                  if (index >= state.products.length) {
-                    return const BottomLoader();
-                  }
-
-                  return index >= state.products.length
-                      ? const BottomLoader()
-                      : SearchProductListItem(product: state.products[index]);
-                },
-                itemCount: state.hasReachedMax
-                    ? state.products.length
-                    : state.products.length + 1,
-                controller: _scrollController,
+              return Scrollbar(
+                child: ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(
+                      0, Dims.large, Dims.xSmall, Dims.medium),
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index >= state.products.length) {
+                      return const BottomLoader();
+                    }
+              
+                    return index >= state.products.length
+                        ? const BottomLoader()
+                        : SearchProductListItem(product: state.products[index]);
+                  },
+                  itemCount: state.hasReachedMax
+                      ? state.products.length
+                      : state.products.length + 1,
+                  controller: _scrollController,
+                ),
               );
             case SearchProductStatus.initial:
               return const SizedBox.shrink();
