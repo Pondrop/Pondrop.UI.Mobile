@@ -76,6 +76,8 @@ class _SearchFieldControlState extends State<SearchFieldControl> {
                           textController.text = result.first.name;
                         }
                         break;
+                      default:
+                        break;
                     }
                   }
                 : null),
@@ -83,6 +85,8 @@ class _SearchFieldControlState extends State<SearchFieldControl> {
     }
 
     return TextField(
+      maxLines: 3,
+      minLines: 1,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: widget.field.label,

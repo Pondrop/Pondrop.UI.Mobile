@@ -108,6 +108,8 @@ class SubmissionSummaryListView extends StatelessWidget {
           height: Dims.xSmall,
         ));
         textWidgets.add(Text(i.resultString,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
             style: Theme.of(context)
                 .textTheme
                 .bodyText1!
@@ -154,10 +156,12 @@ class SubmissionSummaryListView extends StatelessWidget {
               const SizedBox(
                 width: Dims.small,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: textWidgets,
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: textWidgets,
+                ),
               )
             ],
           )

@@ -26,6 +26,12 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
 
   MobileScannerController controller = MobileScannerController(
     torchEnabled: false,
+    formats: [ 
+      BarcodeFormat.ean13,
+      BarcodeFormat.ean8,
+      BarcodeFormat.upcA,
+      BarcodeFormat.upcE
+    ]
   );
 
   @override
@@ -42,41 +48,10 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
-        title: Center(
-            child: Text(
+        title: Text(
           l10n.barcodeScan,
           style: const TextStyle(color: Colors.white),
-        )),
-        actions: [
-          IconButton(
-            color: Colors.white,
-            icon: ValueListenableBuilder(
-              valueListenable: controller.torchState,
-              builder: (context, state, child) {
-                if (state == null) {
-                  return const Icon(
-                    Icons.flash_off,
-                    color: Colors.white,
-                  );
-                }
-                switch (state as TorchState) {
-                  case TorchState.off:
-                    return const Icon(
-                      Icons.flash_off,
-                      color: Colors.white,
-                    );
-                  case TorchState.on:
-                    return const Icon(
-                      Icons.flash_on,
-                      color: Colors.yellow,
-                    );
-                }
-              },
-            ),
-            iconSize: iconSize,
-            onPressed: () => controller.toggleTorch(),
-          ),
-        ],
+        ),
       ),
       body: Builder(
         builder: (context) {

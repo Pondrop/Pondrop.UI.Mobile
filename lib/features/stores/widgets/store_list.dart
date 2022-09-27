@@ -52,38 +52,40 @@ class _StoresListState extends State<StoresList> {
     );
   }
 
-  ListView _storesList(StoreState state) {
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
-      itemBuilder: (BuildContext context, int index) {
-        Widget getItem(int idx, List<Store> stores) {
-          return idx >= stores.length
-              ? const BottomLoader()
-              : StoreListItem(store: stores[index]);
-        }
-
-        if (index == 0) {
-          return Column(children: [
-            // The header
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: Dims.large, vertical: Dims.medium),
-              child: Text(widget.header,
-                  style: TextStyle(
-                      color: Colors.grey[800],
-                      letterSpacing: 0.5,
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.bold)),
-            ),
-            getItem(index, state.stores)
-          ]);
-        }
-
-        return getItem(index, state.stores);
-      },
-      itemCount:
-          state.hasReachedMax ? state.stores.length : state.stores.length + 1,
-      controller: _scrollController,
+  Widget _storesList(StoreState state) {
+    return Scrollbar(
+      child: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
+        itemBuilder: (BuildContext context, int index) {
+          Widget getItem(int idx, List<Store> stores) {
+            return idx >= stores.length
+                ? const BottomLoader()
+                : StoreListItem(store: stores[index]);
+          }
+    
+          if (index == 0) {
+            return Column(children: [
+              // The header
+              Container(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(horizontal: Dims.large, vertical: Dims.medium),
+                child: Text(widget.header,
+                    style: TextStyle(
+                        color: Colors.grey[800],
+                        letterSpacing: 0.5,
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold)),
+              ),
+              getItem(index, state.stores)
+            ]);
+          }
+    
+          return getItem(index, state.stores);
+        },
+        itemCount:
+            state.hasReachedMax ? state.stores.length : state.stores.length + 1,
+        controller: _scrollController,
+      ),
     );
   }
 
