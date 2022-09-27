@@ -26,7 +26,12 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
 
   MobileScannerController controller = MobileScannerController(
     torchEnabled: false,
-    formats: [ BarcodeFormat.code128 ]
+    formats: [ 
+      BarcodeFormat.ean13,
+      BarcodeFormat.ean8,
+      BarcodeFormat.upcA,
+      BarcodeFormat.upcE
+    ]
   );
 
   @override
