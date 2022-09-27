@@ -20,8 +20,7 @@ class SubmissionFieldResultValueDto {
   @JsonKey(name: 'doubleValue')
   final double? doubleValue;
 
-  // TODO: REMOVE IGNORE ONCE IDs ARE FROM COSMOS
-  @JsonKey(ignore: true, name: 'itemValue')
+  @JsonKey(name: 'itemValue')
   final SubmissionFieldResultValueItemDto? itemValue;
 
   @JsonKey(ignore: true)
