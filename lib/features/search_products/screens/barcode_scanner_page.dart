@@ -26,12 +26,6 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
 
   MobileScannerController controller = MobileScannerController(
     torchEnabled: false,
-    formats: [ 
-      BarcodeFormat.ean13,
-      BarcodeFormat.ean8,
-      BarcodeFormat.upcA,
-      BarcodeFormat.upcE
-    ]
   );
 
   @override
@@ -61,6 +55,16 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
                 controller: controller,
                 fit: BoxFit.cover,
                 onDetect: (barcode, args) {
+                  switch (barcode.format) {
+                    case BarcodeFormat.ean13:
+                    case BarcodeFormat.ean8:
+                    case BarcodeFormat.upcA:
+                    case BarcodeFormat.upcE:
+                      break;
+                    default:
+                      return;
+                  }
+
                   if (widget.automaticallyReturn) {
                     final barcodeValue = barcode.rawValue ?? '';
                     if (!hasPopped && barcodeValue.isNotEmpty) {
