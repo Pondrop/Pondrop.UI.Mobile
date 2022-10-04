@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pondrop/api/submission_api.dart';
-import 'package:pondrop/features/search_products/screens/search_product_page.dart';
+import 'package:pondrop/features/search_items/search_items.dart';
+import 'package:pondrop/features/styles/styles.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
@@ -9,7 +10,7 @@ import 'package:tuple/tuple.dart';
 
 import '../../bloc/store_submission_bloc.dart';
 
-class SearchFieldControl extends StatefulWidget {
+class SearchFieldControl extends StatelessWidget {
   const SearchFieldControl(
       {super.key, required this.field, this.readOnly = false});
 
@@ -17,97 +18,102 @@ class SearchFieldControl extends StatefulWidget {
     return Key('SearchFieldControl_SearchBtn_$fieldId');
   }
 
-  static Key getClearButtonKey(String fieldId) {
-    return Key('SearchFieldControl_ClearBtn_$fieldId');
+  static Key getClearButtonKey(String fieldId, String itemId) {
+    return Key('SearchFieldControl_ClearBtn_${fieldId}_${itemId}');
   }
 
   final StoreSubmissionField field;
   final bool readOnly;
 
   @override
-  State<SearchFieldControl> createState() => _SearchFieldControlState();
-}
-
-class _SearchFieldControlState extends State<SearchFieldControl> {
-  final textController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    textController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    if (widget.field.result.isEmpty) {
-      return SizedBox(
+    final children = <Widget>[];
+
+    for (final i in field.results.where((e) => !e.isEmpty)) {
+      children.add(TextFormField(
+        key: Key('SearchFieldControl_Txt_${field.fieldId}_${i.item!.item1}'),
+        initialValue: i.item?.item2 ?? '',
+        maxLines: 3,
+        minLines: 1,
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: field.label,
+          suffixIcon: !readOnly
+              ? IconButton(
+                  key: SearchFieldControl.getClearButtonKey(
+                      field.fieldId, i.item!.item1),
+                  icon: const Icon(Icons.cancel_outlined),
+                  onPressed: () {
+                    context.read<StoreSubmissionBloc>().add(
+                        StoreSubmissionFieldResultEvent(
+                            stepId: field.stepId,
+                            fieldId: field.fieldId,
+                            result: StoreSubmissionFieldResult(),
+                            resultIdx: field.results.indexOf(i)));
+                  },
+                )
+              : null,
+        ),
+        focusNode: _AlwaysDisabledFocusNode(),
+        readOnly: true,
+      ));
+
+      children.add(const SizedBox(
+        height: Dims.medium,
+      ));
+    }
+
+    if (children.isNotEmpty) {
+      children.removeLast();
+    }
+
+    if (field.results.where((e) => !e.isEmpty).length < (field.maxValue ?? 1)) {
+      if (children.isNotEmpty) {
+        children.add(const SizedBox(
+          height: Dims.small,
+        ));
+      }
+
+      children.add(SizedBox(
         width: double.infinity,
         child: ElevatedButton.icon(
-            key: SearchFieldControl.getSearchButtonKey(widget.field.fieldId),
+            key: SearchFieldControl.getSearchButtonKey(field.fieldId),
             icon: const Icon(Icons.add),
             label: Text(l10n.addItem(l10n.product.toLowerCase())),
-            onPressed: !widget.readOnly && widget.field.itemType != null
+            onPressed: !readOnly && field.itemType != null
                 ? () async {
                     final bloc = context.read<StoreSubmissionBloc>();
 
-                    switch (widget.field.itemType!) {
-                      case SubmissionFieldItemType.products:
-                        final result = await Navigator.of(context).push(
-                            SearchProductPage.route(
-                                productRepository:
-                                    RepositoryProvider.of<ProductRepository>(
-                                        context)));
+                    final result = await Navigator.of(context).push(
+                        SearchItemPage.route(
+                            type: field.itemType!.toSearchItemType(),
+                            categoryRepository:
+                                RepositoryProvider.of<CategoryRepository>(
+                                    context),
+                            productRepository:
+                                RepositoryProvider.of<ProductRepository>(
+                                    context)));
 
-                        if (result?.isNotEmpty == true) {
-                          bloc.add(StoreSubmissionFieldResultEvent(
-                              stepId: widget.field.stepId,
-                              fieldId: widget.field.fieldId,
-                              result: StoreSubmissionFieldResult(
-                                item:
-                                    Tuple2(result!.first.id, result.first.name),
-                              )));
-                          textController.text = result.first.name;
-                        }
-                        break;
-                      default:
-                        break;
+                    if (result?.isNotEmpty == true) {
+                      bloc.add(StoreSubmissionFieldResultEvent(
+                          stepId: field.stepId,
+                          fieldId: field.fieldId,
+                          result: StoreSubmissionFieldResult(
+                            item: Tuple2(result!.first.id, result.first.title),
+                          ),
+                          resultIdx: field.maxValue ?? 0));
                     }
                   }
                 : null),
-      );
+      ));
     }
 
-    return TextField(
-      maxLines: 3,
-      minLines: 1,
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        labelText: widget.field.label,
-        suffixIcon: !widget.readOnly
-            ? IconButton(
-                key: SearchFieldControl.getClearButtonKey(widget.field.fieldId),
-                icon: const Icon(Icons.cancel_outlined),
-                onPressed: () {
-                  context.read<StoreSubmissionBloc>().add(
-                      StoreSubmissionFieldResultEvent(
-                          stepId: widget.field.stepId,
-                          fieldId: widget.field.fieldId,
-                          result: StoreSubmissionFieldResult()));
-                  textController.text = '';
-                },
-              )
-            : null,
-      ),
-      controller: textController,
-      focusNode: _AlwaysDisabledFocusNode(),
-      readOnly: true,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: children,
     );
   }
 }

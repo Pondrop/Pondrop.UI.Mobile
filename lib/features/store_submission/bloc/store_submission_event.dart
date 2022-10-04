@@ -16,9 +16,12 @@ class StoreSubmissionFieldResultEvent extends StoreSubmissionEvent {
     required this.stepId,
     required this.fieldId,
     required this.result,
+    this.resultIdx = 0,
   });
 
   final String stepId;
   final String fieldId;
   final StoreSubmissionFieldResult result;
+
+  final int resultIdx;
 }

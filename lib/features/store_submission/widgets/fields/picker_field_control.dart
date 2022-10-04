@@ -38,7 +38,7 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: widget.field.label,
-        suffixIcon: widget.field.mandatory && widget.field.result.isEmpty
+        suffixIcon: widget.field.mandatory && widget.field.results.first.isEmpty
             ? const RequiredView()
             : null,
       ),
@@ -62,9 +62,9 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
                       overflow: TextOverflow.ellipsis,
                     ))));
                 final currentIdx =
-                    widget.field.result.stringValue?.isNotEmpty == true
+                    widget.field.results.first.stringValue?.isNotEmpty == true
                         ? widget.field.pickerValues!
-                                .indexOf(widget.field.result.stringValue!) +
+                                .indexOf(widget.field.results.first.stringValue!) +
                             1
                         : 0;
 

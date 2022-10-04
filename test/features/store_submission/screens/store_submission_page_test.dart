@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/features/dialogs/dialogs.dart';
-import 'package:pondrop/features/search_products/search_product.dart';
-import 'package:pondrop/features/search_products/widgets/search_product_list_item.dart';
+import 'package:pondrop/features/search_items/search_items.dart';
+import 'package:pondrop/features/search_items/widgets/search_list_item.dart';
 import 'package:pondrop/features/store_submission/widgets/fields/fields.dart';
 import 'package:pondrop/models/store_submission.dart';
 import 'package:pondrop/repositories/repositories.dart';
@@ -24,12 +24,15 @@ class MockLocationRepository extends Mock implements LocationRepository {}
 
 class MockSubmissionRepository extends Mock implements SubmissionRepository {}
 
+class MockCategoryRepository extends Mock implements CategoryRepository {}
+
 class MockProductRepository extends Mock implements ProductRepository {}
 
 void main() {
   late CameraRepository cameraRepository;
   late LocationRepository locationRepository;
   late SubmissionRepository submissionRepository;
+  late CategoryRepository categoryRepository;
   late ProductRepository productRepository;
 
   late StoreVisitDto visit;
@@ -39,6 +42,7 @@ void main() {
     cameraRepository = MockCameraRepository();
     locationRepository = MockLocationRepository();
     submissionRepository = MockSubmissionRepository();
+    categoryRepository = MockCategoryRepository();
     productRepository = MockProductRepository();
 
     visit = FakeStoreVisit.fakeVist();
@@ -267,6 +271,7 @@ void main() {
             RepositoryProvider.value(value: submissionRepository),
             RepositoryProvider.value(value: cameraRepository),
             RepositoryProvider.value(value: locationRepository),
+            RepositoryProvider.value(value: categoryRepository),
             RepositoryProvider.value(value: productRepository),
           ],
           child: StoreSubmissionPage(
@@ -289,21 +294,21 @@ void main() {
       await tester.tap(find.byKey(searchButtonKey));
       await tester.pumpAndSettle();
 
-      expect(find.byType(SearchProductPage), findsOneWidget);
+      expect(find.byType(SearchItemPage), findsOneWidget);
 
       await tester.enterText(
-          find.byKey(SearchProductPage.searchTextFieldKey), 'search term');
+          find.byKey(SearchItemPage.searchTextFieldKey), 'search term');
 
       await tester.pump(const Duration(milliseconds: 350));
 
-      await tester.tap(find.byType(SearchProductListItem));
+      await tester.tap(find.byType(SearchListItem));
       await tester.pumpAndSettle();
 
       expect(find.byKey(searchButtonKey), findsNothing);
       expect(find.text(product.name), findsOneWidget);
 
       await tester.tap(find
-          .byKey(SearchFieldControl.getClearButtonKey(searchField.fieldId)));
+          .byKey(SearchFieldControl.getClearButtonKey(searchField.fieldId, product.id)));
       await tester.pumpAndSettle();
       expect(find.byKey(searchButtonKey), findsOneWidget);
     });

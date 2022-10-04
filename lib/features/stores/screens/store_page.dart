@@ -7,7 +7,7 @@ import 'package:pondrop/features/authentication/bloc/authentication_bloc.dart';
 import 'package:pondrop/features/stores/widgets/store_list.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/repositories/repositories.dart';
-import 'package:pondrop/features/search_products/search_product.dart';
+import 'package:pondrop/features/search_items/search_items.dart';
 import 'package:pondrop/features/search_store/screens/search_store_page.dart';
 import 'package:pondrop/features/stores/bloc/store_bloc.dart';
 import 'package:pondrop/features/styles/styles.dart';
@@ -69,13 +69,23 @@ class StorePage extends StatelessWidget {
                     selectedTileColor: PondropColors.selectedListItemColor,
                   ),
                   ListTile(
+                    leading: const Icon(Icons.category_outlined),
+                    title: Text(l10n.categories),
+                    selectedColor: Colors.black,
+                    iconColor: Colors.black,
+                    selectedTileColor: PondropColors.selectedListItemColor,
+                    onTap: () {
+                      Navigator.of(context).push(SearchItemPage.route(type: SearchItemType.category));
+                    },
+                  ),
+                  ListTile(
                     leading: const Icon(Icons.local_offer_outlined),
                     title: Text(l10n.products),
                     selectedColor: Colors.black,
                     iconColor: Colors.black,
                     selectedTileColor: PondropColors.selectedListItemColor,
                     onTap: () {
-                      Navigator.of(context).push(SearchProductPage.route());
+                      Navigator.of(context).push(SearchItemPage.route(type: SearchItemType.product));
                     },
                   ),
                   ListTile(

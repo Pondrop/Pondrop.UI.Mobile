@@ -54,7 +54,8 @@ class _StoresListState extends State<StoresList> {
 
   Widget _storesList(StoreState state) {
     return Scrollbar(
-      child: ListView.builder(
+      controller: _scrollController,
+      child: ListView.builder(        
         padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
         itemBuilder: (BuildContext context, int index) {
           Widget getItem(int idx, List<Store> stores) {

@@ -39,7 +39,7 @@ class StoreSubmissionState extends Equatable {
     submission.steps.last.fields.any((e) => e.mandatory);
 
   bool get hasAnyResults =>
-    submission.steps.any((step) => step.fields.any((field) => !field.result.isEmpty));
+    submission.steps.any((step) => step.fields.any((field) => field.results.every((e) => !e.isEmpty)));
 
   StoreSubmissionState copyWith({
     SubmissionStatus? action,

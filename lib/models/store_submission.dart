@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -33,7 +35,7 @@ extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
                         maxValue: field.maxValue,
                         pickerValues: field.pickerValues,
                         itemType: field.itemType,
-                        result: StoreSubmissionFieldResult()))
+                        results: [ StoreSubmissionFieldResult() ]))
                     .toList(),
               ))
           .toList(),
@@ -56,22 +58,23 @@ extension StoreSubmissionResultMapping on StoreSubmission {
                 startedUtc: step.started.toUtc(),
                 fields: step.fields
                     .map((field) => SubmissionFieldResultDto(
-                            templateFieldId: field.fieldId,
-                            values: [
-                              SubmissionFieldResultValueDto(
-                                stringValue: field.result.stringValue,
-                                intValue: field.result.intValue,
-                                doubleValue: field.result.doubleValue,
-                                photoPathValue: field.result.photoPathValue,
-                                itemValue: field.itemType != null &&
-                                        field.result.item != null
-                                    ? SubmissionFieldResultValueItemDto(
-                                        itemId: field.result.item!.item1,
-                                        itemName: field.result.item!.item2,
-                                        itemType: field.itemType!)
-                                    : null,
-                              )
-                            ]))
+                        templateFieldId: field.fieldId,
+                        values: field.results
+                            .where((e) => !e.isEmpty)
+                            .map((e) => SubmissionFieldResultValueDto(
+                                  stringValue: e.stringValue,
+                                  intValue: e.intValue,
+                                  doubleValue: e.doubleValue,
+                                  photoPathValue: e.photoPathValue,
+                                  itemValue:
+                                      field.itemType != null && e.item != null
+                                          ? SubmissionFieldResultValueItemDto(
+                                              itemId: e.item!.item1,
+                                              itemName: e.item!.item2,
+                                              itemType: field.itemType!)
+                                          : null,
+                                ))
+                            .toList()))
                     .toList(),
               ))
           .toList(),
@@ -155,8 +158,13 @@ class StoreSubmissionStep extends Equatable {
   final List<StoreSubmissionField> fields;
 
   bool get isComplete =>
-      fields.isEmpty || fields.every((e) => !e.mandatory || !e.result.isEmpty);
-  bool get isEmpty => fields.isEmpty || fields.every((e) => e.result.isEmpty);
+      fields.isEmpty ||
+      fields.every((e) => !e.mandatory || e.results.every((e) => !e.isEmpty));
+  bool get isEmpty =>
+      fields.isEmpty || fields.every((e) => e.results.every((e) => e.isEmpty));
+
+  bool get isFocus =>
+      fields.length == 1 && fields[0].fieldType == SubmissionFieldType.focus;
 
   StoreSubmissionStep copy() {
     return StoreSubmissionStep(
@@ -200,7 +208,7 @@ class StoreSubmissionField extends Equatable {
       this.maxValue,
       this.pickerValues,
       this.itemType,
-      required this.result});
+      this.results = const []});
 
   final String templateId;
   final String stepId;
@@ -213,25 +221,28 @@ class StoreSubmissionField extends Equatable {
   final List<String>? pickerValues;
   final SubmissionFieldItemType? itemType;
 
-  final StoreSubmissionFieldResult result;
+  final List<StoreSubmissionFieldResult> results;
 
   String get resultString {
-    switch (fieldType) {
-      case SubmissionFieldType.photo:
-        return result.photoPathValue ?? '';
-      case SubmissionFieldType.text:
-      case SubmissionFieldType.multilineText:
-      case SubmissionFieldType.picker:
-        return result.stringValue ?? '';
-      case SubmissionFieldType.currency:
-        return NumberFormat.simpleCurrency().format(result.doubleValue ?? 0);
-      case SubmissionFieldType.integer:
-        return result.intValue?.toString() ?? '';
-      case SubmissionFieldType.search:
-        return result.item?.item2 ?? result.item?.item1 ?? '';
-      default:
-        return '';
-    }
+    return results.map((e) {
+      switch (fieldType) {
+        case SubmissionFieldType.photo:
+          return e.photoPathValue ?? '';
+        case SubmissionFieldType.text:
+        case SubmissionFieldType.multilineText:
+        case SubmissionFieldType.picker:
+          return e.stringValue ?? '';
+        case SubmissionFieldType.currency:
+          return NumberFormat.simpleCurrency().format(e.doubleValue ?? 0);
+        case SubmissionFieldType.integer:
+          return e.intValue?.toString() ?? '';
+        case SubmissionFieldType.search:
+        case SubmissionFieldType.focus:
+          return e.item?.item2 ?? e.item?.item1 ?? '';
+        default:
+          return '';
+      }
+    }).join(', ');
   }
 
   StoreSubmissionField copy() {
@@ -245,7 +256,7 @@ class StoreSubmissionField extends Equatable {
         maxValue: maxValue,
         pickerValues: pickerValues,
         itemType: itemType,
-        result: result.copy());
+        results: results.map((e) => e.copy()).toList());
   }
 
   @override
@@ -257,7 +268,7 @@ class StoreSubmissionField extends Equatable {
         maxValue,
         pickerValues,
         itemType,
-        result,
+        results,
       ];
 }
 

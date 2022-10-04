@@ -39,8 +39,11 @@ class App extends StatelessWidget {
                 userRepository:
                     RepositoryProvider.of<UserRepository>(context))),
         RepositoryProvider(
+            create: (context) => CategoryRepository(
+                userRepository: RepositoryProvider.of<UserRepository>(context))),
+        RepositoryProvider(
             create: (context) => ProductRepository(
-                userRepository: RepositoryProvider.of<UserRepository>(context)))
+                userRepository: RepositoryProvider.of<UserRepository>(context))),
       ],
       child: MultiBlocProvider(
         providers: [

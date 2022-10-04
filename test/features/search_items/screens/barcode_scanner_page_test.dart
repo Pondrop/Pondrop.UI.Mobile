@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:pondrop/features/search_products/search_product.dart';
+import 'package:pondrop/features/search_items/search_items.dart';
 
 import '../../../helpers/helpers.dart';
 
