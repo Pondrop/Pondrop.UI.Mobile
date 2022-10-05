@@ -177,6 +177,8 @@
     "@barcode": {},
     "searchProductNameOrBarcode": "Search product name or barcode",
     "@searchProductNameOrBarcode": {},
+    "searchCategoryName": "Search by category name",
+    "@searchCategoryName": {},
     "itemSearch": "{item} search",
     "@itemSearch": {
         "placeholders": {
@@ -186,5 +188,7 @@
         }
     },
     "barcodeScan": "Barcode scan",
-    "@barcodeScan": {}
+    "@barcodeScan": {},
+    "categories": "Categories",
+    "@categories": {}
 }

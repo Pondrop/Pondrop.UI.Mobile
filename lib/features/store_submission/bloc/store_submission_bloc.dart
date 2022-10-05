@@ -38,11 +38,21 @@ class StoreSubmissionBloc
     final step = newSubmission.steps[state.currentStepIdx];
     final field = step.fields.firstWhere((e) => e.fieldId == event.fieldId);
 
-    field.result.stringValue = event.result.stringValue;
-    field.result.intValue = event.result.intValue;
-    field.result.doubleValue = event.result.doubleValue;
-    field.result.photoPathValue = event.result.photoPathValue;
-    field.result.item = event.result.item;
+    if (event.resultIdx > field.results.length - 1) {
+      field.results.add(event.result);
+    } else {
+      final resultToEdit = field.results[event.resultIdx];
+
+      resultToEdit.stringValue = event.result.stringValue;
+      resultToEdit.intValue = event.result.intValue;
+      resultToEdit.doubleValue = event.result.doubleValue;
+      resultToEdit.photoPathValue = event.result.photoPathValue;
+      resultToEdit.item = event.result.item;
+
+      if (field.results.length > 1 && resultToEdit.isEmpty) {
+        field.results.removeAt(event.resultIdx);
+      }
+    }
 
     emit(state.copyWith(submission: newSubmission));
   }

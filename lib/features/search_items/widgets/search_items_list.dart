@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/features/search_items/search_items.dart';
 import 'package:pondrop/l10n/l10n.dart';
-import 'package:pondrop/features/search_products/bloc/search_product_bloc.dart';
-import 'package:pondrop/features/search_products/widgets/search_product_list_item.dart';
+import 'package:pondrop/features/search_items/bloc/search_items_bloc.dart';
+import 'package:pondrop/features/search_items/widgets/search_list_item.dart';
 import 'package:pondrop/features/global/widgets/bottom_loader.dart';
 import 'package:pondrop/features/styles/styles.dart';
 
-class SearchProductList extends StatefulWidget {
-  final String header;
+class SearchItemsList extends StatefulWidget { 
 
-  const SearchProductList(Key? key, this.header) : super(key: key);
+  const SearchItemsList({Key? key, required this.header, this.onTap, this.excludedIds = const []}) : super(key: key);
+
+  final String header;
+  final List<String> excludedIds;
+  final Function(BuildContext, SearchItem)? onTap;
 
   @override
-  State<SearchProductList> createState() => _SearchProductListState();
+  State<SearchItemsList> createState() => _SearchItemsListState();
 }
 
-class _SearchProductListState extends State<SearchProductList> {
+class _SearchItemsListState extends State<SearchItemsList> {
   final _scrollController = ScrollController();
 
   @override
@@ -29,41 +33,44 @@ class _SearchProductListState extends State<SearchProductList> {
     return RefreshIndicator(
       color: Theme.of(context).primaryColor,
       onRefresh: () {
-        final bloc = context.read<SearchProductBloc>()..add(const SearchProductRefreshed());
-        return bloc.stream.firstWhere((e) => e.status != SearchProductStatus.loading);
+        final bloc = context.read<SearchItemsBloc>()..add(const SearchRefreshed());
+        return bloc.stream.firstWhere((e) => e.status != SearchStatus.loading);
       },
-      child: BlocBuilder<SearchProductBloc, SearchProductState>(
+      child: BlocBuilder<SearchItemsBloc, SearchItemsState>(
         builder: (context, state) {
           switch (state.status) {
-            case SearchProductStatus.failure:
+            case SearchStatus.failure:
               return const Center(child: NoResultsFound());
-            case SearchProductStatus.loading:
-            case SearchProductStatus.success:
-              if (state.products.isEmpty &&
-                  state.status != SearchProductStatus.loading) {
+            case SearchStatus.loading:
+            case SearchStatus.success:
+              if (state.items.isEmpty &&
+                  state.status != SearchStatus.loading) {
                 return const Center(child: NoResultsFound());
               }
 
               return Scrollbar(
+                controller: _scrollController,
                 child: ListView.builder(
                   padding: const EdgeInsets.fromLTRB(
                       0, Dims.large, Dims.xSmall, Dims.medium),
                   itemBuilder: (BuildContext context, int index) {
-                    if (index >= state.products.length) {
+                    if (index >= state.items.length) {
                       return const BottomLoader();
                     }
               
-                    return index >= state.products.length
+                    return index >= state.items.length
                         ? const BottomLoader()
-                        : SearchProductListItem(product: state.products[index]);
+                        : widget.excludedIds.contains(state.items[index].id)
+                          ? const SizedBox.shrink()
+                          : SearchListItem(item: state.items[index], onTap: widget.onTap,);
                   },
                   itemCount: state.hasReachedMax
-                      ? state.products.length
-                      : state.products.length + 1,
+                      ? state.items.length
+                      : state.items.length + 1,
                   controller: _scrollController,
                 ),
               );
-            case SearchProductStatus.initial:
+            case SearchStatus.initial:
               return const SizedBox.shrink();
           }
         },
@@ -81,7 +88,7 @@ class _SearchProductListState extends State<SearchProductList> {
 
   void _onScroll() {
     if (_isBottom) {
-      context.read<SearchProductBloc>().add(const SearchProductFetched());
+      context.read<SearchItemsBloc>().add(const SearchFetched());
     }
   }
 

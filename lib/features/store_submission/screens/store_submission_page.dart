@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +18,7 @@ import 'package:pondrop/features/styles/styles.dart';
 
 import '../bloc/store_submission_bloc.dart';
 import '../widgets/fields/fields.dart';
+import '../widgets/focus_header_view.dart';
 
 class StoreSubmissionPage extends StatelessWidget {
   const StoreSubmissionPage(
@@ -47,7 +50,8 @@ class StoreSubmissionPage extends StatelessWidget {
       )..add(const StoreSubmissionNextEvent()),
       child: BlocListener<StoreSubmissionBloc, StoreSubmissionState>(
         listener: (context, state) async {
-          final cameraRepository = RepositoryProvider.of<CameraRepository>(context);
+          final cameraRepository =
+              RepositoryProvider.of<CameraRepository>(context);
           final bloc = context.read<StoreSubmissionBloc>();
           final navigator = Navigator.of(context);
 
@@ -78,8 +82,14 @@ class StoreSubmissionPage extends StatelessWidget {
             final okay =
                 await navigator.push<bool?>(DialogPage.route(DialogConfig(
               title: l10n.itemOfItem(
-                  state.currentStepIdx + 1,
+                  state.currentStepIdx +
+                      1 -
+                      (state.submission.steps
+                          .take(math.max(0, state.currentStepIdx + 1))
+                          .where((e) => e.isFocus)
+                          .length),
                   state.submission.steps.length -
+                      (state.submission.steps.where((e) => e.isFocus).length) -
                       (state.lastStepHasMandatoryFields ? 0 : 1)),
               iconData: IconData(state.currentStep.instructionsIconCodePoint,
                   fontFamily: state.currentStep.instructionsIconFontFamily),
@@ -105,37 +115,38 @@ class StoreSubmissionPage extends StatelessWidget {
             children: [
               Padding(
                 padding: Dims.smallEdgeInsets,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        child: Text(
-                          l10n.cancel,
-                          style: PondropStyles.linkTextStyle,
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                child: Stack(alignment: Alignment.center, children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                      child: Text(
+                        l10n.cancel,
+                        style: PondropStyles.linkTextStyle,
                       ),
-                      Expanded(
-                          child: Align(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  BlocBuilder<StoreSubmissionBloc, StoreSubmissionState>(
+                    builder: (context, state) {
+                      return Align(
                         alignment: Alignment.center,
-                        child: BlocBuilder<StoreSubmissionBloc,
-                            StoreSubmissionState>(
-                          builder: (context, state) {
-                            return Text(
-                              state.currentStep.title.isNotEmpty
-                                  ? state.currentStep.title
-                                  : state.submission.title,
-                              style: PondropStyles.popupTitleTextStyle,
-                            );
-                          },
+                        child: Text(
+                          state.currentStep.title.isNotEmpty
+                              ? state.currentStep.title
+                              : state.submission.title,
+                          style: PondropStyles.popupTitleTextStyle,
                         ),
-                      )),
-                      BlocBuilder<StoreSubmissionBloc, StoreSubmissionState>(
-                        builder: (context, state) {
-                          return TextButton(
+                      );
+                    },
+                  ),
+                  BlocBuilder<StoreSubmissionBloc, StoreSubmissionState>(
+                    builder: (context, state) {
+                      if (!state.currentStep.isFocus) {
+                        return Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
                               key: nextButtonKey,
                               onPressed: state.currentStep.isComplete
                                   ? () {
@@ -150,10 +161,14 @@ class StoreSubmissionPage extends StatelessWidget {
                                     color: state.currentStep.isComplete
                                         ? null
                                         : Colors.grey),
-                              ));
-                        },
-                      ),
-                    ]),
+                              )),
+                        );
+                      }
+
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ]),
               ),
               Expanded(
                   child: BlocBuilder<StoreSubmissionBloc, StoreSubmissionState>(
@@ -173,7 +188,20 @@ class StoreSubmissionPage extends StatelessWidget {
                     );
                   }
 
+                  if (state.currentStep.isFocus) {
+                    return FocusFieldControl(
+                        field: state.currentStep.fields.first);
+                  }
+
                   final children = <Widget>[];
+
+                  final focusSteps = state.submission.steps
+                      .take(math.max(0, state.currentStepIdx))
+                      .where((e) => e.isFocus);
+                  if (focusSteps.isNotEmpty) {
+                    final focusStep = focusSteps.last;
+                    children.add(FocusHeaderView(title: focusStep.fields.first.resultString));
+                  }
 
                   for (final i in state.currentStep.fields) {
                     children.add(Padding(

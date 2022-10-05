@@ -31,8 +31,8 @@ class PhotoFieldControl extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         color: Theme.of(context).cardColor.withOpacity(0.75),
-        child: field.result.photoPathValue?.isNotEmpty == true
-            ? Image.file(File(field.result.photoPathValue!))
+        child: field.results.first.photoPathValue?.isNotEmpty == true
+            ? Image.file(File(field.results.first.photoPathValue!))
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,

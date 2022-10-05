@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/api/extensions/extensions.dart';
 import 'package:pondrop/api/submission_api.dart';
+import 'package:pondrop/features/store_submission/widgets/focus_header_view.dart';
 import 'package:pondrop/models/store_submission.dart';
 import 'package:pondrop/features/styles/styles.dart';
 
@@ -48,13 +49,13 @@ class SubmissionSummaryListView extends StatelessWidget {
           }
 
           if (index < stepIdx) {
-            if (submission.steps[index].fields.every((e) => e.result.isEmpty)) {
+            if (submission.steps[index].fields.every((e) => e.results.isEmpty)) {
               return const SizedBox.shrink();
             }
 
             return Column(
               children: [
-                if (index > 0)
+                if (index > 0 && !submission.steps[index - 1].isFocus)
                   Divider(
                       indent: Dims.large,
                       height: Dims.small,
@@ -85,13 +86,17 @@ class SubmissionSummaryListView extends StatelessWidget {
   }
 
   Widget _stepItem(BuildContext context, StoreSubmissionStep step) {
+    if (step.isFocus) {
+      return FocusHeaderView(title: step.fields.first.resultString,);
+    }
+
     final photoWidgets = <Widget>[];
     final textWidgets = <Widget>[];
 
-    for (final i in step.fields.where((e) => !e.result.isEmpty)) {
+    for (final i in step.fields.where((e) => !e.results.first.isEmpty)) {
       if (i.fieldType == SubmissionFieldType.photo) {
         photoWidgets.add(_photoCard(Image.file(
-          File(i.result.photoPathValue!),
+          File(i.results.first.photoPathValue!),
           fit: BoxFit.cover,
           width: 72,
           height: 72,

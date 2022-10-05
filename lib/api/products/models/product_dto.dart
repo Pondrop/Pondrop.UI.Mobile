@@ -33,7 +33,7 @@ class ProductDto {
   @JsonKey(name: 'gln')
   final String gln;
   @JsonKey(name: 'tm')
-  final String tm;
+  final int tm;
   @JsonKey(name: 'product')
   final String product;
   @JsonKey(name: 'variant')
@@ -49,7 +49,7 @@ class ProductDto {
   @JsonKey(name: 'possibleCategories')
   final String? possibleCategories;
   @JsonKey(name: 'childbarcode')
-  final String? childBarcode;
+  final int? childBarcode;
   @JsonKey(name: 'childQuantity')
   final double? childQuantity;
   @JsonKey(name: 'brand')
@@ -58,7 +58,7 @@ class ProductDto {
   final String? company;
 
   @JsonKey(name: 'updatedUtc')
-  final DateTime updatedUtc;
+  final DateTime? updatedUtc;
 
   static ProductDto fromJson(Map<String, dynamic> json) =>
       _$ProductDtoFromJson(json);

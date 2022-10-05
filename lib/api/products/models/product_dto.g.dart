@@ -11,7 +11,7 @@ ProductDto _$ProductDtoFromJson(Map<String, dynamic> json) => ProductDto(
       externalReferenceId: json['externalReferenceId'] as String,
       uniqueBarcode: json['uniqueBarcode'] as String,
       gln: json['gln'] as String,
-      tm: json['tm'] as String,
+      tm: json['tm'] as int,
       product: json['product'] as String,
       variant: json['variant'] as String?,
       altName: json['altName'] as String?,
@@ -19,11 +19,13 @@ ProductDto _$ProductDtoFromJson(Map<String, dynamic> json) => ProductDto(
       netContent: (json['netContent'] as num).toDouble(),
       netContentUom: json['netContentUom'] as String?,
       possibleCategories: json['possibleCategories'] as String?,
-      childBarcode: json['childbarcode'] as String?,
+      childBarcode: json['childbarcode'] as int?,
       childQuantity: (json['childQuantity'] as num?)?.toDouble(),
       brand: json['brand'] as String?,
       company: json['company'] as String?,
-      updatedUtc: DateTime.parse(json['updatedUtc'] as String),
+      updatedUtc: json['updatedUtc'] == null
+          ? null
+          : DateTime.parse(json['updatedUtc'] as String),
     );
 
 Map<String, dynamic> _$ProductDtoToJson(ProductDto instance) =>
@@ -44,5 +46,5 @@ Map<String, dynamic> _$ProductDtoToJson(ProductDto instance) =>
       'childQuantity': instance.childQuantity,
       'brand': instance.brand,
       'company': instance.company,
-      'updatedUtc': instance.updatedUtc.toIso8601String(),
+      'updatedUtc': instance.updatedUtc?.toIso8601String(),
     };

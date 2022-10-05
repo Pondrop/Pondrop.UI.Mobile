@@ -18,7 +18,7 @@ class StoreReportListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final photoCount = submissionResult?.steps
             .expand((e) => e.fields
-                .where((e) => e.result.photoPathValue?.isNotEmpty == true))
+                .where((e) => e.results.first.photoPathValue?.isNotEmpty == true))
             .length ??
         0;
 
