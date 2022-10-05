@@ -24,6 +24,6 @@ Map<String, dynamic> _$SubmissionFieldResultValueItemDtoToJson(
 
 const _$SubmissionFieldItemTypeEnumMap = {
   SubmissionFieldItemType.unknown: 'unknown',
-  SubmissionFieldItemType.products: 'product',
-  SubmissionFieldItemType.categories: 'category',
+  SubmissionFieldItemType.products: 'products',
+  SubmissionFieldItemType.categories: 'categories',
 };
