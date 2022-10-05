@@ -89,6 +89,10 @@ class SearchFieldControl extends StatelessWidget {
                     final result = await Navigator.of(context).push(
                         SearchItemPage.route(
                             type: field.itemType!.toSearchItemType(),
+                            excludeIds: field.results
+                                .where((e) => e.item != null)
+                                .map((e) => e.item!.item1)
+                                .toList(),
                             categoryRepository:
                                 RepositoryProvider.of<CategoryRepository>(
                                     context),
