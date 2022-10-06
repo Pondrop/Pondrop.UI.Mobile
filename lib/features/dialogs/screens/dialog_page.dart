@@ -90,7 +90,8 @@ class DialogPage extends StatelessWidget {
         Navigator.of(context).pop(true);
       },
       style: PondropStyles.whiteElevatedButtonStyle,
-      child: Text(config.okayButtonText, style: PondropStyles.blackButtonTextStyle),
+      child: Text(config.okayButtonText,
+          style: PondropStyles.blackButtonTextStyle),
     ));
     children.add(separator);
 
@@ -103,7 +104,6 @@ class DialogPage extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyText1!.copyWith(
                     color: Colors.white,
                   ))));
-      children.add(separator);
     }
 
     return Container(
@@ -115,38 +115,46 @@ class DialogPage extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: Dims.large, vertical: Dims.medium),
+              horizontal: Dims.xLarge, vertical: Dims.xLarge),
           child: Center(
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24.0),
-              ),
-              color: Colors.black.withOpacity(0.75),
-              child: Stack(children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: Dims.xLarge, vertical: Dims.large),
-                  child: SingleChildScrollView(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: children),
-                  ),
+            child: SizedBox(
+              width: double.infinity,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24.0),
                 ),
-                Positioned(
-                  left: Dims.small,
-                  top: Dims.xSmall,
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(null);
-                    },
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.white,
+                color: Colors.black.withOpacity(0.75),
+                child: Stack(children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: Dims.xLarge, vertical: Dims.large),
+                    child: SingleChildScrollView(
+                      child: Center(
+                        child: Padding(
+                          padding: Dims.smallEdgeInsets,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: children),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ]),
+                  Positioned(
+                    left: Dims.medium,
+                    top: Dims.medium,
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(null);
+                      },
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ]),
+              ),
             ),
           ),
         ),
