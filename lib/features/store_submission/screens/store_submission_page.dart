@@ -201,7 +201,7 @@ class StoreSubmissionPage extends StatelessWidget {
                   if (focusSteps.isNotEmpty) {
                     final focusStep = focusSteps.last;
                     children.add(FocusHeaderView(
-                        title: focusStep.fields.first.resultString));
+                        title: focusStep.fields.first.toResultString()));
                   }
 
                   for (final i in state.currentStep.fields) {

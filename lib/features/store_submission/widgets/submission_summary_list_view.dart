@@ -87,7 +87,7 @@ class SubmissionSummaryListView extends StatelessWidget {
 
   Widget _stepItem(BuildContext context, StoreSubmissionStep step) {
     if (step.isFocus) {
-      return FocusHeaderView(title: step.fields.first.resultString,);
+      return FocusHeaderView(title: step.fields.first.toResultString(),);
     }
 
     final photoWidgets = <Widget>[];
@@ -112,7 +112,7 @@ class SubmissionSummaryListView extends StatelessWidget {
         textWidgets.add(const SizedBox(
           height: Dims.xSmall,
         ));
-        textWidgets.add(Text(i.resultString,
+        textWidgets.add(Text(i.toResultString('\n'),
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context)

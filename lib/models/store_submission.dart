@@ -221,7 +221,7 @@ class StoreSubmissionField extends Equatable {
 
   final List<StoreSubmissionFieldResult> results;
 
-  String get resultString {
+  String toResultString([String separator = ', ']) {
     return results.map((e) {
       switch (fieldType) {
         case SubmissionFieldType.photo:
@@ -240,7 +240,7 @@ class StoreSubmissionField extends Equatable {
         default:
           return '';
       }
-    }).join(', ');
+    }).join(separator);
   }
 
   StoreSubmissionField copy() {
