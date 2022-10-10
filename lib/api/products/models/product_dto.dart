@@ -18,7 +18,7 @@ class ProductDto {
       required this.netContent,
       required this.netContentUom,
       required this.possibleCategories,
-      required this.childBarcode,
+      //required this.childBarcode,
       required this.childQuantity,
       required this.brand,
       required this.company,
@@ -48,8 +48,8 @@ class ProductDto {
   final String? netContentUom;
   @JsonKey(name: 'possibleCategories')
   final String? possibleCategories;
-  @JsonKey(name: 'childbarcode')
-  final int? childBarcode;
+  // @JsonKey(name: 'childbarcode')
+  // final int? childBarcode;
   @JsonKey(name: 'childQuantity')
   final double? childQuantity;
   @JsonKey(name: 'brand')

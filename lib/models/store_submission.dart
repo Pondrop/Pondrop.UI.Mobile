@@ -160,8 +160,6 @@ class StoreSubmissionStep extends Equatable {
   bool get isComplete =>
       fields.isEmpty ||
       fields.every((e) => !e.mandatory || e.results.every((e) => !e.isEmpty));
-  bool get isEmpty =>
-      fields.isEmpty || fields.every((e) => e.results.every((e) => e.isEmpty));
 
   bool get isFocus =>
       fields.length == 1 && fields[0].fieldType == SubmissionFieldType.focus;
@@ -223,7 +221,7 @@ class StoreSubmissionField extends Equatable {
 
   final List<StoreSubmissionFieldResult> results;
 
-  String get resultString {
+  String toResultString([String separator = ', ']) {
     return results.map((e) {
       switch (fieldType) {
         case SubmissionFieldType.photo:
@@ -242,7 +240,7 @@ class StoreSubmissionField extends Equatable {
         default:
           return '';
       }
-    }).join(', ');
+    }).join(separator);
   }
 
   StoreSubmissionField copy() {

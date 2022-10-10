@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pondrop/api/submission_api.dart';
-import 'package:pondrop/features/search_items/bloc/search_items_bloc.dart';
-import 'package:pondrop/features/search_items/search_items.dart';
 import 'package:pondrop/models/models.dart';
-import 'package:pondrop/repositories/repositories.dart';
 
 import '../widgets/fields/fields.dart';
 

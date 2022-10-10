@@ -107,7 +107,7 @@ class SearchFieldControl extends StatelessWidget {
                           result: StoreSubmissionFieldResult(
                             item: Tuple2(result!.first.id, result.first.title),
                           ),
-                          resultIdx: field.maxValue ?? 0));
+                          resultIdx: field.results.length == 1 && field.results.first.isEmpty ? 0 : (field.maxValue ?? 0) + 1));
                     }
                   }
                 : null),
