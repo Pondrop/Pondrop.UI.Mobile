@@ -49,7 +49,7 @@ class SubmissionSummaryListView extends StatelessWidget {
           }
 
           if (index < stepIdx) {
-            if (submission.steps[index].fields.every((e) => e.results.isEmpty)) {
+            if (submission.steps[index].isEmpty) {
               return const SizedBox.shrink();
             }
 

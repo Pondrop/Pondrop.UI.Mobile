@@ -16,11 +16,21 @@ class StoreReportListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final photoCount = submissionResult?.steps
-            .expand((e) => e.fields
-                .where((e) => e.results.first.photoPathValue?.isNotEmpty == true))
-            .length ??
-        0;
+    var photoCount = 0;
+    var focusName = '';
+
+    if (submissionResult?.steps.isNotEmpty == true) {
+      photoCount = submissionResult!.steps
+          .expand((e) => e.fields
+              .where((e) => e.results.first.photoPathValue?.isNotEmpty == true))
+          .length;
+      focusName = submissionResult!.steps
+          .expand((e) => e.fields
+              .where((e) => e.fieldType == SubmissionFieldType.focus)
+              .map((e) => e.toResultString()))
+          .where((e) => e.isNotEmpty)
+          .join(', ');
+    }
 
     return InkWell(
         onTap: () {
@@ -62,7 +72,9 @@ class StoreReportListItem extends StatelessWidget {
                                       fontWeight: FontWeight.w500)),
                           const SizedBox(height: Dims.small),
                           Text(
-                            submissionTemplate.description,
+                            focusName.isEmpty
+                                ? submissionTemplate.description
+                                : focusName,
                             style: Theme.of(context).textTheme.caption,
                           ),
                         ],

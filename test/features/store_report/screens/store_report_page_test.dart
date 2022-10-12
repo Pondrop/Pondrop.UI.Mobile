@@ -6,6 +6,7 @@ import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/features/store_report/store_report.dart';
 
+import '../../../fake_data/fake_data.dart';
 import '../../../helpers/helpers.dart';
 
 class MockStoreRepository extends Mock implements StoreRepository {}
@@ -57,12 +58,43 @@ void main() {
               return MultiRepositoryProvider(providers: [
                 RepositoryProvider.value(value: storeRepository),
                 RepositoryProvider.value(value: submissionRepository),
-                RepositoryProvider.value(value: locationRepository),                
+                RepositoryProvider.value(value: locationRepository),
               ], child: const StoreReportPage());
             });
       });
 
       expect(find.text(store.displayName), findsOneWidget);
+    });
+
+    testWidgets('renders a Store Report page with Submissions', (tester) async {
+      final templates = FakeStoreSubmissionTemplates.fakeTemplates();
+      final submission = templates.first.toStoreSubmission();
+
+      when(() => submissionRepository.fetchTemplates())
+          .thenAnswer((invocation) => Future.value(templates));
+      when(() => submissionRepository.submissions)
+          .thenAnswer((invocation) => Stream.fromIterable([submission]));
+      when(() => submissionRepository.startStoreVisit(any(), any()))
+          .thenAnswer((invocation) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((invocation) => Future.value(null));
+
+      await tester.pumpAppWithRoute((settings) {
+        return MaterialPageRoute(
+            settings: RouteSettings(arguments: store),
+            builder: (context) {
+              return MultiRepositoryProvider(providers: [
+                RepositoryProvider.value(value: storeRepository),
+                RepositoryProvider.value(value: submissionRepository),
+                RepositoryProvider.value(value: locationRepository),
+              ], child: const StoreReportPage());
+            });
+      });
+
+      await tester.pump(const Duration(milliseconds: 350));
+
+      expect(find.text(store.displayName), findsOneWidget);
+      expect(find.text(submission.title), findsOneWidget);
     });
   });
 }

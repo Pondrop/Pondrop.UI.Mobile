@@ -69,6 +69,7 @@ class SearchFieldControl extends StatelessWidget {
       children.removeLast();
     }
 
+    // Check number of results against max value (defaulting to 1)
     if (field.results.where((e) => !e.isEmpty).length < (field.maxValue ?? 1)) {
       if (children.isNotEmpty) {
         children.add(const SizedBox(
@@ -107,6 +108,8 @@ class SearchFieldControl extends StatelessWidget {
                           result: StoreSubmissionFieldResult(
                             item: Tuple2(result!.first.id, result.first.title),
                           ),
+                          // updated the first result if empty,
+                          // otherwise append a new result
                           resultIdx: field.results.length == 1 && field.results.first.isEmpty ? 0 : (field.maxValue ?? 0) + 1));
                     }
                   }
