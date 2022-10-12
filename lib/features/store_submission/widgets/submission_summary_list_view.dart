@@ -113,8 +113,6 @@ class SubmissionSummaryListView extends StatelessWidget {
           height: Dims.xSmall,
         ));
         textWidgets.add(Text(i.toResultString('\n'),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
             style: Theme.of(context)
                 .textTheme
                 .bodyText1!
