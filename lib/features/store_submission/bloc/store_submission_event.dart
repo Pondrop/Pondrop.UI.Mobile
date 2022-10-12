@@ -23,5 +23,9 @@ class StoreSubmissionFieldResultEvent extends StoreSubmissionEvent {
   final String fieldId;
   final StoreSubmissionFieldResult result;
 
+  /// The StoreSubmissionFieldResult index to update
+  /// 
+  /// If set to a value greater than the current length of results,
+  /// a new result is appended.
   final int resultIdx;
 }

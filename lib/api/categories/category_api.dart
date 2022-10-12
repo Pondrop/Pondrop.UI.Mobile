@@ -25,6 +25,10 @@ class CategoryApi {
       '\$skip' : '$skipIdx',
     };
 
+    if (keyword.isEmpty) {
+      queryParams['\$orderby'] = 'name asc';
+    }
+
     final uri = Uri.https(_baseUrl, "/indexes/cosmosdb-index-category/docs", queryParams);  
     final headers = _getCommonHeaders(accessToken);
 

@@ -38,9 +38,11 @@ class StoreSubmissionBloc
     final step = newSubmission.steps[state.currentStepIdx];
     final field = step.fields.firstWhere((e) => e.fieldId == event.fieldId);
 
+    // Index is out-of-bounds, so append a new result
     if (event.resultIdx > field.results.length - 1) {
       field.results.add(event.result);
     } else {
+      // Index is valid so updated existing result
       final resultToEdit = field.results[event.resultIdx];
 
       resultToEdit.stringValue = event.result.stringValue;
@@ -49,6 +51,7 @@ class StoreSubmissionBloc
       resultToEdit.photoPathValue = event.result.photoPathValue;
       resultToEdit.item = event.result.item;
 
+      // Remove empty results (while maintaining 1 as the minimum array length)
       if (field.results.length > 1 && resultToEdit.isEmpty) {
         field.results.removeAt(event.resultIdx);
       }

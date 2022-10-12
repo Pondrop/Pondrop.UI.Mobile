@@ -106,13 +106,13 @@ void main() {
 
     test('Submission created', () async {
       final templates = FakeStoreSubmissionTemplates.fakeTemplates();
-      final sumbission = templates.first.toStoreSubmission();
+      final submission = templates.first.toStoreSubmission();
 
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value(templates));
       when(() => submissionRepository.submissions)
           .thenAnswer((invocation) => Stream.fromIterable([
-            sumbission
+            submission
           ]));
       when(() => submissionRepository.startStoreVisit(store.id, any()))
           .thenAnswer((invocation) => Future.value(storeVisitDto));
@@ -132,7 +132,7 @@ void main() {
       expect(bloc.state.visit, storeVisitDto);
       expect(bloc.state.visitStatus, StoreReportVisitStatus.started);
       expect(bloc.state.templates, templates);
-      expect(bloc.state.submissions, [ sumbission ]);
+      expect(bloc.state.submissions, [ submission ]);
     });
   });
 }

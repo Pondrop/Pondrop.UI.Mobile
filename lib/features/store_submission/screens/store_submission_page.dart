@@ -79,18 +79,24 @@ class StoreSubmissionPage extends StatelessWidget {
               builder: (_) => _cameraAccessPrompt(context),
             );
           } else if (state.status == SubmissionStatus.stepInstructions) {
+            // the current step number
+            // excludes and previous "focus" steps
             final currentStepNum = (state.currentStepIdx + 1) -
                 (state.submission.steps
                     .take(math.max(0, state.currentStepIdx + 1))
                     .where((e) => e.isFocus)
                     .length);
+            // the total number of steps
+            // excludes all "focus" steps
             final totalStepNum = state.submission.steps.length -
                 (state.submission.steps.where((e) => e.isFocus).length) -
                 (state.lastStepHasMandatoryFields ? 0 : 1);
 
             final okay =
                 await navigator.push<bool?>(DialogPage.route(DialogConfig(
-              title: state.currentStep.isFocus ? '' : l10n.itemOfItem(currentStepNum, totalStepNum),
+              title: state.currentStep.isFocus
+                  ? ''
+                  : l10n.itemOfItem(currentStepNum, totalStepNum),
               iconData: IconData(state.currentStep.instructionsIconCodePoint,
                   fontFamily: state.currentStep.instructionsIconFontFamily),
               header: state.currentStep.title,
@@ -195,10 +201,13 @@ class StoreSubmissionPage extends StatelessWidget {
 
                   final children = <Widget>[];
 
+                  // get all previous "focus" steps
                   final focusSteps = state.submission.steps
                       .take(math.max(0, state.currentStepIdx))
                       .where((e) => e.isFocus);
                   if (focusSteps.isNotEmpty) {
+                    // if any, then we want to display the "focus" header,
+                    // which will be based on the most recent focus result
                     final focusStep = focusSteps.last;
                     children.add(FocusHeaderView(
                         title: focusStep.fields.first.toResultString()));

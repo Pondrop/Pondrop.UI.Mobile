@@ -28,7 +28,6 @@ class SearchBlocProvider extends StatelessWidget {
                   RepositoryProvider.of<CategoryRepository>(context),
               productRepository: productRepository ??
                   RepositoryProvider.of<ProductRepository>(context),
-              minQueryLength: type == SearchItemType.category ? 0 : 3,
             ),
         child: child);
   }
