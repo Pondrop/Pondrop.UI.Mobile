@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/api/submission_api.dart';
+import 'package:pondrop/features/create_product/screens/create_product_page.dart';
 import 'package:pondrop/features/search_items/search_items.dart';
 import 'package:pondrop/features/styles/styles.dart';
 import 'package:pondrop/l10n/l10n.dart';
@@ -86,14 +90,37 @@ class SearchFieldControl extends StatelessWidget {
             onPressed: !readOnly && field.itemType != null
                 ? () async {
                     final bloc = context.read<StoreSubmissionBloc>();
+                    final nav = Navigator.of(context);
 
-                    final result = await Navigator.of(context).push(
+                    final result = await nav.push(
                         SearchItemPage.route(
                             type: field.itemType!.toSearchItemType(),
                             excludeIds: field.results
                                 .where((e) => e.item != null)
                                 .map((e) => e.item!.item1)
                                 .toList(),
+                            actionButtonText: field.itemType ==
+                                    SubmissionFieldItemType.products
+                                ? l10n.createNewItem(l10n.product.toLowerCase())
+                                : '',
+                            actionButtonOnTap: field.itemType ==
+                                    SubmissionFieldItemType.products
+                                ? () async {
+                                    final result =
+                                        await showCupertinoModalBottomSheet<
+                                            Tuple2<String, String>?>(
+                                      context: context,
+                                      builder: (context) =>
+                                          const CreateProductPage(name: 'test', barcode: 'test',),
+                                      enableDrag: false,
+                                    );
+
+                                    if (result?.item1.isNotEmpty == true &&
+                                        result?.item2.isNotEmpty == true) {
+                                     nav.pop([ SearchItem(id: result!.item2, title: result.item1) ]);
+                                    }
+                                  }
+                                : null,
                             categoryRepository:
                                 RepositoryProvider.of<CategoryRepository>(
                                     context),
@@ -102,15 +129,7 @@ class SearchFieldControl extends StatelessWidget {
                                     context)));
 
                     if (result?.isNotEmpty == true) {
-                      bloc.add(StoreSubmissionFieldResultEvent(
-                          stepId: field.stepId,
-                          fieldId: field.fieldId,
-                          result: StoreSubmissionFieldResult(
-                            item: Tuple2(result!.first.id, result.first.title),
-                          ),
-                          // updated the first result if empty,
-                          // otherwise append a new result
-                          resultIdx: field.results.length == 1 && field.results.first.isEmpty ? 0 : (field.maxValue ?? 0) + 1));
+                      _addResult(bloc, result!.first.id, result.first.title);
                     }
                   }
                 : null),
@@ -122,6 +141,20 @@ class SearchFieldControl extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: children,
     );
+  }
+
+  void _addResult(StoreSubmissionBloc bloc, String id, String name) {
+    bloc.add(StoreSubmissionFieldResultEvent(
+        stepId: field.stepId,
+        fieldId: field.fieldId,
+        result: StoreSubmissionFieldResult(
+          item: Tuple2(id, name),
+        ),
+        // updated the first result if empty,
+        // otherwise append a new result
+        resultIdx: field.results.length == 1 && field.results.first.isEmpty
+            ? 0
+            : (field.maxValue ?? 0) + 1));
   }
 }
 
