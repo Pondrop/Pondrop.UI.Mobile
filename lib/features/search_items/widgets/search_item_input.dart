@@ -25,6 +25,7 @@ class _SearchItemInputState extends State<SearchItemInput> {
       final l10n = context.l10n;
       return TextField(
         key: SearchItemPage.searchTextFieldKey,
+        autofocus: true,
         style: const TextStyle(fontSize: 20, color: Colors.black),
         controller: _searchTextController,
         decoration: InputDecoration(
