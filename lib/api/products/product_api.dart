@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:pondrop/api/extensions/extensions.dart';
+import 'package:pondrop/extensions/extensions.dart';
 import 'package:pondrop/api/products/models/models.dart';
 
 class ProductApi {

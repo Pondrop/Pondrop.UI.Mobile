@@ -12,6 +12,9 @@ SubmissionFieldResultValueDto _$SubmissionFieldResultValueDtoFromJson(
       stringValue: json['stringValue'] as String?,
       intValue: json['intValue'] as int?,
       doubleValue: (json['doubleValue'] as num?)?.toDouble(),
+      dateTimeValue: json['dateTimeValue'] == null
+          ? null
+          : DateTime.parse(json['dateTimeValue'] as String),
       itemValue: json['itemValue'] == null
           ? null
           : SubmissionFieldResultValueItemDto.fromJson(
@@ -26,6 +29,7 @@ Map<String, dynamic> _$SubmissionFieldResultValueDtoToJson(
       'stringValue': instance.stringValue,
       'intValue': instance.intValue,
       'doubleValue': instance.doubleValue,
+      'dateTimeValue': instance.dateTimeValue?.toIso8601String(),
       'itemValue': instance.itemValue?.toJson(),
       'photoFileName': instance.photoFileName,
       'photoBase64': instance.photoBase64,

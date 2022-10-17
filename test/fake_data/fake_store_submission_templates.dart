@@ -32,13 +32,19 @@ class FakeStoreSubmissionTemplates {
                   label: 'Product',
                   mandatory: false,
                   fieldType: SubmissionFieldType.search,
-                  itemType: SubmissionFieldItemType.products
+                  itemType: SubmissionFieldItemType.product
                 ),
                 SubmissionTemplateFieldDto(
                   id: const Uuid().v4(),
                   label: 'Name',
                   mandatory: false,
                   fieldType: SubmissionFieldType.text,
+                ),
+                 SubmissionTemplateFieldDto(
+                  id: const Uuid().v4(),
+                  label: 'Use By date',
+                  mandatory: false,
+                  fieldType: SubmissionFieldType.date,
                 ),
                 SubmissionTemplateFieldDto(
                   id: const Uuid().v4(),

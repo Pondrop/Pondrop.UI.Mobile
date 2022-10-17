@@ -86,7 +86,7 @@ class _AppViewState extends State<AppView> {
           ),
           primaryColor: PondropColors.primaryColor,
           colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.blueGrey,
+            primarySwatch: Colors.indigo,
             accentColor: PondropColors.primaryColor,
             errorColor: PondropColors.errorColor,
           ),

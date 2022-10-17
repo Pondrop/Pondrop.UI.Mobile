@@ -48,6 +48,7 @@ class StoreSubmissionBloc
       resultToEdit.stringValue = event.result.stringValue;
       resultToEdit.intValue = event.result.intValue;
       resultToEdit.doubleValue = event.result.doubleValue;
+      resultToEdit.dateTimeValue = event.result.dateTimeValue;
       resultToEdit.photoPathValue = event.result.photoPathValue;
       resultToEdit.item = event.result.item;
 

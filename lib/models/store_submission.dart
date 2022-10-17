@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -35,7 +33,7 @@ extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
                         maxValue: field.maxValue,
                         pickerValues: field.pickerValues,
                         itemType: field.itemType,
-                        results: [ StoreSubmissionFieldResult() ]))
+                        results: [StoreSubmissionFieldResult()]))
                     .toList(),
               ))
           .toList(),
@@ -158,8 +156,7 @@ class StoreSubmissionStep extends Equatable {
   final List<StoreSubmissionField> fields;
 
   bool get isEmpty =>
-      fields.isEmpty ||
-      fields.every((e) => e.results.every((e) => e.isEmpty));
+      fields.isEmpty || fields.every((e) => e.results.every((e) => e.isEmpty));
 
   bool get isComplete =>
       fields.isEmpty ||
@@ -225,7 +222,7 @@ class StoreSubmissionField extends Equatable {
 
   final List<StoreSubmissionFieldResult> results;
 
-  String toResultString([String separator = ', ']) {
+  String toResultString({String separator = ', ', String locale = 'en'}) {
     return results.map((e) {
       switch (fieldType) {
         case SubmissionFieldType.photo:
@@ -241,6 +238,10 @@ class StoreSubmissionField extends Equatable {
         case SubmissionFieldType.search:
         case SubmissionFieldType.focus:
           return e.item?.item2 ?? e.item?.item1 ?? '';
+        case SubmissionFieldType.date:
+          return e.dateTimeValue != null
+              ? DateFormat.yMd(locale).format(e.dateTimeValue!)
+              : '';
         default:
           return '';
       }
@@ -279,6 +280,7 @@ class StoreSubmissionFieldResult extends Equatable {
     this.stringValue,
     this.intValue,
     this.doubleValue,
+    this.dateTimeValue,
     this.photoPathValue,
     this.item,
   });
@@ -286,6 +288,7 @@ class StoreSubmissionFieldResult extends Equatable {
   String? stringValue;
   int? intValue;
   double? doubleValue;
+  DateTime? dateTimeValue;
   String? photoPathValue;
 
   Tuple2<String, String>? item;
@@ -294,6 +297,7 @@ class StoreSubmissionFieldResult extends Equatable {
       stringValue == null &&
       intValue == null &&
       doubleValue == null &&
+      dateTimeValue == null &&
       photoPathValue == null &&
       item == null;
 
@@ -302,6 +306,7 @@ class StoreSubmissionFieldResult extends Equatable {
       stringValue: stringValue,
       intValue: intValue,
       doubleValue: doubleValue,
+      dateTimeValue: dateTimeValue,
       photoPathValue: photoPathValue,
       item: item,
     );
@@ -312,6 +317,7 @@ class StoreSubmissionFieldResult extends Equatable {
         stringValue,
         intValue,
         doubleValue,
+        dateTimeValue,
         photoPathValue,
         item,
       ];

@@ -45,6 +45,11 @@ class SubmissionFieldView extends StatelessWidget {
           field: field,
           readOnly: readOnly,
         );
+      case SubmissionFieldType.date:
+        return DateFieldControl(
+          field: field,
+          readOnly: readOnly,
+        );
       case SubmissionFieldType.focus:
       default:
         return const SizedBox.shrink();
