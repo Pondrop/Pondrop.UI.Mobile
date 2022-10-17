@@ -78,13 +78,16 @@ class SearchItemPage extends StatelessWidget {
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Padding(
-                        padding: Dims.largeEdgeInsets,
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                              icon: Icon(actionButtonIconData),
-                              label: Text(actionButtonText),
-                              onPressed: actionButtonOnTap),
+                        padding: Dims.xxLargeEdgeInsets,
+                        child: Padding(
+                          padding: Dims.largeBottomEdgeInsets,
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                                icon: Icon(actionButtonIconData),
+                                label: Text(actionButtonText),
+                                onPressed: actionButtonOnTap),
+                          ),
                         ),
                       ),
                     )

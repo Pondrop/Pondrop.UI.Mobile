@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -92,44 +91,50 @@ class SearchFieldControl extends StatelessWidget {
                     final bloc = context.read<StoreSubmissionBloc>();
                     final nav = Navigator.of(context);
 
-                    final result = await nav.push(
-                        SearchItemPage.route(
-                            type: field.itemType!.toSearchItemType(),
-                            excludeIds: field.results
-                                .where((e) => e.item != null)
-                                .map((e) => e.item!.item1)
-                                .toList(),
-                            actionButtonText: field.itemType ==
-                                    SubmissionFieldItemType.products
+                    final result = await nav.push(SearchItemPage.route(
+                        type: field.itemType!.toSearchItemType(),
+                        excludeIds: field.results
+                            .where((e) => e.item != null)
+                            .map((e) => e.item!.item1)
+                            .toList(),
+                        actionButtonText:
+                            field.itemType == SubmissionFieldItemType.products
                                 ? l10n.createNewItem(l10n.product.toLowerCase())
                                 : '',
-                            actionButtonOnTap: field.itemType ==
-                                    SubmissionFieldItemType.products
+                        actionButtonOnTap:
+                            field.itemType == SubmissionFieldItemType.products
                                 ? () async {
                                     final result =
                                         await showCupertinoModalBottomSheet<
                                             Tuple2<String, String>?>(
                                       context: context,
-                                      builder: (context) =>
-                                          const CreateProductPage(name: 'test', barcode: 'test',),
+                                      builder: (context) => kDebugMode
+                                          ? const CreateProductPage(
+                                              name: 'Test product',
+                                              barcode: '123456789',
+                                            )
+                                          : const CreateProductPage(),
                                       enableDrag: false,
                                     );
 
                                     if (result?.item1.isNotEmpty == true &&
                                         result?.item2.isNotEmpty == true) {
-                                     nav.pop([ SearchItem(id: result!.item2, title: result.item1) ]);
+                                      nav.pop([
+                                        SearchItem(
+                                            id: '',
+                                            title: result!.item1,
+                                            extras: {'barcode': result.item2})
+                                      ]);
                                     }
                                   }
                                 : null,
-                            categoryRepository:
-                                RepositoryProvider.of<CategoryRepository>(
-                                    context),
-                            productRepository:
-                                RepositoryProvider.of<ProductRepository>(
-                                    context)));
+                        categoryRepository:
+                            RepositoryProvider.of<CategoryRepository>(context),
+                        productRepository:
+                            RepositoryProvider.of<ProductRepository>(context)));
 
                     if (result?.isNotEmpty == true) {
-                      _addResult(bloc, result!.first.id, result.first.title);
+                      _addResult(bloc, result!.first.id, result.first.title, extras: result.first.extras);
                     }
                   }
                 : null),
@@ -143,12 +148,14 @@ class SearchFieldControl extends StatelessWidget {
     );
   }
 
-  void _addResult(StoreSubmissionBloc bloc, String id, String name) {
+  void _addResult(StoreSubmissionBloc bloc, String id, String name,
+      {Map<String, String>? extras}) {
     bloc.add(StoreSubmissionFieldResultEvent(
         stepId: field.stepId,
         fieldId: field.fieldId,
         result: StoreSubmissionFieldResult(
           item: Tuple2(id, name),
+          itemExtras: extras,
         ),
         // updated the first result if empty,
         // otherwise append a new result

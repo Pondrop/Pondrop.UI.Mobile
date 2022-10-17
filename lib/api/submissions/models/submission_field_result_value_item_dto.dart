@@ -10,6 +10,7 @@ class SubmissionFieldResultValueItemDto {
     required this.itemId,
     required this.itemName,
     required this.itemType,
+    required this.extras,
   });
 
   @JsonKey(name: 'itemId')
@@ -18,6 +19,9 @@ class SubmissionFieldResultValueItemDto {
   final String itemName;
   @JsonKey(name: 'itemType')
   final SubmissionFieldItemType itemType;
+
+  @JsonKey(name: 'extras')
+  final Map<String, String>? extras;
   
   static SubmissionFieldResultValueItemDto fromJson(Map<String, dynamic> json) =>
     _$SubmissionFieldResultValueItemDtoFromJson(json);

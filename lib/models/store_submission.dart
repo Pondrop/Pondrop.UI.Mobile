@@ -71,7 +71,8 @@ extension StoreSubmissionResultMapping on StoreSubmission {
                                           ? SubmissionFieldResultValueItemDto(
                                               itemId: e.item!.item1,
                                               itemName: e.item!.item2,
-                                              itemType: field.itemType!)
+                                              itemType: field.itemType!,
+                                              extras: e.itemExtras)
                                           : null,
                                 ))
                             .toList()))
@@ -281,6 +282,7 @@ class StoreSubmissionFieldResult extends Equatable {
     this.doubleValue,
     this.photoPathValue,
     this.item,
+    this.itemExtras,
   });
 
   String? stringValue;
@@ -289,13 +291,15 @@ class StoreSubmissionFieldResult extends Equatable {
   String? photoPathValue;
 
   Tuple2<String, String>? item;
+  Map<String, String>? itemExtras;
 
   bool get isEmpty =>
       stringValue == null &&
       intValue == null &&
       doubleValue == null &&
       photoPathValue == null &&
-      item == null;
+      item == null &&
+      itemExtras == null;
 
   StoreSubmissionFieldResult copy() {
     return StoreSubmissionFieldResult(
@@ -304,6 +308,7 @@ class StoreSubmissionFieldResult extends Equatable {
       doubleValue: doubleValue,
       photoPathValue: photoPathValue,
       item: item,
+      itemExtras: itemExtras,
     );
   }
 
@@ -314,5 +319,6 @@ class StoreSubmissionFieldResult extends Equatable {
         doubleValue,
         photoPathValue,
         item,
+        itemExtras,
       ];
 }
