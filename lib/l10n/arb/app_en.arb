@@ -190,5 +190,29 @@
     "barcodeScan": "Barcode scan",
     "@barcodeScan": {},
     "categories": "Categories",
-    "@categories": {}
+    "@categories": {},
+    "createNewItem": "Create new {item}",
+    "@createNewItem": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "createItem": "Create {item}",
+    "@createItem": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    },
+    "itemName": "{item} name",
+    "@itemName": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
+    }
 }

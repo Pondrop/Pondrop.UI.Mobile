@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/api/submission_api.dart';
+import 'package:pondrop/features/create_product/screens/create_product_page.dart';
 import 'package:pondrop/features/search_items/search_items.dart';
 import 'package:pondrop/features/styles/styles.dart';
 import 'package:pondrop/l10n/l10n.dart';
@@ -18,8 +21,8 @@ class SearchFieldControl extends StatelessWidget {
     return Key('SearchFieldControl_SearchBtn_$fieldId');
   }
 
-  static Key getClearButtonKey(String fieldId, String itemId) {
-    return Key('SearchFieldControl_ClearBtn_${fieldId}_${itemId}');
+  static Key getClearButtonKey(String fieldId, int idx) {
+    return Key('SearchFieldControl_ClearBtn_${fieldId}_$idx');
   }
 
   final StoreSubmissionField field;
@@ -32,9 +35,10 @@ class SearchFieldControl extends StatelessWidget {
     final children = <Widget>[];
 
     for (final i in field.results.where((e) => !e.isEmpty)) {
+      final idx = field.results.indexOf(i);
       children.add(TextFormField(
-        key: Key('SearchFieldControl_Txt_${field.fieldId}_${i.item!.item1}'),
-        initialValue: i.item?.item2 ?? '',
+        key: Key('SearchFieldControl_Txt_${field.fieldId}_$idx'),
+        initialValue: i.itemValue?.itemName ?? '',
         maxLines: 3,
         minLines: 1,
         decoration: InputDecoration(
@@ -43,7 +47,7 @@ class SearchFieldControl extends StatelessWidget {
           suffixIcon: !readOnly
               ? IconButton(
                   key: SearchFieldControl.getClearButtonKey(
-                      field.fieldId, i.item!.item1),
+                      field.fieldId, idx),
                   icon: const Icon(Icons.cancel_outlined),
                   onPressed: () {
                     context.read<StoreSubmissionBloc>().add(
@@ -86,31 +90,52 @@ class SearchFieldControl extends StatelessWidget {
             onPressed: !readOnly && field.itemType != null
                 ? () async {
                     final bloc = context.read<StoreSubmissionBloc>();
+                    final nav = Navigator.of(context);
 
-                    final result = await Navigator.of(context).push(
-                        SearchItemPage.route(
-                            type: field.itemType!.toSearchItemType(),
-                            excludeIds: field.results
-                                .where((e) => e.item != null)
-                                .map((e) => e.item!.item1)
-                                .toList(),
-                            categoryRepository:
-                                RepositoryProvider.of<CategoryRepository>(
-                                    context),
-                            productRepository:
-                                RepositoryProvider.of<ProductRepository>(
-                                    context)));
+                    final result = await nav.push(SearchItemPage.route(
+                        type: field.itemType!.toSearchItemType(),
+                        excludeIds: field.results
+                            .where((e) => e.itemValue?.itemName.isNotEmpty == true)
+                            .map((e) => e.itemValue!.itemId)
+                            .toList(),
+                        actionButtonText:
+                            field.itemType == SubmissionFieldItemType.products
+                                ? l10n.createNewItem(l10n.product.toLowerCase())
+                                : '',
+                        actionButtonOnTap:
+                            field.itemType == SubmissionFieldItemType.products
+                                ? () async {
+                                    final result =
+                                        await showCupertinoModalBottomSheet<
+                                            Tuple2<String, String>?>(
+                                      context: context,
+                                      builder: (context) => kDebugMode
+                                          ? const CreateProductPage(
+                                              name: 'Test product',
+                                              barcode: '123456789',
+                                            )
+                                          : const CreateProductPage(),
+                                      enableDrag: false,
+                                    );
+
+                                    if (result?.item1.isNotEmpty == true &&
+                                        result?.item2.isNotEmpty == true) {
+                                      nav.pop([
+                                        SearchItem(
+                                            id: '',
+                                            title: result!.item1,
+                                            barcode: result.item2)
+                                      ]);
+                                    }
+                                  }
+                                : null,
+                        categoryRepository:
+                            RepositoryProvider.of<CategoryRepository>(context),
+                        productRepository:
+                            RepositoryProvider.of<ProductRepository>(context)));
 
                     if (result?.isNotEmpty == true) {
-                      bloc.add(StoreSubmissionFieldResultEvent(
-                          stepId: field.stepId,
-                          fieldId: field.fieldId,
-                          result: StoreSubmissionFieldResult(
-                            item: Tuple2(result!.first.id, result.first.title),
-                          ),
-                          // updated the first result if empty,
-                          // otherwise append a new result
-                          resultIdx: field.results.length == 1 && field.results.first.isEmpty ? 0 : (field.maxValue ?? 0) + 1));
+                      _addResult(bloc, result!.first.id, result.first.title, result.first.barcode);
                     }
                   }
                 : null),
@@ -122,6 +147,24 @@ class SearchFieldControl extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: children,
     );
+  }
+
+  void _addResult(StoreSubmissionBloc bloc, String id, String name,
+      String? barcode) {
+    bloc.add(StoreSubmissionFieldResultEvent(
+        stepId: field.stepId,
+        fieldId: field.fieldId,
+        result: StoreSubmissionFieldResult(
+          itemValue: StoreSubmissionFieldResultItem(
+            itemId: id,
+            itemName: name,
+            itemBarcode: barcode)
+        ),
+        // updated the first result if empty,
+        // otherwise append a new result
+        resultIdx: field.results.length == 1 && field.results.first.isEmpty
+            ? 0
+            : (field.maxValue ?? 0) + 1));
   }
 }
 

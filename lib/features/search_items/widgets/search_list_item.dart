@@ -43,10 +43,10 @@ class SearchListItem extends StatelessWidget {
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.titleMedium),
-                        if (item.subTitle.isNotEmpty) ...[
+                        if (item.subtitle.isNotEmpty) ...[
                           const SizedBox(height: Dims.small),
                           Text(
-                            item.subTitle,
+                            item.subtitle,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.caption,
                           ),

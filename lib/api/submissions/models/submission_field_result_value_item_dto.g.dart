@@ -12,6 +12,7 @@ SubmissionFieldResultValueItemDto _$SubmissionFieldResultValueItemDtoFromJson(
       itemId: json['itemId'] as String,
       itemName: json['itemName'] as String,
       itemType: $enumDecode(_$SubmissionFieldItemTypeEnumMap, json['itemType']),
+      itemBarcode: json['itemBarcode'] as String?,
     );
 
 Map<String, dynamic> _$SubmissionFieldResultValueItemDtoToJson(
@@ -20,6 +21,7 @@ Map<String, dynamic> _$SubmissionFieldResultValueItemDtoToJson(
       'itemId': instance.itemId,
       'itemName': instance.itemName,
       'itemType': _$SubmissionFieldItemTypeEnumMap[instance.itemType]!,
+      'itemBarcode': instance.itemBarcode,
     };
 
 const _$SubmissionFieldItemTypeEnumMap = {
