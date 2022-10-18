@@ -308,7 +308,7 @@ void main() {
       expect(find.text(product.name), findsOneWidget);
 
       await tester.tap(find
-          .byKey(SearchFieldControl.getClearButtonKey(searchField.fieldId, product.id)));
+          .byKey(SearchFieldControl.getClearButtonKey(searchField.fieldId, 0)));
       await tester.pumpAndSettle();
       expect(find.byKey(searchButtonKey), findsOneWidget);
     });

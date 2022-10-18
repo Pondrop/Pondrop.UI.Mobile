@@ -6,7 +6,7 @@ class SearchItem extends Equatable {
     required this.id,
     required this.title,
     this.subtitle = '',
-    this.extras,
+    this.barcode,
     this.iconData,
   });
 
@@ -15,10 +15,10 @@ class SearchItem extends Equatable {
   final String title;
   final String subtitle;
 
-  final Map<String, String>? extras;
+  final String? barcode;
 
   final IconData? iconData;
 
   @override
-  List<Object?> get props => [id, title, subtitle, extras];
+  List<Object?> get props => [id, title, subtitle, barcode];
 }

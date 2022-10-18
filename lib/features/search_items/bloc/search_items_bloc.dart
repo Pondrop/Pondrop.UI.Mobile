@@ -110,7 +110,7 @@ class SearchItemsBloc extends Bloc<SearchItemsEvent, SearchItemsState> {
         return Tuple2(categories.item1.map((e) => SearchItem(id: e.id, title: e.name, iconData: Icons.category_outlined)).toList(), categories.item2);
       case SearchItemType.product:
         final products = await _productRepository.fetchProducts(query, skipIdx);
-        return Tuple2(products.item1.map((e) => SearchItem(id: e.id, title: e.name, subtitle: e.barcode)).toList(), products.item2);
+        return Tuple2(products.item1.map((e) => SearchItem(id: e.id, title: e.name, subtitle: e.barcode, barcode: e.barcode)).toList(), products.item2);
     }
   }
 }

@@ -21,8 +21,8 @@ class SearchFieldControl extends StatelessWidget {
     return Key('SearchFieldControl_SearchBtn_$fieldId');
   }
 
-  static Key getClearButtonKey(String fieldId, String itemId) {
-    return Key('SearchFieldControl_ClearBtn_${fieldId}_${itemId}');
+  static Key getClearButtonKey(String fieldId, int idx) {
+    return Key('SearchFieldControl_ClearBtn_${fieldId}_$idx');
   }
 
   final StoreSubmissionField field;
@@ -35,9 +35,10 @@ class SearchFieldControl extends StatelessWidget {
     final children = <Widget>[];
 
     for (final i in field.results.where((e) => !e.isEmpty)) {
+      final idx = field.results.indexOf(i);
       children.add(TextFormField(
-        key: Key('SearchFieldControl_Txt_${field.fieldId}_${i.item!.item1}'),
-        initialValue: i.item?.item2 ?? '',
+        key: Key('SearchFieldControl_Txt_${field.fieldId}_$idx'),
+        initialValue: i.itemValue?.itemName ?? '',
         maxLines: 3,
         minLines: 1,
         decoration: InputDecoration(
@@ -46,7 +47,7 @@ class SearchFieldControl extends StatelessWidget {
           suffixIcon: !readOnly
               ? IconButton(
                   key: SearchFieldControl.getClearButtonKey(
-                      field.fieldId, i.item!.item1),
+                      field.fieldId, idx),
                   icon: const Icon(Icons.cancel_outlined),
                   onPressed: () {
                     context.read<StoreSubmissionBloc>().add(
@@ -94,8 +95,8 @@ class SearchFieldControl extends StatelessWidget {
                     final result = await nav.push(SearchItemPage.route(
                         type: field.itemType!.toSearchItemType(),
                         excludeIds: field.results
-                            .where((e) => e.item != null)
-                            .map((e) => e.item!.item1)
+                            .where((e) => e.itemValue?.itemName.isNotEmpty == true)
+                            .map((e) => e.itemValue!.itemId)
                             .toList(),
                         actionButtonText:
                             field.itemType == SubmissionFieldItemType.products
@@ -123,7 +124,7 @@ class SearchFieldControl extends StatelessWidget {
                                         SearchItem(
                                             id: '',
                                             title: result!.item1,
-                                            extras: {'barcode': result.item2})
+                                            barcode: result.item2)
                                       ]);
                                     }
                                   }
@@ -134,7 +135,7 @@ class SearchFieldControl extends StatelessWidget {
                             RepositoryProvider.of<ProductRepository>(context)));
 
                     if (result?.isNotEmpty == true) {
-                      _addResult(bloc, result!.first.id, result.first.title, extras: result.first.extras);
+                      _addResult(bloc, result!.first.id, result.first.title, result.first.barcode);
                     }
                   }
                 : null),
@@ -149,13 +150,15 @@ class SearchFieldControl extends StatelessWidget {
   }
 
   void _addResult(StoreSubmissionBloc bloc, String id, String name,
-      {Map<String, String>? extras}) {
+      String? barcode) {
     bloc.add(StoreSubmissionFieldResultEvent(
         stepId: field.stepId,
         fieldId: field.fieldId,
         result: StoreSubmissionFieldResult(
-          item: Tuple2(id, name),
-          itemExtras: extras,
+          itemValue: StoreSubmissionFieldResultItem(
+            itemId: id,
+            itemName: name,
+            itemBarcode: barcode)
         ),
         // updated the first result if empty,
         // otherwise append a new result

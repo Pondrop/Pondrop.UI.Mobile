@@ -43,7 +43,8 @@ class FocusFieldControl extends StatelessWidget {
                             stepId: field.stepId,
                             fieldId: field.fieldId,
                             result: StoreSubmissionFieldResult(
-                              item: Tuple2(item.id, item.title),
+                              itemValue: StoreSubmissionFieldResultItem(
+                                  itemId: item.id, itemName: item.title),
                             ),
                             resultIdx: field.maxValue ?? 0));
                     context
