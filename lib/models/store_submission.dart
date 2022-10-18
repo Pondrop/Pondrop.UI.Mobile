@@ -223,7 +223,7 @@ class StoreSubmissionField extends Equatable {
 
   final List<StoreSubmissionFieldResult> results;
 
-  String toResultString([String separator = ', ']) {
+  String toResultString({String separator = ', ', String locale = 'en'}) {
     return results.map((e) {
       switch (fieldType) {
         case SubmissionFieldType.photo:
@@ -239,6 +239,10 @@ class StoreSubmissionField extends Equatable {
         case SubmissionFieldType.search:
         case SubmissionFieldType.focus:
           return e.itemValue?.itemName ?? '';
+        case SubmissionFieldType.date:
+          return e.dateTimeValue != null
+              ? DateFormat.yMd(locale).format(e.dateTimeValue!)
+              : '';          
         default:
           return '';
       }
@@ -277,6 +281,7 @@ class StoreSubmissionFieldResult extends Equatable {
     this.stringValue,
     this.intValue,
     this.doubleValue,
+    this.dateTimeValue,
     this.photoPathValue,
     this.itemValue,
   });
@@ -284,6 +289,7 @@ class StoreSubmissionFieldResult extends Equatable {
   String? stringValue;
   int? intValue;
   double? doubleValue;
+  DateTime? dateTimeValue;
   String? photoPathValue;
 
   StoreSubmissionFieldResultItem? itemValue;
@@ -292,6 +298,7 @@ class StoreSubmissionFieldResult extends Equatable {
       stringValue == null &&
       intValue == null &&
       doubleValue == null &&
+      dateTimeValue == null &&
       photoPathValue == null &&
       (itemValue == null || itemValue!.isEmpty);
 
@@ -300,6 +307,7 @@ class StoreSubmissionFieldResult extends Equatable {
       stringValue: stringValue,
       intValue: intValue,
       doubleValue: doubleValue,
+      dateTimeValue: dateTimeValue,
       photoPathValue: photoPathValue,
       itemValue: itemValue?.copy(),
     );
@@ -310,6 +318,7 @@ class StoreSubmissionFieldResult extends Equatable {
         stringValue,
         intValue,
         doubleValue,
+        dateTimeValue,
         photoPathValue,
         itemValue,
       ];

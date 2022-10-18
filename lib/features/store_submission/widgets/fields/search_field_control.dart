@@ -99,11 +99,11 @@ class SearchFieldControl extends StatelessWidget {
                             .map((e) => e.itemValue!.itemId)
                             .toList(),
                         actionButtonText:
-                            field.itemType == SubmissionFieldItemType.products
+                            field.itemType == SubmissionFieldItemType.product
                                 ? l10n.createNewItem(l10n.product.toLowerCase())
                                 : '',
                         actionButtonOnTap:
-                            field.itemType == SubmissionFieldItemType.products
+                            field.itemType == SubmissionFieldItemType.product
                                 ? () async {
                                     final result =
                                         await showCupertinoModalBottomSheet<

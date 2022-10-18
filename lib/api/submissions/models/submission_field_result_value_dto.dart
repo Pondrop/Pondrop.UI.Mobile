@@ -9,6 +9,7 @@ class SubmissionFieldResultValueDto {
     this.stringValue,
     this.intValue,
     this.doubleValue,
+    this.dateTimeValue,
     this.photoPathValue,
     this.itemValue
   });
@@ -19,6 +20,8 @@ class SubmissionFieldResultValueDto {
   final int? intValue;
   @JsonKey(name: 'doubleValue')
   final double? doubleValue;
+  @JsonKey(name: 'dateTimeValue')
+  final DateTime? dateTimeValue;
 
   @JsonKey(name: 'itemValue')
   final SubmissionFieldResultValueItemDto? itemValue;

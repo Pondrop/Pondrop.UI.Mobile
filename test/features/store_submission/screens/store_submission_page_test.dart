@@ -163,6 +163,16 @@ void main() {
               .firstWhere((e) => e.fieldType == SubmissionFieldType.text)
               .fieldId)),
           textValue);
+
+      // Date field
+      await tester.tap(find.byKey(Key(step.fields
+          .firstWhere((e) => e.fieldType == SubmissionFieldType.date)
+          .fieldId)));
+      await tester.pump();
+      expect(find.byType(CalendarDatePicker), findsOneWidget);
+      await tester.tap(find.text('15'));
+      await tester.tap(find.text('OK'));
+
       await tester.enterText(
           find.byKey(Key(step.fields
               .firstWhere((e) => e.fieldType == SubmissionFieldType.currency)
@@ -287,7 +297,7 @@ void main() {
       final step = submission.steps[0];
       final searchField = step.fields.firstWhere((e) =>
           e.fieldType == SubmissionFieldType.search &&
-          e.itemType == SubmissionFieldItemType.products);
+          e.itemType == SubmissionFieldItemType.product);
       final searchButtonKey =
           SearchFieldControl.getSearchButtonKey(searchField.fieldId);
 

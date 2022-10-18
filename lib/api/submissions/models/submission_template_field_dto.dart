@@ -2,8 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'submission_template_field_dto.g.dart';
 
-enum SubmissionFieldType { unknown, photo, text, multilineText, integer, currency, picker, search, focus }
-enum SubmissionFieldItemType { unknown, products, categories }
+enum SubmissionFieldType { unknown, photo, text, multilineText, integer, currency, picker, search, focus, date }
+enum SubmissionFieldItemType { unknown, product, category }
 
 @JsonSerializable(explicitToJson: true)
 class SubmissionTemplateFieldDto {

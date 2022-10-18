@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:pondrop/api/extensions/extensions.dart';
+import 'package:pondrop/extensions/extensions.dart';
 import 'package:pondrop/api/stores/models/store_dto.dart';
 
 class StoreApi {

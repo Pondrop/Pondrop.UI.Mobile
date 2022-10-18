@@ -5,9 +5,9 @@ enum SearchItemType { category, product }
 extension SubmissionFieldItemTypeX on SubmissionFieldItemType {
   SearchItemType toSearchItemType() {
     switch (this) {
-      case SubmissionFieldItemType.products:
+      case SubmissionFieldItemType.product:
         return SearchItemType.product;
-      case SubmissionFieldItemType.categories:
+      case SubmissionFieldItemType.category:
         return SearchItemType.category;
       default:
         throw Exception('Not supported "$this"');

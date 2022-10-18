@@ -3,8 +3,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
-import 'package:pondrop/api/extensions/extensions.dart';
+import 'package:pondrop/extensions/extensions.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
+import 'package:uuid/uuid.dart';
 
 class SubmissionApi {
   SubmissionApi({http.Client? httpClient})

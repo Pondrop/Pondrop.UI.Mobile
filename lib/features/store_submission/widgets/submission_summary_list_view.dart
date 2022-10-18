@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:pondrop/api/extensions/extensions.dart';
+import 'package:pondrop/extensions/extensions.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/features/store_submission/widgets/focus_header_view.dart';
 import 'package:pondrop/models/store_submission.dart';
@@ -87,7 +87,9 @@ class SubmissionSummaryListView extends StatelessWidget {
 
   Widget _stepItem(BuildContext context, StoreSubmissionStep step) {
     if (step.isFocus) {
-      return FocusHeaderView(title: step.fields.first.toResultString(),);
+      return FocusHeaderView(
+        title: step.fields.first.toResultString(),
+      );
     }
 
     final photoWidgets = <Widget>[];
@@ -112,7 +114,10 @@ class SubmissionSummaryListView extends StatelessWidget {
         textWidgets.add(const SizedBox(
           height: Dims.xSmall,
         ));
-        textWidgets.add(Text(i.toResultString('\n'),
+        textWidgets.add(Text(
+            i.toResultString(
+                separator: '\n',
+                locale: Localizations.localeOf(context).toString()),
             style: Theme.of(context)
                 .textTheme
                 .bodyText1!

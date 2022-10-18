@@ -45,10 +45,11 @@ const _$SubmissionFieldTypeEnumMap = {
   SubmissionFieldType.picker: 'picker',
   SubmissionFieldType.search: 'search',
   SubmissionFieldType.focus: 'focus',
+  SubmissionFieldType.date: 'date',
 };
 
 const _$SubmissionFieldItemTypeEnumMap = {
   SubmissionFieldItemType.unknown: 'unknown',
-  SubmissionFieldItemType.products: 'products',
-  SubmissionFieldItemType.categories: 'categories',
+  SubmissionFieldItemType.product: 'product',
+  SubmissionFieldItemType.category: 'category',
 };
