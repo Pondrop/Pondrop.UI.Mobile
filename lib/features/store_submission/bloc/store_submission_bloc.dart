@@ -49,7 +49,7 @@ class StoreSubmissionBloc
       resultToEdit.intValue = event.result.intValue;
       resultToEdit.doubleValue = event.result.doubleValue;
       resultToEdit.photoPathValue = event.result.photoPathValue;
-      resultToEdit.item = event.result.item;
+      resultToEdit.itemValue = event.result.itemValue;
 
       // Remove empty results (while maintaining 1 as the minimum array length)
       if (field.results.length > 1 && resultToEdit.isEmpty) {

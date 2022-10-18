@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pondrop/features/search_items/widgets/search_bloc_provider.dart';
-import 'package:pondrop/features/search_items/widgets/search_item_input.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/features/styles/styles.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/repositories/repositories.dart';
@@ -11,6 +10,9 @@ class SearchItemPage extends StatelessWidget {
       {Key? key,
       required this.type,
       required this.enableBack,
+      this.actionButtonIconData = Icons.add,
+      this.actionButtonText = '',
+      this.actionButtonOnTap,
       this.excludedIds = const [],
       this.categoryRepository,
       this.productRepository})
@@ -21,6 +23,10 @@ class SearchItemPage extends StatelessWidget {
   final SearchItemType type;
   final bool enableBack;
 
+  final IconData actionButtonIconData;
+  final String actionButtonText;
+  final VoidCallback? actionButtonOnTap;
+
   final List<String> excludedIds;
 
   final CategoryRepository? categoryRepository;
@@ -29,13 +35,19 @@ class SearchItemPage extends StatelessWidget {
   static Route<List<SearchItem>> route(
       {required SearchItemType type,
       bool enableBack = true,
+      IconData actionButtonIconData = Icons.add,
+      String actionButtonText = '',
+      VoidCallback? actionButtonOnTap,
       List<String> excludeIds = const [],
       CategoryRepository? categoryRepository,
       ProductRepository? productRepository}) {
-    return RouteTransitions.modalSlideRoute<List<SearchItem>>(
-        pageBuilder: (_) => SearchItemPage(
+    return MaterialWithModalsPageRoute<List<SearchItem>>(
+        builder: (_) => SearchItemPage(
               type: type,
               enableBack: enableBack,
+              actionButtonIconData: actionButtonIconData,
+              actionButtonText: actionButtonText,
+              actionButtonOnTap: actionButtonOnTap,
               excludedIds: excludeIds,
               categoryRepository: categoryRepository,
               productRepository: productRepository,
@@ -51,16 +63,36 @@ class SearchItemPage extends StatelessWidget {
         child: WillPopScope(
           onWillPop: () async => enableBack,
           child: Scaffold(
-            appBar: AppBar(
-                leading: enableBack ? null : const Icon(Icons.search),
-                title: SearchItemInput(type: type)),
-            body: SearchItemsList(
-                header: context.l10n.searchResults.toUpperCase(),
-                onTap: (BuildContext context, SearchItem item) async {
-                  Navigator.of(context).pop([item]);
-                },
-                excludedIds: excludedIds),
-          ),
+              appBar: AppBar(
+                  leading: enableBack ? null : const Icon(Icons.search),
+                  title: SearchItemInput(type: type)),
+              body: Stack(
+                children: [
+                  SearchItemsList(
+                      header: context.l10n.searchResults.toUpperCase(),
+                      onTap: (BuildContext context, SearchItem item) async {
+                        Navigator.of(context).pop([item]);
+                      },
+                      excludedIds: excludedIds),
+                  if (actionButtonOnTap != null)
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: Dims.xxLargeEdgeInsets,
+                        child: Padding(
+                          padding: Dims.largeBottomEdgeInsets,
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                                icon: Icon(actionButtonIconData),
+                                label: Text(actionButtonText),
+                                onPressed: actionButtonOnTap),
+                          ),
+                        ),
+                      ),
+                    )
+                ],
+              )),
         ));
   }
 }

@@ -1,10 +1,7 @@
-import 'dart:math';
-
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
-import 'package:tuple/tuple.dart';
 
 extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
   StoreSubmission toStoreSubmission() {
@@ -35,7 +32,7 @@ extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
                         maxValue: field.maxValue,
                         pickerValues: field.pickerValues,
                         itemType: field.itemType,
-                        results: [ StoreSubmissionFieldResult() ]))
+                        results: [StoreSubmissionFieldResult()]))
                     .toList(),
               ))
           .toList(),
@@ -66,13 +63,15 @@ extension StoreSubmissionResultMapping on StoreSubmission {
                                   intValue: e.intValue,
                                   doubleValue: e.doubleValue,
                                   photoPathValue: e.photoPathValue,
-                                  itemValue:
-                                      field.itemType != null && e.item != null
-                                          ? SubmissionFieldResultValueItemDto(
-                                              itemId: e.item!.item1,
-                                              itemName: e.item!.item2,
-                                              itemType: field.itemType!)
-                                          : null,
+                                  itemValue: field.itemType != null &&
+                                          e.itemValue != null
+                                      ? SubmissionFieldResultValueItemDto(
+                                          itemId: e.itemValue!.itemId,
+                                          itemName: e.itemValue!.itemName,
+                                          itemBarcode: e.itemValue!.itemBarcode,
+                                          itemType: field.itemType!,
+                                        )
+                                      : null,
                                 ))
                             .toList()))
                     .toList(),
@@ -158,8 +157,7 @@ class StoreSubmissionStep extends Equatable {
   final List<StoreSubmissionField> fields;
 
   bool get isEmpty =>
-      fields.isEmpty ||
-      fields.every((e) => e.results.every((e) => e.isEmpty));
+      fields.isEmpty || fields.every((e) => e.results.every((e) => e.isEmpty));
 
   bool get isComplete =>
       fields.isEmpty ||
@@ -240,7 +238,7 @@ class StoreSubmissionField extends Equatable {
           return e.intValue?.toString() ?? '';
         case SubmissionFieldType.search:
         case SubmissionFieldType.focus:
-          return e.item?.item2 ?? e.item?.item1 ?? '';
+          return e.itemValue?.itemName ?? '';
         default:
           return '';
       }
@@ -280,7 +278,7 @@ class StoreSubmissionFieldResult extends Equatable {
     this.intValue,
     this.doubleValue,
     this.photoPathValue,
-    this.item,
+    this.itemValue,
   });
 
   String? stringValue;
@@ -288,14 +286,14 @@ class StoreSubmissionFieldResult extends Equatable {
   double? doubleValue;
   String? photoPathValue;
 
-  Tuple2<String, String>? item;
+  StoreSubmissionFieldResultItem? itemValue;
 
   bool get isEmpty =>
       stringValue == null &&
       intValue == null &&
       doubleValue == null &&
       photoPathValue == null &&
-      item == null;
+      (itemValue == null || itemValue!.isEmpty);
 
   StoreSubmissionFieldResult copy() {
     return StoreSubmissionFieldResult(
@@ -303,7 +301,7 @@ class StoreSubmissionFieldResult extends Equatable {
       intValue: intValue,
       doubleValue: doubleValue,
       photoPathValue: photoPathValue,
-      item: item,
+      itemValue: itemValue?.copy(),
     );
   }
 
@@ -313,6 +311,38 @@ class StoreSubmissionFieldResult extends Equatable {
         intValue,
         doubleValue,
         photoPathValue,
-        item,
+        itemValue,
+      ];
+}
+
+class StoreSubmissionFieldResultItem extends Equatable {
+  StoreSubmissionFieldResultItem({
+    this.itemId = '',
+    this.itemName = '',
+    this.itemBarcode,
+  });
+
+  String itemId;
+  String itemName;
+  String? itemBarcode;
+
+  bool get isEmpty =>
+      itemId.isEmpty &&
+      itemName.isEmpty &&
+      (itemBarcode == null || itemBarcode!.isEmpty);
+
+  StoreSubmissionFieldResultItem copy() {
+    return StoreSubmissionFieldResultItem(
+      itemId: itemId,
+      itemName: itemName,
+      itemBarcode: itemBarcode,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        itemId,
+        itemName,
+        itemBarcode,
       ];
 }
