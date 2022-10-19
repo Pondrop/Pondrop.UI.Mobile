@@ -20,7 +20,7 @@ class IntFieldControl extends StatelessWidget {
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: field.label,
-        suffixIcon: field.mandatory && field.results.isEmpty
+        suffixIcon: field.mandatory && field.results.first.isEmpty
             ? const RequiredView()
             : null,
       ),

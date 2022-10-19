@@ -210,7 +210,10 @@ class StoreSubmissionPage extends StatelessWidget {
                     // which will be based on the most recent focus result
                     final focusStep = focusSteps.last;
                     children.add(FocusHeaderView(
-                        title: focusStep.fields.first.toResultString()));
+                      title: focusStep.fields.first.toResultString(),
+                      itemType: focusStep.fields.first.itemType ??
+                          SubmissionFieldItemType.unknown,
+                    ));
                   }
 
                   for (final i in state.currentStep.fields) {
@@ -225,7 +228,12 @@ class StoreSubmissionPage extends StatelessWidget {
                   return SingleChildScrollView(
                       controller: ModalScrollController.of(context),
                       child: Padding(
-                          padding: Dims.smallEdgeInsets,
+                          padding: const EdgeInsets.fromLTRB(
+                            Dims.medium,
+                            Dims.small,
+                            Dims.medium,
+                            Dims.xxLarge
+                          ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
