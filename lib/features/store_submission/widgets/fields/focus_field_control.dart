@@ -15,7 +15,7 @@ class FocusFieldControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SearchBlocProvider(
-        type: SearchItemType.category,
+        type: field.itemType!.toSearchItemType(),
         child: Column(
           children: [
             Padding(

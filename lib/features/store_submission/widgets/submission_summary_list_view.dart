@@ -89,6 +89,7 @@ class SubmissionSummaryListView extends StatelessWidget {
     if (step.isFocus) {
       return FocusHeaderView(
         title: step.fields.first.toResultString(),
+        itemType: step.fields.first.itemType ?? SubmissionFieldItemType.unknown,
       );
     }
 

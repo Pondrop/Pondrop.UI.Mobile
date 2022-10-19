@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:pondrop/api/submissions/models/submission_template_field_dto.dart';
 import 'package:pondrop/features/styles/styles.dart';
 
 class FocusHeaderView extends StatelessWidget {
-  const FocusHeaderView({Key? key, required this.title}) : super(key: key);
+  const FocusHeaderView({Key? key, required this.title, required this.itemType})
+      : super(key: key);
 
   final String title;
+  final SubmissionFieldItemType itemType;
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +20,8 @@ class FocusHeaderView extends StatelessWidget {
           decoration: BoxDecoration(
               color: PondropColors.primaryLightColor,
               borderRadius: BorderRadius.circular(100)),
-          child: const Icon(
-            Icons.category_outlined,
+          child: Icon(
+            _getItemIconData(),
             color: Colors.black,
             size: Dims.xxLarge * 1.25,
           ),
@@ -37,5 +40,16 @@ class FocusHeaderView extends StatelessWidget {
         )
       ],
     );
+  }
+
+  IconData _getItemIconData() {
+    switch (itemType) {
+      case SubmissionFieldItemType.product:
+        return Icons.inventory_2_outlined;
+      case SubmissionFieldItemType.category:
+        return Icons.category_outlined;
+      default:
+        return Icons.question_mark_outlined;
+    }
   }
 }
