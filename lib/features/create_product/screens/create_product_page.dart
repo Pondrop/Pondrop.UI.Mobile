@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pondrop/features/global/global.dart';
 import 'package:pondrop/features/search_items/search_items.dart';
 import 'package:pondrop/features/styles/styles.dart';
 import 'package:pondrop/l10n/l10n.dart';
@@ -128,12 +130,20 @@ class _CreateProductPageState extends State<CreateProductPage> {
                       ),
                       TextField(
                         key: CreateProductPage.barcodeTextKey,
-                        readOnly: true,
                         controller: _barcodeTextController,
-                        focusNode: _AlwaysDisabledFocusNode(),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(13)
+                        ],
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
                           labelText: l10n.barcode,
+                          errorText: _barcodeTextController.text.isNotEmpty &&
+                                  !EanValidator.validChecksum(
+                                      _barcodeTextController.text)
+                              ? l10n.itemIsNotValid(l10n.barcode)
+                              : null,
                           suffixIcon: IconButton(
                             tooltip: l10n.barcode,
                             focusColor: Colors.black,
@@ -150,6 +160,9 @@ class _CreateProductPageState extends State<CreateProductPage> {
                             },
                           ),
                         ),
+                        onChanged: (value) {
+                          updateIsValid();
+                        },
                       ),
                     ],
                   )),
@@ -163,12 +176,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
   void updateIsValid() {
     setState(() {
       _isValid = _nameTextController.text.isNotEmpty &&
-          _barcodeTextController.text.isNotEmpty;
+          EanValidator.validChecksum(_barcodeTextController.text);
     });
   }
-}
-
-class _AlwaysDisabledFocusNode extends FocusNode {
-  @override
-  bool get hasFocus => false;
 }

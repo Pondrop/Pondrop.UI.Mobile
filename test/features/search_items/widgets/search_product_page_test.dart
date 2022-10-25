@@ -10,15 +10,12 @@ import 'package:tuple/tuple.dart';
 import '../../../fake_data/fake_data.dart';
 import '../../../helpers/helpers.dart';
 
-class MockCategoryRepository extends Mock implements CategoryRepository {}
 class MockProductRepository extends Mock implements ProductRepository {}
 
 void main() {
-  late CategoryRepository categoryRepository;
   late ProductRepository productRepository;
 
   setUp(() {
-    categoryRepository = MockCategoryRepository();
     productRepository = MockProductRepository();
   });
 
@@ -29,7 +26,6 @@ void main() {
 
     testWidgets('renders a SearchProductList', (tester) async {
       await tester.pumpApp(MultiRepositoryProvider(providers: [
-        RepositoryProvider.value(value: categoryRepository),
         RepositoryProvider.value(value: productRepository),
       ], child: const SearchItemPage(type: SearchItemType.product, enableBack: false)));
       expect(find.byType(SearchItemsList), findsOneWidget);
@@ -42,7 +38,6 @@ void main() {
           .thenAnswer((_) => Future.value(Tuple2([FakeProduct.fakeProduct()], true)));
       
       await tester.pumpApp(MultiRepositoryProvider(providers: [
-        RepositoryProvider.value(value: categoryRepository),
         RepositoryProvider.value(value: productRepository),
       ], child: const SearchItemPage(type: SearchItemType.product, enableBack: false)));
 
@@ -58,18 +53,17 @@ void main() {
     testWidgets('renders a SearchCategoryListItem', (tester) async {
       const query = 'Flutter';
 
-      when(() => categoryRepository.fetchCategories(query, 0))
+      when(() => productRepository.fetchCategories(query, 0))
           .thenAnswer((_) => Future.value(Tuple2([FakeCategory.fakeCategory()], true)));
       
       await tester.pumpApp(MultiRepositoryProvider(providers: [
-        RepositoryProvider.value(value: categoryRepository),
         RepositoryProvider.value(value: productRepository),
       ], child: const SearchItemPage(type: SearchItemType.category, enableBack: false)));
 
       await tester.enterText(find.byKey(SearchItemPage.searchTextFieldKey), query);
       await tester.pump(const Duration(milliseconds: 350));
 
-      verify(() => categoryRepository.fetchCategories(query, 0)).called(1);
+      verify(() => productRepository.fetchCategories(query, 0)).called(1);
 
       expect(find.byType(SearchItemsList), findsOneWidget);
       expect(find.byType(SearchListItem), findsOneWidget);
@@ -83,7 +77,6 @@ void main() {
           .thenAnswer((_) => Future.value(const Tuple2([], false)));
       
       await tester.pumpApp(MultiRepositoryProvider(providers: [
-        RepositoryProvider.value(value: categoryRepository),
         RepositoryProvider.value(value: productRepository),
       ], child: const SearchItemPage(type: SearchItemType.product, enableBack: false)));
 

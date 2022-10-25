@@ -8,14 +8,11 @@ import 'package:tuple/tuple.dart';
 import '../../../fake_data/fake_data.dart';
 
 class MockProductRepository extends Mock implements ProductRepository {}
-class MockCategoryRepository extends Mock implements CategoryRepository {}
 
 void main() {
-  late CategoryRepository categoryRepository;
   late ProductRepository productRepository;
 
   setUp(() {
-    categoryRepository = MockCategoryRepository();
     productRepository = MockProductRepository();
   });
 
@@ -24,7 +21,6 @@ void main() {
       expect(
           SearchItemsBloc(
             type: SearchItemType.category,
-            categoryRepository: categoryRepository,
             productRepository: productRepository,
           ).state,
           equals(const SearchItemsState(type: SearchItemType.category)));
@@ -38,7 +34,6 @@ void main() {
 
       final bloc = SearchItemsBloc(
         type: SearchItemType.product,
-        categoryRepository: categoryRepository,
         productRepository: productRepository,
       );
 
@@ -59,7 +54,6 @@ void main() {
 
       final bloc = SearchItemsBloc(
         type: SearchItemType.product,
-        categoryRepository: categoryRepository,
         productRepository: productRepository,
       );
 
@@ -75,7 +69,6 @@ void main() {
     test('emit empty when Search Text is empty', () async {
       final bloc = SearchItemsBloc(
         type: SearchItemType.product,
-        categoryRepository: categoryRepository,
         productRepository: productRepository,
       );
 
@@ -95,7 +88,6 @@ void main() {
 
       final bloc = SearchItemsBloc(
         type: SearchItemType.product,
-        categoryRepository: categoryRepository,
         productRepository: productRepository,
       );
 
@@ -116,7 +108,6 @@ void main() {
 
       final bloc = SearchItemsBloc(
         type: SearchItemType.product,
-        categoryRepository: categoryRepository,
         productRepository: productRepository,
       );
 

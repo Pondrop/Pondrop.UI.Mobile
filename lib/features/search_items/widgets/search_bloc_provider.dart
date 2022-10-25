@@ -9,14 +9,12 @@ class SearchBlocProvider extends StatelessWidget {
       {Key? key,
       required this.type,
       this.child,
-      this.categoryRepository,
       this.productRepository})
       : super(key: key);
 
   final SearchItemType type;
   final Widget? child;
 
-  final CategoryRepository? categoryRepository;
   final ProductRepository? productRepository;
 
   @override
@@ -24,8 +22,6 @@ class SearchBlocProvider extends StatelessWidget {
     return BlocProvider(
         create: (_) => SearchItemsBloc(
               type: type,
-              categoryRepository: categoryRepository ??
-                  RepositoryProvider.of<CategoryRepository>(context),
               productRepository: productRepository ??
                   RepositoryProvider.of<ProductRepository>(context),
             ),
