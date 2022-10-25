@@ -32,6 +32,7 @@ class FocusHeaderView extends StatelessWidget {
         Center(
           child: Text(
             title,
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline6,
           ),
         ),
