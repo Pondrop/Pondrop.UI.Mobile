@@ -58,8 +58,6 @@ class _BarcodeScannerPageState extends State<BarcodeScannerPage>
                   switch (barcode.format) {
                     case BarcodeFormat.ean13:
                     case BarcodeFormat.ean8:
-                    case BarcodeFormat.upcA:
-                    case BarcodeFormat.upcE:
                       break;
                     default:
                       return;

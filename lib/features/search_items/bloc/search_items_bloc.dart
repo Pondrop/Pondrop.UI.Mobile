@@ -20,13 +20,11 @@ EventTransformer<Event> debounce<Event>(Duration duration) {
 
 class SearchItemsBloc extends Bloc<SearchItemsEvent, SearchItemsState> {
   SearchItemsBloc({
-    required CategoryRepository categoryRepository,
     required ProductRepository productRepository,
     required SearchItemType type,
     this.minQueryLength = 3,
   })
-      : _categoryRepository = categoryRepository,
-        _productRepository = productRepository,
+      : _productRepository = productRepository,
         super(SearchItemsState(type: type)) {
     on<SearchFetched>(_onFetched);
     on<SearchRefreshed>(_onRefresh);
@@ -37,7 +35,6 @@ class SearchItemsBloc extends Bloc<SearchItemsEvent, SearchItemsState> {
 
   final int minQueryLength;
 
-  final CategoryRepository _categoryRepository;
   final ProductRepository _productRepository;
 
   Future<void> _onFetched(
@@ -106,7 +103,7 @@ class SearchItemsBloc extends Bloc<SearchItemsEvent, SearchItemsState> {
   Future<Tuple2<List<SearchItem>, bool>> fetchItems(String query, int skipIdx) async {
     switch (state.type) {
       case SearchItemType.category:
-        final categories = await _categoryRepository.fetchCategories(query, skipIdx);
+        final categories = await _productRepository.fetchCategories(query, skipIdx);
         return Tuple2(categories.item1.map((e) => SearchItem(id: e.id, title: e.name, iconData: Icons.category_outlined)).toList(), categories.item2);
       case SearchItemType.product:
         final products = await _productRepository.fetchProducts(query, skipIdx);

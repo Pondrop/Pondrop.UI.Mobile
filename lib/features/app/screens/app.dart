@@ -37,10 +37,7 @@ class App extends StatelessWidget {
         RepositoryProvider(
             create: (context) => SubmissionRepository(
                 userRepository:
-                    RepositoryProvider.of<UserRepository>(context))),
-        RepositoryProvider(
-            create: (context) => CategoryRepository(
-                userRepository: RepositoryProvider.of<UserRepository>(context))),
+                    RepositoryProvider.of<UserRepository>(context))),        
         RepositoryProvider(
             create: (context) => ProductRepository(
                 userRepository: RepositoryProvider.of<UserRepository>(context))),

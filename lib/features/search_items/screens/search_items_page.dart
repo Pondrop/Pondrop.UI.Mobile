@@ -14,7 +14,6 @@ class SearchItemPage extends StatelessWidget {
       this.actionButtonText = '',
       this.actionButtonOnTap,
       this.excludedIds = const [],
-      this.categoryRepository,
       this.productRepository})
       : super(key: key);
 
@@ -25,11 +24,10 @@ class SearchItemPage extends StatelessWidget {
 
   final IconData actionButtonIconData;
   final String actionButtonText;
-  final VoidCallback? actionButtonOnTap;
+  final Function(BuildContext)? actionButtonOnTap;
 
   final List<String> excludedIds;
 
-  final CategoryRepository? categoryRepository;
   final ProductRepository? productRepository;
 
   static Route<List<SearchItem>> route(
@@ -37,9 +35,8 @@ class SearchItemPage extends StatelessWidget {
       bool enableBack = true,
       IconData actionButtonIconData = Icons.add,
       String actionButtonText = '',
-      VoidCallback? actionButtonOnTap,
+      Function(BuildContext)? actionButtonOnTap,
       List<String> excludeIds = const [],
-      CategoryRepository? categoryRepository,
       ProductRepository? productRepository}) {
     return MaterialWithModalsPageRoute<List<SearchItem>>(
         builder: (_) => SearchItemPage(
@@ -49,7 +46,6 @@ class SearchItemPage extends StatelessWidget {
               actionButtonText: actionButtonText,
               actionButtonOnTap: actionButtonOnTap,
               excludedIds: excludeIds,
-              categoryRepository: categoryRepository,
               productRepository: productRepository,
             ));
   }
@@ -58,7 +54,6 @@ class SearchItemPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SearchBlocProvider(
         type: type,
-        categoryRepository: categoryRepository,
         productRepository: productRepository,
         child: WillPopScope(
           onWillPop: () async => enableBack,
@@ -83,10 +78,14 @@ class SearchItemPage extends StatelessWidget {
                           padding: Dims.largeBottomEdgeInsets,
                           child: SizedBox(
                             width: double.infinity,
-                            child: ElevatedButton.icon(
-                                icon: Icon(actionButtonIconData),
-                                label: Text(actionButtonText),
-                                onPressed: actionButtonOnTap),
+                            child: Builder(
+                              builder: (context) {
+                                return ElevatedButton.icon(
+                                    icon: Icon(actionButtonIconData),
+                                    label: Text(actionButtonText),
+                                    onPressed: () => actionButtonOnTap?.call(context));
+                              }
+                            ),
                           ),
                         ),
                       ),

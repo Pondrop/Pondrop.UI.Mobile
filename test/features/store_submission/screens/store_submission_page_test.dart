@@ -24,15 +24,12 @@ class MockLocationRepository extends Mock implements LocationRepository {}
 
 class MockSubmissionRepository extends Mock implements SubmissionRepository {}
 
-class MockCategoryRepository extends Mock implements CategoryRepository {}
-
 class MockProductRepository extends Mock implements ProductRepository {}
 
 void main() {
   late CameraRepository cameraRepository;
   late LocationRepository locationRepository;
   late SubmissionRepository submissionRepository;
-  late CategoryRepository categoryRepository;
   late ProductRepository productRepository;
 
   late StoreVisitDto visit;
@@ -42,7 +39,6 @@ void main() {
     cameraRepository = MockCameraRepository();
     locationRepository = MockLocationRepository();
     submissionRepository = MockSubmissionRepository();
-    categoryRepository = MockCategoryRepository();
     productRepository = MockProductRepository();
 
     visit = FakeStoreVisit.fakeVist();
@@ -281,7 +277,6 @@ void main() {
             RepositoryProvider.value(value: submissionRepository),
             RepositoryProvider.value(value: cameraRepository),
             RepositoryProvider.value(value: locationRepository),
-            RepositoryProvider.value(value: categoryRepository),
             RepositoryProvider.value(value: productRepository),
           ],
           child: StoreSubmissionPage(
@@ -317,8 +312,7 @@ void main() {
       expect(find.byKey(searchButtonKey), findsNothing);
       expect(find.text(product.name), findsOneWidget);
 
-      await tester.tap(find
-          .byKey(SearchFieldControl.getClearButtonKey(searchField.fieldId, 0)));
+      await tester.tap(find.byIcon(Icons.cancel_outlined));
       await tester.pumpAndSettle();
       expect(find.byKey(searchButtonKey), findsOneWidget);
     });

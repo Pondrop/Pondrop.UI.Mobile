@@ -36,6 +36,32 @@ class ProductApi {
     return ProductSearchResultDto.fromJson(jsonDecode(response.body));
   }
 
+  Future<CategorySearchResultDto> searchCategories(
+    String accessToken, {
+    String keyword = '',
+    int skipIdx = 0,
+  }) async {
+    final queryParams = {
+      'api-version' : '2021-04-30-Preview',
+      'search' : '$keyword*',
+      '\$skip' : '$skipIdx',
+    };
+
+    if (keyword.isEmpty) {
+      queryParams['\$orderby'] = 'name asc';
+    }
+
+    final uri = Uri.https(_baseUrl, "/indexes/cosmosdb-index-category/docs", queryParams);  
+    final headers = _getCommonHeaders(accessToken);
+
+    final response =
+        await _httpClient.get(uri, headers: headers);
+
+    response.ensureSuccessStatusCode();
+
+    return CategorySearchResultDto.fromJson(jsonDecode(response.body));
+  }
+
   Map<String, String> _getCommonHeaders(String accessToken) {
     return {
       'Content-type': 'application/json',

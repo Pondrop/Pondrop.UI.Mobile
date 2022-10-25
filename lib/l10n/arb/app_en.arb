@@ -214,5 +214,13 @@
                 "type" : "String"
             }
         }
+    },
+    "itemIsNotValid": "{item} is not valid",
+    "@itemIsNotValid": {
+        "placeholders": {
+            "item": {
+                "type" : "String"
+            }
+        }
     }
 }
