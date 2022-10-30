@@ -160,6 +160,12 @@ void main() {
               .fieldId)),
           textValue);
 
+      await tester.enterText(
+          find.byKey(Key(step.fields
+              .firstWhere((e) => e.fieldType == SubmissionFieldType.barcode)
+              .fieldId)),
+          '96385074');
+
       // Date field
       await tester.tap(find.byKey(Key(step.fields
           .firstWhere((e) => e.fieldType == SubmissionFieldType.date)

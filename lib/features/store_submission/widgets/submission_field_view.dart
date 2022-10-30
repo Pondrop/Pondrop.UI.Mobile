@@ -14,6 +14,11 @@ class SubmissionFieldView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (field.fieldType) {
+      case SubmissionFieldType.barcode:
+        return BarcodeFieldControl(
+          field: field,
+          readOnly: readOnly,
+        );
       case SubmissionFieldType.photo:
         return PhotoFieldControl(
           field: field,

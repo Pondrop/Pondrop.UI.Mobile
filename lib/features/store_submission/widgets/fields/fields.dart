@@ -1,3 +1,4 @@
+export 'barcode_field_control.dart';
 export 'currency_field_control.dart';
 export 'date_field_control.dart';
 export 'focus_field_control.dart';

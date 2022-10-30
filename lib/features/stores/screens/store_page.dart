@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pondrop/features/app/widgets/loading_overlay.dart';
 import 'package:pondrop/features/authentication/bloc/authentication_bloc.dart';
+import 'package:pondrop/features/barcode_scanner/barcode_scanner.dart';
 import 'package:pondrop/features/stores/widgets/store_list.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/repositories/repositories.dart';

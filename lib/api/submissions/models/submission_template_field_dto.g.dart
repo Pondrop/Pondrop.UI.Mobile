@@ -46,6 +46,7 @@ const _$SubmissionFieldTypeEnumMap = {
   SubmissionFieldType.search: 'search',
   SubmissionFieldType.focus: 'focus',
   SubmissionFieldType.date: 'date',
+  SubmissionFieldType.barcode: 'barcode',
 };
 
 const _$SubmissionFieldItemTypeEnumMap = {
