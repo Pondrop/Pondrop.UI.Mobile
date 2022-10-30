@@ -40,6 +40,12 @@ class FakeStoreSubmissionTemplates {
                   mandatory: false,
                   fieldType: SubmissionFieldType.text,
                 ),
+                SubmissionTemplateFieldDto(
+                  id: const Uuid().v4(),
+                  label: 'Barcode',
+                  mandatory: false,
+                  fieldType: SubmissionFieldType.barcode,
+                ),
                  SubmissionTemplateFieldDto(
                   id: const Uuid().v4(),
                   label: 'Use By date',

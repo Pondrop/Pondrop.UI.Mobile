@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pondrop/features/barcode_scanner/barcode_scanner.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/features/search_items/bloc/search_items_bloc.dart';
 import 'package:pondrop/features/search_items/search_items.dart';
