@@ -25,7 +25,7 @@ class ProductApi {
       '\$skip' : '$skipIdx',
     };
 
-    final uri = Uri.https(_baseUrl, "/indexes/azuresql-index-allproducts/docs", queryParams);  
+    final uri = Uri.https(_baseUrl, "/indexes/cosmosdb-index-allproduct/docs", queryParams);  
     final headers = _getCommonHeaders(accessToken);
 
     final response =

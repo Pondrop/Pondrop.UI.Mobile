@@ -7,59 +7,53 @@ part 'product_search_result_dto.dart';
 class ProductDto {
   const ProductDto(
       {required this.searchScore,
+      required this.id,
+      required this.name,
+      required this.brandId,
       required this.externalReferenceId,
-      required this.uniqueBarcode,
-      required this.gln,
-      required this.tm,
-      required this.product,
       required this.variant,
       required this.altName,
       required this.shortDescription,
       required this.netContent,
       required this.netContentUom,
       required this.possibleCategories,
-      //required this.childBarcode,
-      required this.childQuantity,
-      required this.brand,
-      required this.company,
-      required this.updatedUtc,});
+      required this.publicationLifecycleId,
+      required this.barcodeNumber,
+      required this.categoryNames});
 
   @JsonKey(name: '@search.score')
   final double searchScore;
+  @JsonKey(name: 'id')
+  final String id;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'brandId')
+  final String brandId;
   @JsonKey(name: 'externalReferenceId')
   final String externalReferenceId;
-  @JsonKey(name: 'uniqueBarcode')
-  final String uniqueBarcode;
-  @JsonKey(name: 'gln')
-  final String gln;
-  @JsonKey(name: 'tm')
-  final int tm;
-  @JsonKey(name: 'product')
-  final String product;
+
   @JsonKey(name: 'variant')
-  final String? variant;
+  final String variant;
   @JsonKey(name: 'altName')
-  final String? altName;
+  final String altName;
   @JsonKey(name: 'shortDescription')
-  final String? shortDescription;  
+  final String shortDescription;
   @JsonKey(name: 'netContent')
   final double netContent;
   @JsonKey(name: 'netContentUom')
-  final String? netContentUom;
+  final String netContentUom;
+
   @JsonKey(name: 'possibleCategories')
-  final String? possibleCategories;
-  // @JsonKey(name: 'childbarcode')
-  // final int? childBarcode;
-  @JsonKey(name: 'childQuantity')
-  final double? childQuantity;
-  @JsonKey(name: 'brand')
-  final String? brand;
-  @JsonKey(name: 'company')
-  final String? company;
+  final String possibleCategories;
 
-  @JsonKey(name: 'updatedUtc')
-  final DateTime? updatedUtc;
+  @JsonKey(name: 'publicationLifecycleId')
+  final String publicationLifecycleId;
 
+  @JsonKey(name: 'barcodeNumber')
+  final String barcodeNumber;
+  @JsonKey(name: 'categoryNames')
+  final String categoryNames;
+  
   static ProductDto fromJson(Map<String, dynamic> json) =>
       _$ProductDtoFromJson(json);
 
