@@ -22,9 +22,9 @@ class ProductRepository {
 
       final products = searchResult.value
           .map((e) => Product(
-                id: e.externalReferenceId,
-                barcode: e.uniqueBarcode,
-                name: e.product,
+                id: e.id,
+                barcode: e.barcodeNumber,
+                name: e.name,
               ))
           .toList();
 
