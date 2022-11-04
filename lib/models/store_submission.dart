@@ -231,6 +231,7 @@ class StoreSubmissionField extends Equatable {
         case SubmissionFieldType.text:
         case SubmissionFieldType.multilineText:
         case SubmissionFieldType.picker:
+        case SubmissionFieldType.barcode:
           return e.stringValue ?? '';
         case SubmissionFieldType.currency:
           return NumberFormat.simpleCurrency().format(e.doubleValue ?? 0);
