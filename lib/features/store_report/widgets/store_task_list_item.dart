@@ -3,8 +3,8 @@ import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/features/styles/styles.dart';
 
-class StoreReportListItem extends StatelessWidget {
-  const StoreReportListItem(
+class StoreTaskListItem extends StatelessWidget {
+  const StoreTaskListItem(
       {super.key,
       required this.submissionTemplate,
       this.submissionResult,
@@ -32,24 +32,16 @@ class StoreReportListItem extends StatelessWidget {
           .join(', ');
     }
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-          Dims.xLarge, Dims.xSmall, Dims.xLarge, Dims.small),
-      child: Material(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(
-              color: Color.fromARGB(153, 114, 120, 126), width: 1),
-        ),
-        elevation: 2,
-        color: const Color.fromARGB(255, 250, 252, 255),
-        child: InkWell(
-            onTap: () {
-              onTap?.call();
-            },
-            child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: Dims.medium),
-                child: Row(
+    return InkWell(
+        onTap: () {
+          onTap?.call();
+        },
+        child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: Dims.small),
+            child: Column(
+              children: [
+                const SizedBox(height: 8),
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
@@ -76,17 +68,14 @@ class StoreReportListItem extends StatelessWidget {
                                   .textTheme
                                   .bodyText1!
                                   .copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600)),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500)),
                           const SizedBox(height: Dims.small),
                           Text(
                             focusName.isEmpty
                                 ? submissionTemplate.description
                                 : focusName,
-                            style: Theme.of(context)
-                                .textTheme
-                                .caption!
-                                .copyWith(fontSize: 14),
+                            style: Theme.of(context).textTheme.caption,
                           ),
                         ],
                       ),
@@ -106,8 +95,15 @@ class StoreReportListItem extends StatelessWidget {
                         ),
                       )
                   ],
-                ))),
-      ),
-    );
+                ),
+                const SizedBox(height: Dims.small),
+                Divider(
+                  indent: 72,
+                  thickness: 1,
+                  height: 1,
+                  color: Colors.grey[300],
+                ),
+              ],
+            )));
   }
 }

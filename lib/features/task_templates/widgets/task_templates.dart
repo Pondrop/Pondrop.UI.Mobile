@@ -40,7 +40,7 @@ class TaskTemplates extends StatelessWidget {
           return ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               final item = state.templates[index];
-              return StoreReportListItem(
+              return StoreTaskListItem(
                   submissionTemplate: item,
                   onTap: () async {
                     Navigator.of(context).pop();
