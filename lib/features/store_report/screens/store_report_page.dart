@@ -62,16 +62,41 @@ class StoreReportPage extends StatelessWidget {
                     child: BlocBuilder<StoreReportBloc, StoreReportState>(
                         builder: (context, state) {
                       return ListView.builder(
-                        itemBuilder: (BuildContext context, int index) =>
-                            StoreReportListItem(
-                          submissionTemplate: state.templates.firstWhere((e) =>
-                              e.id == state.submissions[index].templateId),
-                          submissionResult: state.submissions[index],
-                          onTap: () => Navigator.of(context).push(
-                              StoreSubmissionSummaryPage.route(
-                                  state.submissions[index])),
-                        ),
-                        itemCount: state.submissions.length,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: Dims.small),
+                        itemBuilder: (BuildContext context, int index) {
+                          return Theme(
+                              data: Theme.of(context)
+                                  .copyWith(dividerColor: Colors.transparent),
+                              child: ExpansionTile(
+                                initiallyExpanded: true,
+                                title: Text(
+                                  (state.submissions.length > 1
+                                          ? l10n.itemSpaceItem(
+                                              state.submissions.length
+                                                  .toString(),
+                                              l10n.completed)
+                                          : l10n.completed)
+                                      .toUpperCase(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .caption!
+                                      .copyWith(fontWeight: FontWeight.w600),
+                                ),
+                                children: [
+                                  for (final i in state.submissions)
+                                    StoreReportListItem(
+                                        submissionTemplate: state.templates
+                                            .firstWhere(
+                                                (e) => e.id == i.templateId),
+                                        submissionResult: i,
+                                        onTap: () => Navigator.of(context).push(
+                                            StoreSubmissionSummaryPage.route(
+                                                i)))
+                                ],
+                              ));
+                        },
+                        itemCount: state.submissions.isNotEmpty ? 1 : 0,
                       );
                     }),
                   )

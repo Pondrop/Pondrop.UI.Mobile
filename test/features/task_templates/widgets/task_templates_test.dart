@@ -96,7 +96,7 @@ void main() {
       await tester.pump();
 
       expect(find.byType(ListView), findsOneWidget);
-      expect(find.byType(StoreReportListItem), findsOneWidget);
+      expect(find.byType(StoreTaskListItem), findsOneWidget);
       expect(find.text(templates.first.title), findsOneWidget);
     });
   });

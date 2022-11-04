@@ -5,9 +5,9 @@
         "description": "Text shown in the AppBar of the Counter Page"
     },
     "getStarted": "Get started",
-    "@getStarted": { },
+    "@getStarted": {},
     "enterValidEmailToContinue": "Please enter a valid email to continue.",
-    "@enterValidEmailToContinue": { },
+    "@enterValidEmailToContinue": {},
     "email": "Email",
     "@email": {},
     "emailInvalid": "Must be a valid email address",
@@ -25,7 +25,7 @@
         "description": "Text shown when an entered password is too short",
         "placeholders": {
             "length": {
-                "type" : "int"
+                "type": "int"
             }
         }
     },
@@ -67,10 +67,10 @@
     "@itemOfItem": {
         "placeholders": {
             "item": {
-                "type" : "int"
+                "type": "int"
             },
             "total": {
-                "type" : "int"
+                "type": "int"
             }
         }
     },
@@ -88,7 +88,7 @@
     "@itemEllipsis": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
     },
@@ -98,7 +98,7 @@
     "@selectAItem": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
     },
@@ -106,7 +106,7 @@
     "@itemFailedPleaseTryAgain": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
     },
@@ -114,7 +114,7 @@
     "@noItemFound": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
     },
@@ -124,7 +124,7 @@
     "@addItem": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
     },
@@ -138,10 +138,21 @@
     "@itemHyphenItem": {
         "placeholders": {
             "item1": {
-                "type" : "String"
+                "type": "String"
             },
             "item2": {
-                "type" : "String"
+                "type": "String"
+            }
+        }
+    },
+    "itemSpaceItem": "{item1} {item2}",
+    "@itemSpaceItem": {
+        "placeholders": {
+            "item1": {
+                "type": "String"
+            },
+            "item2": {
+                "type": "String"
             }
         }
     },
@@ -159,7 +170,7 @@
     "@itemBang": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
     },
@@ -183,7 +194,7 @@
     "@itemSearch": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
     },
@@ -195,7 +206,7 @@
     "@createNewItem": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
     },
@@ -203,7 +214,7 @@
     "@createItem": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
     },
@@ -211,7 +222,7 @@
     "@itemName": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
     },
@@ -219,8 +230,10 @@
     "@itemIsNotValid": {
         "placeholders": {
             "item": {
-                "type" : "String"
+                "type": "String"
             }
         }
-    }
+    },
+    "completed": "Completed",
+    "@completed": {}
 }
