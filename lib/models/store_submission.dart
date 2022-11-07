@@ -79,6 +79,22 @@ extension StoreSubmissionResultMapping on StoreSubmission {
           .toList(),
     );
   }
+
+  int photoCount() {
+    return steps
+        .expand((e) => e.fields
+            .where((e) => e.results.first.photoPathValue?.isNotEmpty == true))
+        .length;
+  }
+
+  String toFocusString({String separator = ', '}) {
+    return steps
+        .expand((e) => e.fields
+            .where((e) => e.fieldType == SubmissionFieldType.focus)
+            .map((e) => e.toResultString()))
+        .where((e) => e.isNotEmpty)
+        .join(separator);
+  }
 }
 
 class StoreSubmission extends Equatable {
@@ -243,7 +259,7 @@ class StoreSubmissionField extends Equatable {
         case SubmissionFieldType.date:
           return e.dateTimeValue != null
               ? DateFormat.yMd(locale).format(e.dateTimeValue!)
-              : '';          
+              : '';
         default:
           return '';
       }

@@ -1,3 +1,4 @@
+import 'package:advance_expansion_tile/advance_expansion_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -11,7 +12,19 @@ import 'package:pondrop/features/task_templates/task_templates.dart';
 import '../bloc/store_report_bloc.dart';
 import '../widgets/store_report_list_item.dart';
 
+enum StoreReportGroups {
+  newSubmissions,
+  acceptedSubmissions,
+  completedSubmissions
+}
+
 class StoreReportPage extends StatelessWidget {
+  static const List<StoreReportGroups> _groups = [
+    StoreReportGroups.newSubmissions,
+    StoreReportGroups.acceptedSubmissions,
+    StoreReportGroups.completedSubmissions
+  ];
+
   const StoreReportPage({Key? key}) : super(key: key);
 
   static const routeName = '/stores/report';
@@ -58,47 +71,29 @@ class StoreReportPage extends StatelessWidget {
                     elevation: 4,
                     child: _storeHeader(context),
                   ),
-                  Expanded(
-                    child: BlocBuilder<StoreReportBloc, StoreReportState>(
-                        builder: (context, state) {
-                      return ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: Dims.small),
-                        itemBuilder: (BuildContext context, int index) {
-                          return Theme(
-                              data: Theme.of(context)
-                                  .copyWith(dividerColor: Colors.transparent),
-                              child: ExpansionTile(
-                                initiallyExpanded: true,
-                                title: Text(
-                                  (state.submissions.length > 1
-                                          ? l10n.itemSpaceItem(
-                                              state.submissions.length
-                                                  .toString(),
-                                              l10n.completed)
-                                          : l10n.completed)
-                                      .toUpperCase(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .caption!
-                                      .copyWith(fontWeight: FontWeight.w600),
-                                ),
-                                children: [
-                                  for (final i in state.submissions)
-                                    StoreReportListItem(
-                                        submissionTemplate: state.templates
-                                            .firstWhere(
-                                                (e) => e.id == i.templateId),
-                                        submissionResult: i,
-                                        onTap: () => Navigator.of(context).push(
-                                            StoreSubmissionSummaryPage.route(
-                                                i)))
-                                ],
-                              ));
-                        },
-                        itemCount: state.submissions.isNotEmpty ? 1 : 0,
-                      );
-                    }),
+                  Theme(
+                    data: Theme.of(context)
+                        .copyWith(dividerColor: Colors.transparent),
+                    child: Expanded(
+                      child: BlocBuilder<StoreReportBloc, StoreReportState>(
+                          builder: (context, state) {
+                        return ListView.builder(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: Dims.small),
+                          itemBuilder: (BuildContext context, int index) {
+                            final group = _groups[index];
+
+                            switch (_groups[index]) {
+                              case StoreReportGroups.completedSubmissions:
+                                return _completedSubmissionTile(context, state);
+                              default:
+                                return const SizedBox.shrink();
+                            }
+                          },
+                          itemCount: _groups.length,
+                        );
+                      }),
+                    ),
                   )
                 ]),
             floatingActionButton:
@@ -176,6 +171,48 @@ class StoreReportPage extends StatelessWidget {
         ],
       );
     });
+  }
+
+  Widget _completedSubmissionTile(
+      BuildContext context, StoreReportState state) {
+    if (state.submissions.isEmpty) return const SizedBox.shrink();
+
+    final l10n = context.l10n;
+
+    final completed = <Widget>{};
+
+    for (final i in state.submissions) {
+      final template = state.templates.firstWhere((e) => e.id == i.templateId);
+      final focus = i.toFocusString();
+
+      completed.add(StoreReportListItem(
+          iconData: IconData(template.iconCodePoint,
+              fontFamily: template.iconFontFamily),
+          title: template.title,
+          subTitle: focus.isNotEmpty ? focus : template.description,
+          photoCount: i.photoCount(),
+          onTap: () =>
+              Navigator.of(context).push(StoreSubmissionSummaryPage.route(i))));
+    }
+
+    return AdvanceExpansionTile(
+      key: const Key('StoreReportGroups_Completed'),
+      initiallyExpanded: true,
+      iconColor: Colors.black87,
+      collapsedIconColor: Colors.black87,
+      title: Text(
+        (state.submissions.length > 1
+                ? l10n.itemSpaceItem(
+                    state.submissions.length.toString(), l10n.completed)
+                : l10n.completed)
+            .toUpperCase(),
+        style: Theme.of(context)
+            .textTheme
+            .caption!
+            .copyWith(fontWeight: FontWeight.w600),
+      ),
+      children: [...completed],
+    );
   }
 
   AlertDialog _storeVisitFailed(BuildContext context) {
