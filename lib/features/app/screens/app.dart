@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pondrop/features/app/app.dart';
 import 'package:pondrop/features/authentication/bloc/authentication_bloc.dart';
+import 'package:pondrop/features/global/pondrop_rules.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/features/location/bloc/location_bloc.dart';
 import 'package:pondrop/features/login/login.dart';
@@ -75,6 +76,9 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
+    final rules = PondropRules();
+    rules.insertFact();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
