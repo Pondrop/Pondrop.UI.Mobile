@@ -777,6 +777,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.1"
+  rule_engine:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: "4bb1cf6"
+      resolved-ref: "4bb1cf646c7a7d166dc41f6296b298d7e4392d64"
+      url: "https://github.com/iPieter/rule-engine-dart.git"
+    source: git
+    version: "0.0.4"
   shared_preferences:
     dependency: "direct main"
     description:

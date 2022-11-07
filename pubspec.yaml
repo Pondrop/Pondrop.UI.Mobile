@@ -62,6 +62,11 @@ dependencies:
   tuple: ^2.0.0
   uuid: ^3.0.6
 
+  rule_engine:
+    git:
+      url: https://github.com/iPieter/rule-engine-dart.git
+      ref: 4bb1cf6 # commit hash
+
 dev_dependencies:
   bloc_test: ^9.1.0
   build_runner: ^2.2.0
