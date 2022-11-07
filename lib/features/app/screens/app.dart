@@ -37,10 +37,11 @@ class App extends StatelessWidget {
         RepositoryProvider(
             create: (context) => SubmissionRepository(
                 userRepository:
-                    RepositoryProvider.of<UserRepository>(context))),        
+                    RepositoryProvider.of<UserRepository>(context))),
         RepositoryProvider(
             create: (context) => ProductRepository(
-                userRepository: RepositoryProvider.of<UserRepository>(context))),
+                userRepository:
+                    RepositoryProvider.of<UserRepository>(context))),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -140,29 +141,35 @@ class _AppViewState extends State<AppView> {
       builder: (context, child) {
         return AnnotatedRegion(
           value: SystemUiOverlayStyle.dark,
-          child: LoadingOverlay(
-            child: BlocListener<AuthenticationBloc, AuthenticationState>(
-              listenWhen: (previous, current) =>
-                  previous.status != current.status,
-              listener: (context, state) {
-                switch (state.status) {
-                  case AuthenticationStatus.authenticated:
-                    _navigator.pushAndRemoveUntil<void>(
-                      StorePage.route(),
-                      (route) => false,
-                    );
-                    break;
-                  case AuthenticationStatus.unauthenticated:
-                    _navigator.pushAndRemoveUntil<void>(
-                      LoginPage.route(),
-                      (route) => false,
-                    );
-                    break;
-                  case AuthenticationStatus.unknown:
-                    break;
-                }
-              },
-              child: child,
+          child: GestureDetector(
+            onTap: () {
+              // Dismiss keyboard
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: LoadingOverlay(
+              child: BlocListener<AuthenticationBloc, AuthenticationState>(
+                listenWhen: (previous, current) =>
+                    previous.status != current.status,
+                listener: (context, state) {
+                  switch (state.status) {
+                    case AuthenticationStatus.authenticated:
+                      _navigator.pushAndRemoveUntil<void>(
+                        StorePage.route(),
+                        (route) => false,
+                      );
+                      break;
+                    case AuthenticationStatus.unauthenticated:
+                      _navigator.pushAndRemoveUntil<void>(
+                        LoginPage.route(),
+                        (route) => false,
+                      );
+                      break;
+                    case AuthenticationStatus.unknown:
+                      break;
+                  }
+                },
+                child: child,
+              ),
             ),
           ),
         );

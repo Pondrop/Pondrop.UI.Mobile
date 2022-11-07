@@ -1,41 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:pondrop/api/submission_api.dart';
-import 'package:pondrop/models/models.dart';
 import 'package:pondrop/features/styles/styles.dart';
 
 class StoreReportListItem extends StatelessWidget {
   const StoreReportListItem(
       {super.key,
-      required this.submissionTemplate,
-      this.submissionResult,
+      required this.iconData,
+      required this.title,
+      this.subTitle = '',
+      this.photoCount = 0,
       this.onTap});
 
-  final SubmissionTemplateDto submissionTemplate;
-  final StoreSubmission? submissionResult;
+  final IconData iconData;
+
+  final String title;
+  final String subTitle;
+
+  final int photoCount;
+
   final GestureTapCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    var photoCount = 0;
-    var focusName = '';
-
-    if (submissionResult?.steps.isNotEmpty == true) {
-      photoCount = submissionResult!.steps
-          .expand((e) => e.fields
-              .where((e) => e.results.first.photoPathValue?.isNotEmpty == true))
-          .length;
-      focusName = submissionResult!.steps
-          .expand((e) => e.fields
-              .where((e) => e.fieldType == SubmissionFieldType.focus)
-              .map((e) => e.toResultString()))
-          .where((e) => e.isNotEmpty)
-          .join(', ');
-    }
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(
           Dims.xLarge, Dims.xSmall, Dims.xLarge, Dims.small),
       child: Material(
+        clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: const BorderSide(
@@ -61,8 +51,7 @@ class StoreReportListItem extends StatelessWidget {
                               color: PondropColors.primaryLightColor,
                               borderRadius: BorderRadius.circular(100)),
                           child: Icon(
-                            IconData(submissionTemplate.iconCodePoint,
-                                fontFamily: submissionTemplate.iconFontFamily),
+                            iconData,
                             color: Colors.black,
                           ),
                         )),
@@ -71,7 +60,7 @@ class StoreReportListItem extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(submissionTemplate.title,
+                          Text(title,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText1!
@@ -80,9 +69,7 @@ class StoreReportListItem extends StatelessWidget {
                                       fontWeight: FontWeight.w600)),
                           const SizedBox(height: Dims.small),
                           Text(
-                            focusName.isEmpty
-                                ? submissionTemplate.description
-                                : focusName,
+                            subTitle,
                             style: Theme.of(context)
                                 .textTheme
                                 .caption!
