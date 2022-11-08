@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'package:pondrop/api/common/common.dart';
 import 'package:pondrop/extensions/extensions.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
 import 'package:uuid/uuid.dart';
@@ -27,14 +28,15 @@ class SubmissionApi {
 
     final headers = _getCommonHeaders(accessToken);
 
-    final response = await _httpClient
-        .get(Uri.https(_baseUrl, '/SubmissionTemplate'), headers: headers);
+    final response = await _httpClient.get(
+        Uri.https(_baseUrl, '/SubmissionTemplate', {'offset': '0', 'limit': '999'}),
+        headers: headers);
 
     response.ensureSuccessStatusCode();
 
-    Iterable jsonList = json.decode(response.body);
-    final submissionTemplates =
-        jsonList.map((model) => SubmissionTemplateDto.fromJson(model)).toList();
+    final submissionTemplates = PaginationDto.fromJson(
+        json.decode(response.body),
+        (json) => SubmissionTemplateDto.fromJson(json)).items;
 
     if (submissionTemplates.isNotEmpty) {
       _localTemplates[accessToken] = submissionTemplates;
