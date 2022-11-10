@@ -10,7 +10,7 @@ class ProductApi {
       : _httpClient = httpClient ?? http.Client();
 
   static const String _baseUrl =
-      'pondropsearchstandard.search.windows.net';
+      'product-service.ashyocean-bde16918.australiaeast.azurecontainerapps.io';
 
   final http.Client _httpClient;
 
@@ -20,12 +20,11 @@ class ProductApi {
     int skipIdx = 0,
   }) async {
     final queryParams = {
-      'api-version' : '2021-04-30-Preview',
       'search' : '$keyword*',
       '\$skip' : '$skipIdx',
     };
 
-    final uri = Uri.https(_baseUrl, "/indexes/cosmosdb-index-allproduct/docs", queryParams);  
+    final uri = Uri.https(_baseUrl, "/Product/search", queryParams);  
     final headers = _getCommonHeaders(accessToken);
 
     final response =
@@ -42,7 +41,6 @@ class ProductApi {
     int skipIdx = 0,
   }) async {
     final queryParams = {
-      'api-version' : '2021-04-30-Preview',
       'search' : '$keyword*',
       '\$skip' : '$skipIdx',
     };
@@ -51,7 +49,7 @@ class ProductApi {
       queryParams['\$orderby'] = 'name asc';
     }
 
-    final uri = Uri.https(_baseUrl, "/indexes/cosmosdb-index-category/docs", queryParams);  
+    final uri = Uri.https(_baseUrl, "/Category/search", queryParams);  
     final headers = _getCommonHeaders(accessToken);
 
     final response =
@@ -66,7 +64,6 @@ class ProductApi {
     return {
       'Content-type': 'application/json',
       'Authorization': 'Bearer $accessToken',
-      'api-key': 't9qQq8k9bXhsR4VoCbJAIHYwkBrSTpE03KMKR3Kp6MAzSeAyv0pe'
     };
   }
 }
