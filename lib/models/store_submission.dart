@@ -62,6 +62,7 @@ extension StoreSubmissionResultMapping on StoreSubmission {
                                   stringValue: e.stringValue,
                                   intValue: e.intValue,
                                   doubleValue: e.doubleValue,
+                                  dateTimeValue: e.dateTimeValue,
                                   photoPathValue: e.photoPathValue,
                                   itemValue: field.itemType != null &&
                                           e.itemValue != null
