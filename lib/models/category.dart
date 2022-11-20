@@ -1,16 +1,8 @@
-import 'package:equatable/equatable.dart';
+import 'package:pondrop/models/models.dart';
 
-class Category extends Equatable {
-  const Category(
-      {required this.id,
-      required this.name,});
-
-  final String id;
-  final String name;
-
-  @override
-  List<Object> get props => [
-        id,
-        name,
-      ];
+class Category extends FocusItem {
+  const Category({
+    required String id,
+    required String name,
+  }) : super(id: id, name: name);
 }

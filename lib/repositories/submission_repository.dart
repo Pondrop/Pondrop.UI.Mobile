@@ -40,6 +40,39 @@ class SubmissionRepository {
     return const [];
   }
 
+  Future<List<CategoryCampaignDto>> fetchCategoryCampaigns(
+      String storeId) async {
+    final user = await _userRepository.getUser();
+
+    if (user?.accessToken.isNotEmpty == true) {
+      try {
+        final campaigns = await _submissionApi
+            .fetchCategoryCampaigns(user!.accessToken, [storeId]);
+        return campaigns;
+      } catch (e) {
+        log(e.toString());
+      }
+    }
+
+    return const [];
+  }
+
+  Future<List<ProductCampaignDto>> fetchProductCampaigns(String storeId) async {
+    final user = await _userRepository.getUser();
+
+    if (user?.accessToken.isNotEmpty == true) {
+      try {
+        final campaigns = await _submissionApi
+            .fetchProductCampaigns(user!.accessToken, [storeId]);
+        return campaigns;
+      } catch (e) {
+        log(e.toString());
+      }
+    }
+
+    return const [];
+  }
+
   Future<StoreVisitDto?> startStoreVisit(
       String storeId, LatLng? location) async {
     final user = await _userRepository.getUser();
@@ -87,7 +120,8 @@ class SubmissionRepository {
           if (path.isNotEmpty) {
             final file = File(path);
             if (await file.exists()) {
-              result.photoFileName = '${field.templateFieldId}_${i + 1}${p.extension(path)}';
+              result.photoFileName =
+                  '${field.templateFieldId}_${i + 1}${p.extension(path)}';
               result.photoBase64 = _toBase64(await _readFileBytes(file));
             }
           }

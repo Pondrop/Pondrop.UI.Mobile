@@ -10,6 +10,7 @@ SubmissionResultDto _$SubmissionResultDtoFromJson(Map<String, dynamic> json) =>
     SubmissionResultDto(
       submissionTemplateId: json['submissionTemplateId'] as String,
       storeVisitId: json['storeVisitId'] as String,
+      campaignId: json['campaignId'] as String?,
       latitude: (json['latitude'] as num?)?.toDouble() ?? 0,
       longitude: (json['longitude'] as num?)?.toDouble() ?? 0,
       steps: (json['steps'] as List<dynamic>)
@@ -23,6 +24,7 @@ Map<String, dynamic> _$SubmissionResultDtoToJson(
     <String, dynamic>{
       'submissionTemplateId': instance.submissionTemplateId,
       'storeVisitId': instance.storeVisitId,
+      'campaignId': instance.campaignId,
       'latitude': instance.latitude,
       'longitude': instance.longitude,
       'steps': instance.steps.map((e) => e.toJson()).toList(),

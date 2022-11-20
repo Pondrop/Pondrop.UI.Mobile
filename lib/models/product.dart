@@ -1,19 +1,18 @@
-import 'package:equatable/equatable.dart';
+import 'package:pondrop/models/models.dart';
 
-class Product extends Equatable {
-  const Product(
-      {required this.id,
-      required this.barcode,
-      required this.name,});
+class Product extends FocusItem {
+  const Product({
+    required String id,
+    required String name,
+    required this.barcode,
+  }) : super(id: id, name: name);
 
-  final String id;
   final String barcode;
-  final String name;
 
   @override
   List<Object> get props => [
         id,
-        barcode,
         name,
+        barcode,
       ];
 }

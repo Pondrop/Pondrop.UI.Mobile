@@ -68,7 +68,7 @@ void main() {
 
     testWidgets('renders a Store Report page with Submissions', (tester) async {
       final templates = FakeStoreSubmissionTemplates.fakeTemplates();
-      final submission = templates.first.toStoreSubmission();
+      final submission = templates.first.toStoreSubmission(campaignId: null);
 
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value(templates));

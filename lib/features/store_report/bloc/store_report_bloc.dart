@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/models/models.dart';
@@ -19,21 +20,16 @@ class StoreReportBloc extends Bloc<StoreReportEvent, StoreReportState> {
       : _submissionRepository = submissionRepository,
         _locationRepository = locationRepository,
         super(StoreReportState(store: store)) {
-    on<StoreVisitCreated>(_onStoreVisitCreated);
-    on<StoreVisitFailed>(_onStoreVisitFailed);
+    on<StoreReportRefreshed>(_onStoreReportRefreshed);
     on<StoreReportSubmitted>(_onStoreReportSubmitted);
 
     _storeSubmissionSubscription = _submissionRepository.submissions.listen(
       (submission) => add(StoreReportSubmitted(submission: submission)),
     );
 
-    _locationRepository.getLastKnownPosition().then((value) =>
-        _submissionRepository
-            .startStoreVisit(
-                store.id, LatLng(value?.latitude ?? 0, value?.longitude ?? 0))
-            .then((value) => add(value != null
-                ? StoreVisitCreated(visit: value)
-                : const StoreVisitFailed())));
+    _locationRepository
+        .getLastKnownPosition()
+        .then((value) => add(StoreReportRefreshed(position: value)));
   }
 
   final SubmissionRepository _submissionRepository;
@@ -41,40 +37,73 @@ class StoreReportBloc extends Bloc<StoreReportEvent, StoreReportState> {
 
   late StreamSubscription<StoreSubmission> _storeSubmissionSubscription;
 
-  void _onStoreVisitCreated(
-    StoreVisitCreated event,
+  void _onStoreReportRefreshed(
+    StoreReportRefreshed event,
     Emitter<StoreReportState> emit,
-  ) {
-    emit(state.copyWith(
-        visitStatus: StoreReportVisitStatus.started, visit: event.visit));
-  }
+  ) async {
+    if (state.status == StoreReportStatus.loading) {
+      return;
+    }
 
-  void _onStoreVisitFailed(
-    StoreVisitFailed event,
-    Emitter<StoreReportState> emit,
-  ) {
-    emit(state.copyWith(visitStatus: StoreReportVisitStatus.failed));
+    emit(state.copyWith(status: StoreReportStatus.loading));
+
+    if (state.visit == null) {
+      try {
+        final visitTask = _submissionRepository.startStoreVisit(
+            state.store.id,
+            LatLng(
+                event.position?.latitude ?? 0, event.position?.longitude ?? 0));
+        final templatesTask = _submissionRepository.fetchTemplates();
+
+        await Future.wait([visitTask, templatesTask]);
+
+        emit(state.copyWith(
+            visit: await visitTask, templates: await templatesTask));
+      } catch (e) {
+        log(e.toString());
+      }
+    }
+
+    if (state.visit != null) {
+      try {
+        final categoryCampaignsTask =
+            _submissionRepository.fetchCategoryCampaigns(state.store.id);
+        final productCampaignsTask =
+            _submissionRepository.fetchProductCampaigns(state.store.id);
+
+        await Future.wait([categoryCampaignsTask, productCampaignsTask]);
+
+        final campaigns = [
+          ...(await categoryCampaignsTask),
+          ...(await productCampaignsTask)
+        ].where((c) => c.isValid).toList();
+
+        emit(state.copyWith(campaigns: campaigns));
+      } catch (e) {
+        log(e.toString());
+      }
+    }
+
+    emit(state.copyWith(
+        status: state.visit != null
+            ? StoreReportStatus.loaded
+            : StoreReportStatus.failed));
   }
 
   Future<void> _onStoreReportSubmitted(
     StoreReportSubmitted event,
     Emitter<StoreReportState> emit,
   ) async {
-    final templates = List<SubmissionTemplateDto>.from(state.templates);
-    if (templates.isEmpty) {
-      try {
-        templates.addAll(await _submissionRepository.fetchTemplates());
-      } catch (e) {
-        log(e.toString());
-      }
+    final campaigns = List<CampaignDto>.from(state.campaigns);
+
+    if (event.submission.campaignId != null) {
+      campaigns.removeWhere((e) => e.id == event.submission.campaignId);
     }
 
-    if (templates.any((e) => e.id == event.submission.templateId)) {
-      emit(state.copyWith(
-          templates: templates,
-          submissions: List<StoreSubmission>.from(state.submissions)
-            ..add(event.submission)));
-    }
+    emit(state.copyWith(
+        submissions: List<StoreSubmission>.from(state.submissions)
+          ..add(event.submission),
+        campaigns: campaigns));
   }
 
   @override

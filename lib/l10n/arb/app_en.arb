@@ -235,5 +235,7 @@
         }
     },
     "completed": "Completed",
-    "@completed": {}
+    "@completed": {},
+    "newSolo": "New",
+    "@newSolo": {}
 }

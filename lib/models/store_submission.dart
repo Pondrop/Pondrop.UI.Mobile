@@ -1,12 +1,14 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
 
 extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
-  StoreSubmission toStoreSubmission() {
+  StoreSubmission toStoreSubmission({required String? campaignId}) {
     return StoreSubmission(
       templateId: id,
+      campaignId: campaignId,
       title: title,
       description: description,
       steps: steps
@@ -38,12 +40,24 @@ extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
           .toList(),
     );
   }
+
+  SubmissionFieldItemType? getFocusItemType() {
+    return steps
+        .expand((i) => i.fields)
+        .where((i) =>
+            i.fieldType == SubmissionFieldType.focus &&
+            i.itemType != null &&
+            i.itemType != SubmissionFieldItemType.unknown)
+        .firstOrNull
+        ?.itemType;
+  }
 }
 
 extension StoreSubmissionResultMapping on StoreSubmission {
   SubmissionResultDto toSubmissionResultDto(String storeVisitId) {
     return SubmissionResultDto(
       submissionTemplateId: templateId,
+      campaignId: campaignId,
       storeVisitId: storeVisitId,
       latitude: latitude,
       longitude: longitude,
@@ -101,6 +115,7 @@ extension StoreSubmissionResultMapping on StoreSubmission {
 class StoreSubmission extends Equatable {
   StoreSubmission({
     required this.templateId,
+    required this.campaignId,
     required this.title,
     required this.description,
     this.latitude = 0,
@@ -110,6 +125,7 @@ class StoreSubmission extends Equatable {
   });
 
   final String templateId;
+  final String? campaignId;
   final String title;
   final String description;
 
@@ -123,6 +139,7 @@ class StoreSubmission extends Equatable {
   StoreSubmission copy({LatLng? location, DateTime? submittedDate}) {
     return StoreSubmission(
       templateId: templateId,
+      campaignId: campaignId,
       title: title,
       latitude: location?.latitude ?? latitude,
       longitude: location?.longitude ?? longitude,
@@ -133,7 +150,8 @@ class StoreSubmission extends Equatable {
   }
 
   @override
-  List<Object?> get props => [templateId, title, description, steps];
+  List<Object?> get props =>
+      [templateId, campaignId, title, description, steps];
 }
 
 class StoreSubmissionStep extends Equatable {
@@ -181,7 +199,7 @@ class StoreSubmissionStep extends Equatable {
       fields.every((e) => !e.mandatory || e.results.every((e) => !e.isEmpty));
 
   bool get isFocus =>
-      fields.length == 1 && fields[0].fieldType == SubmissionFieldType.focus;
+      fields.isNotEmpty && fields[0].fieldType == SubmissionFieldType.focus;
 
   StoreSubmissionStep copy() {
     return StoreSubmissionStep(

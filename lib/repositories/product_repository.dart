@@ -34,15 +34,35 @@ class ProductRepository {
     return const Tuple2([], false);
   }
 
+  Future<Map<String, Product>> fetchProductsById(Set<String> ids) async {
+    final user = await _userRepository.getUser();
+
+    if (user?.accessToken.isNotEmpty == true && ids.isNotEmpty) {
+      final searchResult =
+          await _productApi.searchProductsById(user!.accessToken, ids);
+
+      final products = {
+        for (final i in searchResult.value)
+          i.id: Product(
+            id: i.id,
+            barcode: i.barcodeNumber,
+            name: i.name,
+          )
+      };
+
+      return products;
+    }
+
+    return const {};
+  }
+
   Future<Tuple2<List<Category>, bool>> fetchCategories(
       String keyword, int skipIdx) async {
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
-      final searchResult = await _productApi.searchCategories(
-          user!.accessToken,
-          keyword: keyword,
-          skipIdx: skipIdx);
+      final searchResult = await _productApi.searchCategories(user!.accessToken,
+          keyword: keyword, skipIdx: skipIdx);
 
       final categories = searchResult.value
           .map((e) => Category(
@@ -55,5 +75,23 @@ class ProductRepository {
     }
 
     return const Tuple2([], false);
+  }
+
+  Future<Map<String, Category>> fetchCategoriesById(Set<String> ids) async {
+    final user = await _userRepository.getUser();
+
+    if (user?.accessToken.isNotEmpty == true && ids.isNotEmpty) {
+      final searchResult =
+          await _productApi.searchCategoriesById(user!.accessToken, ids);
+
+      final categories = {
+        for (final i in searchResult.value)
+          i.id: Category(id: i.id, name: i.name)
+      };
+
+      return categories;
+    }
+
+    return const {};
   }
 }

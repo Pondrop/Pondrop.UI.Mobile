@@ -22,19 +22,26 @@ import '../widgets/focus_header_view.dart';
 
 class StoreSubmissionPage extends StatelessWidget {
   const StoreSubmissionPage(
-      {Key? key, required this.visit, required this.submission})
+      {Key? key, required this.visit, required this.submission, this.campaign})
       : super(key: key);
 
   static const nextButtonKey = Key('StoreSubmissionPage_Next_Button');
 
-  static Route route(StoreVisitDto visit, StoreSubmission submission) {
+  static Route route(
+      {required StoreVisitDto visit,
+      required StoreSubmission submission,
+      CampaignDto? campaign}) {
     return MaterialPageRoute<void>(
-        builder: (_) =>
-            StoreSubmissionPage(visit: visit, submission: submission));
+        builder: (_) => StoreSubmissionPage(
+              visit: visit,
+              submission: submission,
+              campaign: campaign,
+            ));
   }
 
   final StoreVisitDto visit;
   final StoreSubmission submission;
+  final CampaignDto? campaign;
 
   @override
   Widget build(BuildContext context) {
@@ -195,6 +202,25 @@ class StoreSubmissionPage extends StatelessWidget {
                   }
 
                   if (state.currentStep.isFocus) {
+                    final focusField = state.currentStep.fields.first;
+                    if (campaign != null) {
+                      context
+                          .read<StoreSubmissionBloc>()
+                          .add(StoreSubmissionFieldResultEvent(
+                              stepId: focusField.stepId,
+                              fieldId: focusField.fieldId,
+                              result: StoreSubmissionFieldResult(
+                                itemValue: StoreSubmissionFieldResultItem(
+                                    itemId: campaign!.focusId,
+                                    itemName: campaign!.focusName),
+                              ),
+                              resultIdx: focusField.maxValue ?? 0));
+                      context
+                          .read<StoreSubmissionBloc>()
+                          .add(const StoreSubmissionNextEvent());
+                      return const SizedBox.shrink();
+                    }
+
                     return FocusFieldControl(
                         field: state.currentStep.fields.first);
                   }
@@ -228,12 +254,8 @@ class StoreSubmissionPage extends StatelessWidget {
                   return SingleChildScrollView(
                       controller: ModalScrollController.of(context),
                       child: Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            Dims.medium,
-                            Dims.small,
-                            Dims.medium,
-                            Dims.xxLarge
-                          ),
+                          padding: const EdgeInsets.fromLTRB(Dims.medium,
+                              Dims.small, Dims.medium, Dims.xxLarge),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,

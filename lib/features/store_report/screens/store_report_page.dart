@@ -1,7 +1,9 @@
 import 'package:advance_expansion_tile/advance_expansion_tile.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pondrop/features/store_submission/screens/store_submission_page.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
@@ -47,7 +49,7 @@ class StoreReportPage extends StatelessWidget {
             ),
         child: BlocListener<StoreReportBloc, StoreReportState>(
           listener: (context, state) {
-            if (state.visitStatus == StoreReportVisitStatus.failed) {
+            if (state.status == StoreReportStatus.failed) {
               showDialog(
                 context: context,
                 builder: (_) => _storeVisitFailed(context),
@@ -77,20 +79,29 @@ class StoreReportPage extends StatelessWidget {
                     child: Expanded(
                       child: BlocBuilder<StoreReportBloc, StoreReportState>(
                           builder: (context, state) {
-                        return ListView.builder(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: Dims.small),
-                          itemBuilder: (BuildContext context, int index) {
-                            final group = _groups[index];
-
-                            switch (_groups[index]) {
-                              case StoreReportGroups.completedSubmissions:
-                                return _completedSubmissionTile(context, state);
-                              default:
-                                return const SizedBox.shrink();
-                            }
+                        return RefreshIndicator(
+                          onRefresh: () {
+                            final bloc = context.read<StoreReportBloc>()
+                              ..add(const StoreReportRefreshed());
+                            return bloc.stream.firstWhere(
+                                (e) => e.status != StoreReportStatus.loading);
                           },
-                          itemCount: _groups.length,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 0, vertical: Dims.small),
+                            itemBuilder: (BuildContext context, int index) {
+                              switch (_groups[index]) {
+                                case StoreReportGroups.newSubmissions:
+                                  return _newSubmissionsTile(context, state);
+                                case StoreReportGroups.completedSubmissions:
+                                  return _completedSubmissionsTile(
+                                      context, state);
+                                default:
+                                  return const SizedBox.shrink();
+                              }
+                            },
+                            itemCount: _groups.length,
+                          ),
                         );
                       }),
                     ),
@@ -99,8 +110,8 @@ class StoreReportPage extends StatelessWidget {
             floatingActionButton:
                 BlocBuilder<StoreReportBloc, StoreReportState>(
               builder: (context, state) {
-                switch (state.visitStatus) {
-                  case StoreReportVisitStatus.starting:
+                switch (state.status) {
+                  case StoreReportStatus.loading:
                     return ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: PondropColors.primaryLightColor,
@@ -111,7 +122,7 @@ class StoreReportPage extends StatelessWidget {
                           height: 24,
                           child: CircularProgressIndicator(),
                         ));
-                  case StoreReportVisitStatus.started:
+                  case StoreReportStatus.loaded:
                     return ElevatedButton.icon(
                       icon: const Icon(Icons.add),
                       label: Text(l10n.addItem(l10n.task.toLowerCase())),
@@ -173,26 +184,75 @@ class StoreReportPage extends StatelessWidget {
     });
   }
 
-  Widget _completedSubmissionTile(
+  Widget _newSubmissionsTile(BuildContext context, StoreReportState state) {
+    if (state.campaigns.isEmpty) return const SizedBox.shrink();
+
+    final l10n = context.l10n;
+    final items = <Widget>{};
+
+    for (final i in state.campaigns) {
+      final template = state.templates
+          .where((e) => e.id == i.submissionTemplateId)
+          .firstOrNull;
+      if (template != null) {
+        items.add(StoreReportListItem(
+            iconData: IconData(template.iconCodePoint,
+                fontFamily: template.iconFontFamily),
+            title: template.title,
+            subTitle: i.focusName,
+            onTap: () {
+              showCupertinoModalBottomSheet(
+                context: context,
+                builder: (context) => StoreSubmissionPage(
+                  visit: state.visit!,
+                  submission: template.toStoreSubmission(campaignId: i.id),
+                  campaign: i,
+                ),
+                enableDrag: false,
+              );
+            }));
+      }
+    }
+
+    return AdvanceExpansionTile(
+      key: const Key('StoreReportGroups_New'),
+      initiallyExpanded: true,
+      hideIcon: true,
+      disabled: true,
+      title: Text(
+        l10n.newSolo.toUpperCase(),
+        style: Theme.of(context)
+            .textTheme
+            .caption!
+            .copyWith(fontWeight: FontWeight.w600),
+      ),
+      children: [...items],
+    );
+  }
+
+  Widget _completedSubmissionsTile(
       BuildContext context, StoreReportState state) {
     if (state.submissions.isEmpty) return const SizedBox.shrink();
 
     final l10n = context.l10n;
 
-    final completed = <Widget>{};
+    final items = <Widget>{};
 
     for (final i in state.submissions) {
-      final template = state.templates.firstWhere((e) => e.id == i.templateId);
-      final focus = i.toFocusString();
+      final template =
+          state.templates.where((e) => e.id == i.templateId).firstOrNull;
+      if (template != null) {
+        final focus = i.toFocusString();
 
-      completed.add(StoreReportListItem(
-          iconData: IconData(template.iconCodePoint,
-              fontFamily: template.iconFontFamily),
-          title: template.title,
-          subTitle: focus.isNotEmpty ? focus : template.description,
-          photoCount: i.photoCount(),
-          onTap: () =>
-              Navigator.of(context).push(StoreSubmissionSummaryPage.route(i))));
+        items.add(StoreReportListItem(
+            iconData: IconData(template.iconCodePoint,
+                fontFamily: template.iconFontFamily),
+            title: template.title,
+            subTitle: focus.isNotEmpty ? focus : template.description,
+            photoCount: i.photoCount(),
+            onTap: () => Navigator.of(context)
+                .push(StoreSubmissionSummaryPage.route(i))));
+      }
     }
 
     return AdvanceExpansionTile(
@@ -211,7 +271,7 @@ class StoreReportPage extends StatelessWidget {
             .caption!
             .copyWith(fontWeight: FontWeight.w600),
       ),
-      children: [...completed],
+      children: [...items],
     );
   }
 

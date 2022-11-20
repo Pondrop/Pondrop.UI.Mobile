@@ -6,7 +6,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:pondrop/api/common/common.dart';
 import 'package:pondrop/extensions/extensions.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
-import 'package:uuid/uuid.dart';
 
 class SubmissionApi {
   SubmissionApi({http.Client? httpClient})
@@ -29,7 +28,8 @@ class SubmissionApi {
     final headers = _getCommonHeaders(accessToken);
 
     final response = await _httpClient.get(
-        Uri.https(_baseUrl, '/SubmissionTemplate', {'offset': '0', 'limit': '999'}),
+        Uri.https(
+            _baseUrl, '/SubmissionTemplate', {'offset': '0', 'limit': '-1'}),
         headers: headers);
 
     response.ensureSuccessStatusCode();
@@ -43,6 +43,42 @@ class SubmissionApi {
     }
 
     return submissionTemplates;
+  }
+
+  Future<List<CategoryCampaignDto>> fetchCategoryCampaigns(
+      String accessToken, List<String> storeIds) async {
+    final headers = _getCommonHeaders(accessToken);
+
+    final response = await _httpClient.post(
+        Uri.https(_baseUrl, '/Campaign/category'),
+        headers: headers,
+        body: jsonEncode({'storeIds': storeIds}));
+
+    response.ensureSuccessStatusCode();
+
+    Iterable l = json.decode(response.body);
+    final campaigns = List<CategoryCampaignDto>.from(
+        l.map((i) => CategoryCampaignDto.fromJson(i)));
+
+    return campaigns;
+  }
+
+  Future<List<ProductCampaignDto>> fetchProductCampaigns(
+      String accessToken, List<String> storeIds) async {
+    final headers = _getCommonHeaders(accessToken);
+
+    final response = await _httpClient.post(
+        Uri.https(_baseUrl, '/Campaign/product'),
+        headers: headers,
+        body: jsonEncode({'storeIds': storeIds}));
+
+    response.ensureSuccessStatusCode();
+
+    Iterable l = json.decode(response.body);
+    final campaigns = List<ProductCampaignDto>.from(
+        l.map((i) => ProductCampaignDto.fromJson(i)));
+
+    return campaigns;
   }
 
   Future<StoreVisitDto> startStoreVisit(
