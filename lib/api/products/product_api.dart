@@ -35,6 +35,27 @@ class ProductApi {
     return ProductSearchResultDto.fromJson(jsonDecode(response.body));
   }
 
+  Future<ProductSearchResultDto> searchProductsById(
+    String accessToken,
+    Set<String> ids
+  ) async {
+    final queryParams = {
+      'search' : ids.map((i) => '"$i"').join('|'),
+      'searchFields' : 'id',
+      '\$top' : ids.length.toString(),
+    };
+
+    final uri = Uri.https(_baseUrl, "/Product/search", queryParams);  
+    final headers = _getCommonHeaders(accessToken);
+
+    final response =
+        await _httpClient.get(uri, headers: headers);
+
+    response.ensureSuccessStatusCode();
+
+    return ProductSearchResultDto.fromJson(jsonDecode(response.body));
+  }
+
   Future<CategorySearchResultDto> searchCategories(
     String accessToken, {
     String keyword = '',
@@ -48,6 +69,27 @@ class ProductApi {
     if (keyword.isEmpty) {
       queryParams['\$orderby'] = 'name asc';
     }
+
+    final uri = Uri.https(_baseUrl, "/Category/search", queryParams);  
+    final headers = _getCommonHeaders(accessToken);
+
+    final response =
+        await _httpClient.get(uri, headers: headers);
+
+    response.ensureSuccessStatusCode();
+
+    return CategorySearchResultDto.fromJson(jsonDecode(response.body));
+  }
+
+  Future<CategorySearchResultDto> searchCategoriesById(
+    String accessToken,
+    Set<String> ids
+  ) async {
+    final queryParams = {
+      'search' : ids.map((i) => '"$i"').join('|'),
+      'searchFields' : 'id',
+      '\$top' : ids.length.toString(),
+    };
 
     final uri = Uri.https(_baseUrl, "/Category/search", queryParams);  
     final headers = _getCommonHeaders(accessToken);

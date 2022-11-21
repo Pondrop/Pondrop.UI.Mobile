@@ -5,7 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pondrop/features/app/app.dart';
 import 'package:pondrop/features/authentication/bloc/authentication_bloc.dart';
 import 'package:pondrop/l10n/l10n.dart';
-import 'package:pondrop/features/location/bloc/location_bloc.dart';
 import 'package:pondrop/features/login/login.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/features/splash/screens/splash_page.dart';
@@ -50,10 +49,6 @@ class App extends StatelessWidget {
                     authenticationRepository: authenticationRepository,
                     userRepository: userRepository,
                   )..add(AuthenticationCheckExistingUser())),
-          BlocProvider<LocationBloc>(
-              create: (context) => LocationBloc(
-                    locationRepository: locationRepository,
-                  )),
         ],
         child: const AppView(),
       ),

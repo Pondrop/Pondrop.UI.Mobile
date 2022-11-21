@@ -5,7 +5,6 @@ import 'package:pondrop/features/store_submission/bloc/store_submission_bloc.dar
 import 'package:pondrop/features/styles/styles.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
-import 'package:tuple/tuple.dart';
 
 class FocusFieldControl extends StatelessWidget {
   const FocusFieldControl({super.key, required this.field});

@@ -9,7 +9,7 @@ import advance_expansion_tile
 import flutter_secure_storage_macos
 import geolocator_apple
 import mobile_scanner
-import package_info_plus_macos
+import package_info_plus
 import shared_preferences_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

@@ -42,13 +42,14 @@ void main() {
     productRepository = MockProductRepository();
 
     visit = FakeStoreVisit.fakeVist();
-    submission =
-        FakeStoreSubmissionTemplates.fakeTemplates().first.toStoreSubmission();
+    submission = FakeStoreSubmissionTemplates.fakeTemplates()
+        .first
+        .toStoreSubmission(campaignId: null);
   });
 
   group('Store Submission Page', () {
     test('is routable', () {
-      expect(StoreSubmissionPage.route(visit, submission),
+      expect(StoreSubmissionPage.route(visit: visit, submission: submission),
           isA<MaterialPageRoute>());
     });
 

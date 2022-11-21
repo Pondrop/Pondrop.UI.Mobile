@@ -1,3 +1,5 @@
+export 'campaign_dto.dart';
+
 export 'store_visit_dto.dart';
 
 export 'submission_template_dto.dart';

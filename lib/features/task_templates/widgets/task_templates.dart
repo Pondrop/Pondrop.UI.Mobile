@@ -49,7 +49,7 @@ class TaskTemplates extends StatelessWidget {
                       context: context,
                       builder: (context) => StoreSubmissionPage(
                         visit: visit,
-                        submission: item.toStoreSubmission(),
+                        submission: item.toStoreSubmission(campaignId: null),
                       ),
                       enableDrag: false,
                     );

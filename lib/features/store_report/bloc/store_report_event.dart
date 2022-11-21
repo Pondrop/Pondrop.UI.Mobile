@@ -1,23 +1,16 @@
 part of 'store_report_bloc.dart';
 
-abstract class StoreReportEvent extends Equatable { 
+abstract class StoreReportEvent extends Equatable {
   const StoreReportEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class StoreVisitCreated extends StoreReportEvent {
-  const StoreVisitCreated({required this.visit});
+class StoreReportRefreshed extends StoreReportEvent {
+  const StoreReportRefreshed({this.position});
 
-  final StoreVisitDto visit;
-
-  @override
-  List<Object> get props => [visit];
-}
-
-class StoreVisitFailed extends StoreReportEvent {
-  const StoreVisitFailed();
+  final Position? position;
 }
 
 class StoreReportSubmitted extends StoreReportEvent {

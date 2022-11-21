@@ -28,21 +28,20 @@ void main() {
     submissionRepository = MockSubmissionRepository();
     store = FakeStore.fakeStore();
     position = Position(
-      latitude: latitude,
-      longitude: longitude,
-      timestamp: DateTime.now(),
-      accuracy: 0,
-      altitude: 0,
-      heading: 0,
-      speed: 0,
-      speedAccuracy: 0
-    );
+        latitude: latitude,
+        longitude: longitude,
+        timestamp: DateTime.now(),
+        accuracy: 0,
+        altitude: 0,
+        heading: 0,
+        speed: 0,
+        speedAccuracy: 0);
     storeVisitDto = StoreVisitDto(
-      id: const Uuid().v4().toString(),
-      storeId: store.id, userId: const Uuid().v4().toString(),
-      latitude: latitude,
-      longitude: longitude
-    );
+        id: const Uuid().v4(),
+        storeId: store.id,
+        userId: const Uuid().v4(),
+        latitude: latitude,
+        longitude: longitude);
   });
 
   group('StoreReportBloc', () {
@@ -64,10 +63,12 @@ void main() {
     test('create StoreVisit success', () async {
       when(() => submissionRepository.submissions)
           .thenAnswer((invocation) => Stream.fromIterable([]));
+      when(() => submissionRepository.fetchTemplates())
+          .thenAnswer((invocation) => Future.value([]));
       when(() => submissionRepository.startStoreVisit(store.id, any()))
           .thenAnswer((invocation) => Future.value(storeVisitDto));
-      when(() => locationRepository.getLastKnownPosition()).thenAnswer(
-          (invocation) => Future.value(position));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((invocation) => Future.value(position));
 
       final bloc = StoreReportBloc(
         store: store,
@@ -75,13 +76,15 @@ void main() {
         locationRepository: locationRepository,
       );
 
-      await bloc.stream.first;
+      await Future.delayed(const Duration(milliseconds: 250));
 
-      verify(() => submissionRepository.startStoreVisit(store.id, any())).called(1);
+      verify(() => submissionRepository.startStoreVisit(store.id, any()))
+          .called(1);
+      verify(() => submissionRepository.fetchTemplates()).called(1);
       verify(() => locationRepository.getLastKnownPosition()).called(1);
 
       expect(bloc.state.visit, storeVisitDto);
-      expect(bloc.state.visitStatus, StoreReportVisitStatus.started);
+      expect(bloc.state.status, StoreReportStatus.loaded);
     });
 
     test('create StoreVisit failed', () async {
@@ -89,8 +92,8 @@ void main() {
           .thenAnswer((invocation) => Stream.fromIterable([]));
       when(() => submissionRepository.startStoreVisit(store.id, any()))
           .thenAnswer((invocation) => Future.value(null));
-      when(() => locationRepository.getLastKnownPosition()).thenAnswer(
-          (invocation) => Future.value(position));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((invocation) => Future.value(position));
 
       final bloc = StoreReportBloc(
         store: store,
@@ -98,26 +101,69 @@ void main() {
         locationRepository: locationRepository,
       );
 
-      await bloc.stream.first;
+      await Future.delayed(const Duration(milliseconds: 250));
 
       expect(bloc.state.visit, null);
-      expect(bloc.state.visitStatus, StoreReportVisitStatus.failed);
+      expect(bloc.state.status, StoreReportStatus.failed);
+    });
+
+    test('fetch Campaigns success', () async {
+      final templates = FakeStoreSubmissionTemplates.fakeTemplates();
+      final categoryCampaigns = FakeCampaign.fakeCategoryCampaignDtos(
+          storeId: store.id,
+          submissionTemplateId: templates.first.id,
+          length: 1);
+      final productCampaigns = FakeCampaign.fakeProductCampaignDtos(
+          storeId: store.id,
+          submissionTemplateId: templates.first.id,
+          length: 1);
+
+      when(() => submissionRepository.submissions)
+          .thenAnswer((invocation) => Stream.fromIterable([]));
+      when(() => submissionRepository.fetchTemplates())
+          .thenAnswer((invocation) => Future.value(templates));
+      when(() => submissionRepository.fetchCategoryCampaigns(store.id))
+          .thenAnswer((invocation) => Future.value(categoryCampaigns.cast()));
+      when(() => submissionRepository.fetchProductCampaigns(store.id))
+          .thenAnswer((invocation) => Future.value(productCampaigns.cast()));
+      when(() => submissionRepository.fetchTemplates())
+          .thenAnswer((invocation) => Future.value(templates));
+      when(() => submissionRepository.startStoreVisit(store.id, any()))
+          .thenAnswer((invocation) => Future.value(storeVisitDto));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((invocation) => Future.value(position));
+
+      final bloc = StoreReportBloc(
+        store: store,
+        submissionRepository: submissionRepository,
+        locationRepository: locationRepository,
+      );
+
+      await Future.delayed(const Duration(milliseconds: 250));
+
+      verify(() => submissionRepository.startStoreVisit(store.id, any()))
+          .called(1);
+      verify(() => submissionRepository.fetchTemplates()).called(1);
+      verify(() => locationRepository.getLastKnownPosition()).called(1);
+
+      expect(bloc.state.visit, storeVisitDto);
+      expect(bloc.state.templates, templates);
+      expect(bloc.state.campaigns, [...categoryCampaigns, ...productCampaigns]);
+      expect(bloc.state.status, StoreReportStatus.loaded);
     });
 
     test('Submission created', () async {
       final templates = FakeStoreSubmissionTemplates.fakeTemplates();
-      final submission = templates.first.toStoreSubmission();
+      final submission = templates.first.toStoreSubmission(campaignId: null);
 
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value(templates));
       when(() => submissionRepository.submissions)
-          .thenAnswer((invocation) => Stream.fromIterable([
-            submission
-          ]));
+          .thenAnswer((invocation) => Stream.fromIterable([submission]));
       when(() => submissionRepository.startStoreVisit(store.id, any()))
           .thenAnswer((invocation) => Future.value(storeVisitDto));
-      when(() => locationRepository.getLastKnownPosition()).thenAnswer(
-          (invocation) => Future.value(position));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((invocation) => Future.value(position));
 
       final bloc = StoreReportBloc(
         store: store,
@@ -125,14 +171,12 @@ void main() {
         locationRepository: locationRepository,
       );
 
-      await bloc.stream.first;
-
-      verify(() => submissionRepository.fetchTemplates()).called(1);
+      await Future.delayed(const Duration(milliseconds: 250));
 
       expect(bloc.state.visit, storeVisitDto);
-      expect(bloc.state.visitStatus, StoreReportVisitStatus.started);
+      expect(bloc.state.status, StoreReportStatus.loaded);
       expect(bloc.state.templates, templates);
-      expect(bloc.state.submissions, [ submission ]);
+      expect(bloc.state.submissions, [submission]);
     });
   });
 }
