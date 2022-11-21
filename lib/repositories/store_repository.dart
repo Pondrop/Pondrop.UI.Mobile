@@ -26,12 +26,13 @@ class StoreRepository {
       final stores = searchResult.value
           .map((e) => Store(
               id: e.id,
-              provider: e.name,
+              retailer: e.retailer?.name ?? '',
               name: e.name,
               displayName: e.retailer?.name?.isNotEmpty == true
                   ? '${e.retailer!.name} ${e.name}'
                   : e.name,
-              address: '${e.addressLine1}, ${e.suburb}, ${e.state}, ${e.postcode}',
+              address:
+                  '${e.addressLine1}, ${e.suburb}, ${e.state}, ${e.postcode}',
               latitude: e.latitude,
               longitude: e.longitude,
               lastKnowDistanceMetres: e.distanceInMeters(sortByPosition)))

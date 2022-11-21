@@ -37,9 +37,9 @@ void main() {
         speed: 0,
         speedAccuracy: 0);
     storeVisitDto = StoreVisitDto(
-        id: const Uuid().v4().toString(),
+        id: const Uuid().v4(),
         storeId: store.id,
-        userId: const Uuid().v4().toString(),
+        userId: const Uuid().v4(),
         latitude: latitude,
         longitude: longitude);
   });

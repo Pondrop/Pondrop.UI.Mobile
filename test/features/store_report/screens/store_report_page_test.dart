@@ -29,7 +29,7 @@ void main() {
 
     store = const Store(
         id: 'ID',
-        provider: 'Superfoods',
+        retailer: 'Superfoods',
         name: 'Seaford',
         displayName: 'Superfoods Seaford',
         address: '123 St, City',
