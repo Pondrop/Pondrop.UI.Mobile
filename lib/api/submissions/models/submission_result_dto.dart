@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'models.dart';
@@ -5,14 +6,14 @@ import 'models.dart';
 part 'submission_result_dto.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class SubmissionResultDto {
+class SubmissionResultDto extends Equatable {
   SubmissionResultDto({
     required this.submissionTemplateId,
     required this.storeVisitId,
     this.campaignId,
     this.latitude = 0,
     this.longitude = 0,
-    required this.steps,    
+    required this.steps,
   });
 
   @JsonKey(name: 'submissionTemplateId')
@@ -32,8 +33,17 @@ class SubmissionResultDto {
   final List<SubmissionStepResultDto> steps;
 
   static SubmissionResultDto fromJson(Map<String, dynamic> json) =>
-    _$SubmissionResultDtoFromJson(json);
+      _$SubmissionResultDtoFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-    _$SubmissionResultDtoToJson(this);
+  Map<String, dynamic> toJson() => _$SubmissionResultDtoToJson(this);
+
+  @override
+  List<Object?> get props => [
+        submissionTemplateId,
+        storeVisitId,
+        campaignId,
+        latitude,
+        longitude,
+        steps
+      ];
 }

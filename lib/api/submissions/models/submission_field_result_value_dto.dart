@@ -1,18 +1,18 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
 
 part 'submission_field_result_value_dto.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class SubmissionFieldResultValueDto {
-  SubmissionFieldResultValueDto({
-    this.stringValue,
-    this.intValue,
-    this.doubleValue,
-    this.dateTimeValue,
-    this.photoPathValue,
-    this.itemValue
-  });
+class SubmissionFieldResultValueDto extends Equatable {
+  SubmissionFieldResultValueDto(
+      {this.stringValue,
+      this.intValue,
+      this.doubleValue,
+      this.dateTimeValue,
+      this.photoPathValue,
+      this.itemValue});
 
   @JsonKey(name: 'stringValue')
   final String? stringValue;
@@ -32,10 +32,21 @@ class SubmissionFieldResultValueDto {
   String? photoFileName;
   @JsonKey(name: 'photoBase64')
   String? photoBase64;
-  
-  static SubmissionFieldResultValueDto fromJson(Map<String, dynamic> json) =>
-    _$SubmissionFieldResultValueDtoFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-    _$SubmissionFieldResultValueDtoToJson(this);
+  static SubmissionFieldResultValueDto fromJson(Map<String, dynamic> json) =>
+      _$SubmissionFieldResultValueDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubmissionFieldResultValueDtoToJson(this);
+
+  @override
+  List<Object?> get props => [
+        stringValue,
+        intValue,
+        doubleValue,
+        dateTimeValue,
+        itemValue,
+        photoPathValue,
+        photoFileName,
+        photoBase64,
+      ];
 }

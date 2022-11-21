@@ -48,6 +48,56 @@ void main() {
 
       expect(result, templates);
     });
+
+    test('Get templates from API - failure returns empty', () async {
+      when(() => submissionApi.fetchTemplates(user.accessToken))
+          .thenThrow(Exception());
+
+      final repo = SubmissionRepository(
+          userRepository: userRepository, submissionApi: submissionApi);
+
+      final result = await repo.fetchTemplates();
+
+      expect(result, const []);
+    });
+
+    test('Submit submission', () async {
+      final visitId = const Uuid().v4();
+      final template = FakeStoreSubmissionTemplates.fakeTemplates().first;
+      final submission =
+          template.toStoreSubmission(campaignId: const Uuid().v4());
+      final submissionDto = submission.toSubmissionResultDto(visitId);
+
+      when(() => submissionApi.submitResult(user.accessToken, submissionDto))
+          .thenAnswer((invocation) => Future.value(null));
+
+      final repo = SubmissionRepository(
+          userRepository: userRepository, submissionApi: submissionApi);
+
+      expect(repo.submissions, emits(submission));
+
+      final result = await repo.submitResult(visitId, submission);
+
+      expect(result, true);
+    });
+
+    test('Submit submission - failure returns false', () async {
+      final visitId = const Uuid().v4();
+      final template = FakeStoreSubmissionTemplates.fakeTemplates().first;
+      final submission =
+          template.toStoreSubmission(campaignId: const Uuid().v4());
+      final submissionDto = submission.toSubmissionResultDto(visitId);
+
+      when(() => submissionApi.submitResult(user.accessToken, submissionDto))
+          .thenThrow(Exception());
+
+      final repo = SubmissionRepository(
+          userRepository: userRepository, submissionApi: submissionApi);
+
+      final result = await repo.submitResult(visitId, submission);
+
+      expect(result, false);
+    });
   });
 
   group('StoreRepository StoreVisit', () {
@@ -71,6 +121,20 @@ void main() {
       expect(result, visit);
     });
 
+    test('Start StoreVisit - failure returns null', () async {
+      final storeId = const Uuid().v4();
+
+      when(() => submissionApi.startStoreVisit(user.accessToken, storeId, null))
+          .thenThrow(Exception());
+
+      final repo = SubmissionRepository(
+          userRepository: userRepository, submissionApi: submissionApi);
+
+      final result = await repo.startStoreVisit(storeId, null);
+
+      expect(result, null);
+    });
+
     test('End StoreVisit', () async {
       final storeId = const Uuid().v4();
       final visit = StoreVisitDto(
@@ -89,6 +153,84 @@ void main() {
       final result = await repo.endStoreVisit(visit.id, null);
 
       expect(result, visit);
+    });
+
+    test('End StoreVisit - failure returns null', () async {
+      final visitId = const Uuid().v4();
+
+      when(() => submissionApi.endStoreVisit(user.accessToken, visitId, null))
+          .thenThrow(Exception());
+
+      final repo = SubmissionRepository(
+          userRepository: userRepository, submissionApi: submissionApi);
+
+      final result = await repo.endStoreVisit(visitId, null);
+
+      expect(result, null);
+    });
+  });
+
+  group('StoreRepository Campaigns', () {
+    test('Get category campaigns from API', () async {
+      final storeId = const Uuid().v4();
+      final campaigns = FakeCampaign.fakeCategoryCampaignDtos(storeId: storeId);
+
+      when(() =>
+              submissionApi.fetchCategoryCampaigns(user.accessToken, [storeId]))
+          .thenAnswer((invocation) => Future.value(campaigns.cast()));
+
+      final repo = SubmissionRepository(
+          userRepository: userRepository, submissionApi: submissionApi);
+
+      final result = await repo.fetchCategoryCampaigns(storeId);
+
+      expect(result, campaigns);
+    });
+
+    test('Get category campaigns from API - failure returns empty', () async {
+      final storeId = const Uuid().v4();
+
+      when(() =>
+              submissionApi.fetchCategoryCampaigns(user.accessToken, [storeId]))
+          .thenThrow(Exception());
+
+      final repo = SubmissionRepository(
+          userRepository: userRepository, submissionApi: submissionApi);
+
+      final result = await repo.fetchCategoryCampaigns(storeId);
+
+      expect(result, const []);
+    });
+
+    test('Get product campaigns from API', () async {
+      final storeId = const Uuid().v4();
+      final campaigns = FakeCampaign.fakeProductCampaignDtos(storeId: storeId);
+
+      when(() =>
+              submissionApi.fetchProductCampaigns(user.accessToken, [storeId]))
+          .thenAnswer((invocation) => Future.value(campaigns.cast()));
+
+      final repo = SubmissionRepository(
+          userRepository: userRepository, submissionApi: submissionApi);
+
+      final result = await repo.fetchProductCampaigns(storeId);
+
+      expect(result, campaigns);
+    });
+
+    test('Get product campaigns from API - failure returns empty', () async {
+      final storeId = const Uuid().v4();
+
+      when(() =>
+              submissionApi.fetchProductCampaigns(user.accessToken, [storeId]))
+          .thenThrow(Exception());
+
+      final repo = SubmissionRepository(
+          userRepository: userRepository, submissionApi: submissionApi);
+
+      final result = await repo.fetchProductCampaigns(storeId);
+
+      expect(result, const []);
     });
   });
 }
