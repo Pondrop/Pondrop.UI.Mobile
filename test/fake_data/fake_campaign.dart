@@ -5,7 +5,7 @@ import 'package:uuid/uuid.dart';
 
 class FakeCampaign {
   static List<CampaignDto> fakeCategoryCampaignDtos(
-      {String storeId = '', int length = 3}) {
+      {String storeId = '', String submissionTemplateId = '', int length = 3}) {
     final rng = Random();
     final items = <CampaignDto>[];
 
@@ -14,10 +14,12 @@ class FakeCampaign {
           id: const Uuid().v4(),
           campaignType: CampaignType.task,
           campaignStatus: CampaignStatus.live,
-          submissionTemplateId: const Uuid().v4(),
-          storeId: storeId.isNotEmpty ? const Uuid().v4() : storeId,
+          submissionTemplateId: submissionTemplateId.isEmpty
+              ? const Uuid().v4()
+              : submissionTemplateId,
+          storeId: storeId.isEmpty ? const Uuid().v4() : storeId,
           requiredSubmissions: rng.nextInt(9) + 1,
-          submissionCount: rng.nextInt(9),
+          submissionCount: 0,
           campaignPublishedDate: DateTime.now().add(const Duration(days: -7)),
           campaignEndDate: DateTime.now().add(const Duration(days: 7)),
           focusCategoryId: const Uuid().v4(),
@@ -28,7 +30,7 @@ class FakeCampaign {
   }
 
   static List<CampaignDto> fakeProductCampaignDtos(
-      {String storeId = '', int length = 3}) {
+      {String storeId = '', String submissionTemplateId = '', int length = 3}) {
     final rng = Random();
     final items = <CampaignDto>[];
 
@@ -37,10 +39,12 @@ class FakeCampaign {
           id: const Uuid().v4(),
           campaignType: CampaignType.task,
           campaignStatus: CampaignStatus.live,
-          submissionTemplateId: const Uuid().v4(),
-          storeId: storeId.isNotEmpty ? const Uuid().v4() : storeId,
+          submissionTemplateId: submissionTemplateId.isEmpty
+              ? const Uuid().v4()
+              : submissionTemplateId,
+          storeId: storeId.isEmpty ? const Uuid().v4() : storeId,
           requiredSubmissions: rng.nextInt(9) + 1,
-          submissionCount: rng.nextInt(9),
+          submissionCount: 0,
           campaignPublishedDate: DateTime.now().add(const Duration(days: -7)),
           campaignEndDate: DateTime.now().add(const Duration(days: 7)),
           focusProductId: const Uuid().v4(),
