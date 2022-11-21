@@ -66,6 +66,8 @@ void main() {
       final template = FakeStoreSubmissionTemplates.fakeTemplates().first;
       final submission =
           template.toStoreSubmission(campaignId: const Uuid().v4());
+      submission.steps.first.fields.first.results.first.stringValue =
+          'test value';
       final submissionDto = submission.toSubmissionResultDto(visitId);
 
       when(() => submissionApi.submitResult(user.accessToken, submissionDto))
