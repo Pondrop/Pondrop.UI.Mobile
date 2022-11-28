@@ -14,6 +14,7 @@ class SubmissionTemplateStepDto {
     this.instructionsSkipButton = '',
     this.instructionsIconCodePoint = 0,
     this.instructionsIconFontFamily = '',
+    this.instructionSteps = const [],
     required this.fields,
     this.isSummary = false,
   });
@@ -22,6 +23,7 @@ class SubmissionTemplateStepDto {
   final String id;
   @JsonKey(name: 'title')
   final String title;
+
   @JsonKey(name: 'instructions')
   final String instructions;
   @JsonKey(name: 'instructionsContinueButton')
@@ -32,15 +34,18 @@ class SubmissionTemplateStepDto {
   final int instructionsIconCodePoint;
   @JsonKey(name: 'instructionsIconFontFamily')
   final String instructionsIconFontFamily;
+
+  @JsonKey(name: 'instructionsStep')
+  final List<String> instructionSteps;
+
   @JsonKey(name: 'isSummary')
   final bool isSummary;
 
   @JsonKey(name: 'fields')
   final List<SubmissionTemplateFieldDto> fields;
-  
-  static SubmissionTemplateStepDto fromJson(Map<String, dynamic> json) =>
-    _$SubmissionTemplateStepDtoFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-    _$SubmissionTemplateStepDtoToJson(this);
+  static SubmissionTemplateStepDto fromJson(Map<String, dynamic> json) =>
+      _$SubmissionTemplateStepDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubmissionTemplateStepDtoToJson(this);
 }

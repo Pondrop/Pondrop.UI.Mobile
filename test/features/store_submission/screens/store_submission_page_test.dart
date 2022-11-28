@@ -196,6 +196,11 @@ void main() {
     });
 
     testWidgets('submit submission success', (tester) async {
+      // need at least one result
+      final textField = submission.steps[0].fields
+          .firstWhere((e) => e.fieldType == SubmissionFieldType.text);
+      textField.results.first.stringValue = 'text value';
+
       when(() => cameraRepository.isCameraEnabled())
           .thenAnswer((_) => Future.value(true));
       when(() => locationRepository.getLastKnownPosition())
@@ -224,6 +229,8 @@ void main() {
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
       await tester.pumpAndSettle();
 
+      expect(find.text('Send'), findsOneWidget);
+
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
       await tester.pumpAndSettle();
 
@@ -233,6 +240,11 @@ void main() {
     });
 
     testWidgets('submit submission fails', (tester) async {
+      // need at least one result
+      final textField = submission.steps[0].fields
+          .firstWhere((e) => e.fieldType == SubmissionFieldType.text);
+      textField.results.first.stringValue = 'text value';
+
       when(() => cameraRepository.isCameraEnabled())
           .thenAnswer((_) => Future.value(true));
       when(() => locationRepository.getLastKnownPosition())
@@ -260,6 +272,8 @@ void main() {
 
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
       await tester.pumpAndSettle();
+
+      expect(find.text('Send'), findsOneWidget);
 
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
       await tester.pumpAndSettle();

@@ -39,6 +39,7 @@ class SubmissionApi {
         (json) => SubmissionTemplateDto.fromJson(json)).items;
 
     if (submissionTemplates.isNotEmpty) {
+      submissionTemplates.sort((t1, t2) => t1.title.compareTo(t2.title));
       _localTemplates[accessToken] = submissionTemplates;
     }
 

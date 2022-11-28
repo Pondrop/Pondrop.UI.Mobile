@@ -195,7 +195,7 @@ class StoreSubmissionStep extends Equatable {
       fields.isEmpty || fields.every((e) => e.results.every((e) => e.isEmpty));
 
   bool get isComplete =>
-      fields.isEmpty ||
+      (!isEmpty || isSummary) &&
       fields.every((e) => !e.mandatory || e.results.every((e) => !e.isEmpty));
 
   bool get isFocus =>
