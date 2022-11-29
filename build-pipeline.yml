@@ -35,60 +35,60 @@ jobs:
           versionCode: '$(Build.BuildId)'
           printFile: true
 
-      - task: FlutterBuild@0
-        inputs:
-          target: 'ios'
-          projectDirectory: '.'
-          entryPoint: 'lib/main.dart'
-          iosCodesign: false
-          extraArgs: '--no-tree-shake-icons'
+      # - task: FlutterBuild@0
+      #   inputs:
+      #     target: 'ios'
+      #     projectDirectory: '.'
+      #     entryPoint: 'lib/main.dart'
+      #     iosCodesign: false
+      #     extraArgs: '--no-tree-shake-icons'
 
-      - task: FlutterTest@0
-        inputs:
-          projectDirectory: '.'
+      # - task: FlutterTest@0
+      #   inputs:
+      #     projectDirectory: '.'
       
       - task: AndroidSigning@2
         inputs:
-          apkFiles: '**/*.apk'
+          apkFiles: '**/*.aab'
           jarsignerKeystoreFile: 'key.jks'
           jarsignerKeystorePassword: 'pondrop1!'
           jarsignerKeystoreAlias: 'pondrop'
           jarsignerKeyPassword: 'pondrop1!'
           jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
 
-      - task: InstallAppleCertificate@2
-        displayName: "Install Apple p12 cert"
-        inputs:
-          certSecureFile: "pondrop.p12"
-          certPwd: $(certPassword)
-          keychain: "temp"
-          deleteCert: true
+      # - task: InstallAppleCertificate@2
+      #   displayName: "Install Apple p12 cert"
+      #   inputs:
+      #     certSecureFile: "pondrop.p12"
+      #     certPwd: $(certPassword)
+      #     keychain: "temp"
+      #     deleteCert: true
               
-      - task: InstallAppleProvisioningProfile@1
-        displayName: "Install Apple Mobile Provisioning Profile"
-        inputs:
-          provisioningProfileLocation: "secureFiles"
-          provProfileSecureFile: "Pondrop.mobileprovision"
-          removeProfile: true
+      # - task: InstallAppleProvisioningProfile@1
+      #   displayName: "Install Apple Mobile Provisioning Profile"
+      #   inputs:
+      #     provisioningProfileLocation: "secureFiles"
+      #     provProfileSecureFile: "Pondrop.mobileprovision"
+      #     removeProfile: true
             
-      - task: Xcode@5
-        displayName: "Code sign ipa for Distribution"
-        inputs:
-          actions: "build"
-          xcWorkspacePath: "**/Runner.xcworkspace"
-          scheme: "Runner"
-          sdk: "iphoneos"
-          configuration: "release"
-          packageApp: true
-          signingOption: "manual"
-          signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
-          provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'          
+      # - task: Xcode@5
+      #   displayName: "Code sign ipa for Distribution"
+      #   inputs:
+      #     actions: "build"
+      #     xcWorkspacePath: "**/Runner.xcworkspace"
+      #     scheme: "Runner"
+      #     sdk: "iphoneos"
+      #     configuration: "release"
+      #     packageApp: true
+      #     signingOption: "manual"
+      #     signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+      #     provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'          
             
-      - task: CopyFiles@2
-        inputs:
-          contents: '**/*.ipa'
-          targetFolder: '$(build.artifactStagingDirectory)'
-          OverWrite: true
+      # - task: CopyFiles@2
+      #   inputs:
+      #     contents: '**/*.ipa'
+      #     targetFolder: '$(build.artifactStagingDirectory)'
+      #     OverWrite: true
 
       - task: CopyFiles@2
         inputs:
