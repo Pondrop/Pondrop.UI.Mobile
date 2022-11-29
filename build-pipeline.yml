@@ -27,9 +27,26 @@ jobs:
           iosCodesign: false
           extraArgs: '--no-tree-shake-icons'
 
+      - task: FlutterBuild@0
+        inputs:
+          target: 'aab'
+          projectDirectory: '.'
+          entryPoint: 'lib/main.dart'
+          extraArgs: '--no-tree-shake-icons'
+
       - task: FlutterTest@0
         inputs:
           projectDirectory: '.'
+      
+      - task: AndroidSigning@2
+        inputs:
+          apkFiles: '**/*.apk'
+          jarsignerKeystoreFile: 'key.jks'
+          jarsignerKeystorePassword: 'pondrop1!'
+          jarsignerKeystoreAlias: 'pondrop'
+          jarsignerKeyPassword: 'pondrop1!'
+          jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
+
       - task: InstallAppleCertificate@2
         displayName: "Install Apple p12 cert"
         inputs:
@@ -64,6 +81,12 @@ jobs:
           targetFolder: '$(build.artifactStagingDirectory)'
           OverWrite: true
 
+      - task: CopyFiles@2
+        inputs:
+          contents: '**/*.aab'
+          targetFolder: '$(build.artifactStagingDirectory)'
+          OverWrite: true
+          
       - task: PublishBuildArtifacts@1
         inputs:
           artifactName: 'drop'
