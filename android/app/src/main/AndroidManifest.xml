@@ -5,8 +5,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:versionCode="1" 
-        android:versionName="1.0.0"
-        android:>
+        android:versionName="1.0.0">
         <activity
             android:name=".MainActivity"
             android:exported="true"
