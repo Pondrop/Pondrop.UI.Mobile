@@ -20,10 +20,13 @@ jobs:
           version: 'latest'
 
       - task: android-manifest-version@1
-        inputs:
+        displayName: 'Set Android version numbers'
+        inputs: 
           sourcePath: 'android/app/src/main/AndroidManifest.xml'
           versionCodeOption: 'buildid'
-          versionCode: '$(Build.BuildId)'
+          versionCode: $(Build.BuildId)
+          versionCodeOffset: '1000'
+          versionName: '1.0.$(Build.BuildId)'
           printFile: true
 
       - task: FlutterBuild@0
