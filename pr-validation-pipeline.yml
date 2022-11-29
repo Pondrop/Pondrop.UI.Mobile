@@ -23,6 +23,14 @@ jobs:
           iosCodesign: false
           extraArgs: '--no-tree-shake-icons'
 
+      - task: FlutterBuild@0
+        inputs:
+          target: 'ios'
+          projectDirectory: '.'
+          entryPoint: 'lib/main.dart'
+          iosCodesign: false
+          extraArgs: '--no-tree-shake-icons'
+          
       - task: FlutterTest@0
         inputs:
           projectDirectory: '.'
