@@ -25,6 +25,7 @@ jobs:
           target: 'aab'
           projectDirectory: '.'
           entryPoint: 'lib/main.dart'
+          extraArgs: '--no-tree-shake-icons'
 
 
       - task: ios-bundle-version@1
