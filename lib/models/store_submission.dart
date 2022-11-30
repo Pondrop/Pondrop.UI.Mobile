@@ -102,6 +102,20 @@ extension StoreSubmissionResultMapping on StoreSubmission {
         .length;
   }
 
+  String? getFocusId() {
+    return steps
+        .expand((i) => i.fields)
+        .where((i) =>
+            i.fieldType == SubmissionFieldType.focus &&
+            i.itemType != null &&
+            i.itemType != SubmissionFieldItemType.unknown)
+        .firstOrNull
+        ?.results
+        .firstOrNull
+        ?.itemValue
+        ?.itemId;
+  }
+
   String toFocusString({String separator = ', '}) {
     return steps
         .expand((e) => e.fields
