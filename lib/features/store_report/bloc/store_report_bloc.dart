@@ -97,7 +97,9 @@ class StoreReportBloc extends Bloc<StoreReportEvent, StoreReportState> {
     final campaigns = List<CampaignDto>.from(state.campaigns);
 
     if (event.submission.campaignId != null) {
-      campaigns.removeWhere((e) => e.id == event.submission.campaignId);
+      campaigns.removeWhere((e) =>
+          e.id == event.submission.campaignId &&
+          e.focusId == event.submission.getFocusId());
     }
 
     emit(state.copyWith(
