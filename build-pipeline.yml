@@ -109,13 +109,13 @@ jobs:
       #     targetFolder: '$(build.artifactStagingDirectory)'
       #     OverWrite: true
           
-      # - task: DownloadSecureFile@1
-      #   inputs:
-      #     secureFile: 'TestFlightDistribution.p12'
+      - task: DownloadSecureFile@1
+        inputs:
+          secureFile: 'TestFlightDistribution.p12'
 
-      # - task: DownloadSecureFile@1
-      #   inputs:
-      #     secureFile: 'testflight.mobileprovision'
+      - task: DownloadSecureFile@1
+        inputs:
+          secureFile: 'testflight.mobileprovision'
         
       
       - task: CopyFiles@2
