@@ -117,20 +117,13 @@ jobs:
         inputs:
           secureFile: 'testflight.mobileprovision'
         
-      
       - task: CopyFiles@2
         displayName: 'Copy Mobile Provision package'
         inputs:
-          contents: '$(Agent.TempDirectory)\testflight.mobileprovision'
+          contents: '**'
           targetFolder: '$(build.artifactStagingDirectory)'
           OverWrite: true
           
-      - task: CopyFiles@2
-        displayName: 'Copy Certificate package'
-        inputs:
-          contents: '$(Agent.TempDirectory)\TestFlightDistribution.p12'
-          targetFolder: '$(build.artifactStagingDirectory)'
-          OverWrite: true
 
       - task: PublishBuildArtifacts@1
         inputs:
