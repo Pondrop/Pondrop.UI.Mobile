@@ -47,7 +47,7 @@ jobs:
           projectDirectory: '.'
       # - task: AndroidSigning@2
       #   inputs:
-      #     apkFiles: '*/.aab'
+      #     apkFiles: '**/*.aab'
       #     jarsign: true
       #     jarsignerKeystoreFile: 'key.jks'
       #     jarsignerKeystorePassword: 'pondrop1!'
@@ -59,21 +59,11 @@ jobs:
       # - task: CopyFiles@2
       #   displayName: 'Copy Android build package'
       #   inputs:
-      #     contents: '*/.aab'
+      #     contents: '**/*.aab'
       #     targetFolder: '$(build.artifactStagingDirectory)'
       #     OverWrite: true   
-      - task: Xcode@5
-        displayName: "Xcode iOS build"
-        inputs:
-          actions: "build"
-          xcWorkspacePath: "**/Runner.xcworkspace"
-          scheme: "Runner"
-          sdk: "iphoneos"
-          configuration: "release"
-          packageApp: false
-          signingOption: "nosign"
       - task: InstallAppleCertificate@2
-        displayName: "Install Apple p12 AdHoc cert"
+        displayName: "Install Apple p12 cert"
         inputs:
           certSecureFile: "pondrop.p12"
           certPwd: $(certPassword)
@@ -84,12 +74,12 @@ jobs:
         displayName: "Install Apple Mobile AdHoc Provisioning Profile"
         inputs:
           provisioningProfileLocation: "secureFiles"
-          provProfileSecureFile: "Pondrop.mobileprovision"
+          provProfileSecureFile: "adhoc.mobileprovision"
           removeProfile: true
       - task: Xcode@5
-        displayName: "Code sign IPA for Ad-Hoc"
+        displayName: "Build iOS Ad-Hoc"
         inputs:
-          actions: "archive"
+          actions: "build"
           xcWorkspacePath: "**/Runner.xcworkspace"
           scheme: "Runner"
           sdk: "iphoneos"
@@ -97,31 +87,23 @@ jobs:
           packageApp: true
           signingOption: "manual"
           signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
-          provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
+          provisioningProfileUuid: '$(adhocProfileUuid)'
       - task: CopyFiles@2
         displayName: 'Copy Ad-Hoc iOS build package'
         inputs:
-          contents: '*/.ipa'
+          contents: '**/*.ipa'
           targetFolder: '$(build.artifactStagingDirectory)/adhoc'
-          OverWrite: true        
-      - task: InstallAppleCertificate@2
-        displayName: "Install Apple p12 Distribution cert"
-        inputs:
-          certSecureFile: "TestFlightDistribution.p12"
-          certPwd: 'pondrop'
-          keychain: "temp"
-          deleteCert: false
-          deleteCustomKeychain: false
+          OverWrite: true
       - task: InstallAppleProvisioningProfile@1
         displayName: "Install Apple Mobile Distribution Provisioning Profile"
         inputs:
           provisioningProfileLocation: "secureFiles"
-          provProfileSecureFile: "testflight.mobileprovision"
+          provProfileSecureFile: "distribution.mobileprovision"
           removeProfile: true
       - task: Xcode@5
-        displayName: "Code sign IPA for Distribution"
+        displayName: "Build iOS Distribution"
         inputs:
-          actions: "archive"
+          actions: "build"
           xcWorkspacePath: "**/Runner.xcworkspace"
           scheme: "Runner"
           sdk: "iphoneos"
@@ -129,11 +111,11 @@ jobs:
           packageApp: true
           signingOption: "manual"
           signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
-          provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
+          provisioningProfileUuid: '$(distProfileUuid)'
       - task: CopyFiles@2
         displayName: 'Copy Distribution iOS build package'
         inputs:
-          contents: '*/.ipa'
+          contents: '**/*.ipa'
           targetFolder: '$(build.artifactStagingDirectory)/distribution'
           OverWrite: true
       - task: PublishBuildArtifacts@1
