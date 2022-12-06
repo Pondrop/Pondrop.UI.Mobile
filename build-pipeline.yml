@@ -76,7 +76,7 @@ jobs:
         displayName: "Install Apple p12 cert"
         inputs:
           certSecureFile: "pondrop-adhoc.p12"
-          certPwd: $(certPassword)
+          certPwd: $(p12Password)
           keychain: "temp"
           deleteCert: false
           deleteCustomKeychain: true
@@ -112,7 +112,7 @@ jobs:
         displayName: "Install Apple p12 cert"
         inputs:
           certSecureFile: "pondrop-dist.p12"
-          certPwd: $(distCertPassword)
+          certPwd: $(p12Password)
           keychain: "temp"
           deleteCert: false
           deleteCustomKeychain: false
