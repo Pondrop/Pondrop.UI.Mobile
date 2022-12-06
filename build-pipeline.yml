@@ -115,25 +115,25 @@ jobs:
           targetFolder: '$(build.artifactStagingDirectory)/adhoc'
           OverWrite: true
             
-      # - task: Xcode@5
-      #   displayName: "Build iOS Distribution"
-      #   inputs:
-      #     actions: "build"
-      #     xcWorkspacePath: "**/Runner.xcworkspace"
-      #     scheme: "Runner"
-      #     sdk: "iphoneos"
-      #     configuration: "release"
-      #     packageApp: true
-      #     signingOption: "manual"
-      #     signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
-      #     provisioningProfileUuid: '$(distProfileUuid)'
+      - task: Xcode@5
+        displayName: "Build iOS Distribution"
+        inputs:
+          actions: "build"
+          xcWorkspacePath: "**/Runner.xcworkspace"
+          scheme: "Runner"
+          sdk: "iphoneos"
+          configuration: "release"
+          packageApp: true
+          signingOption: "manual"
+          signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+          provisioningProfileUuid: '$(distProfileUuid)'
                     
-      # - task: CopyFiles@2
-      #   displayName: 'Copy Distribution iOS build package'
-      #   inputs:
-      #     contents: '**/*.ipa'
-      #     targetFolder: '$(build.artifactStagingDirectory)/distribution'
-      #     OverWrite: true
+      - task: CopyFiles@2
+        displayName: 'Copy Distribution iOS build package'
+        inputs:
+          contents: '**/*.ipa'
+          targetFolder: '$(build.artifactStagingDirectory)/distribution'
+          OverWrite: true
 
       - task: PublishBuildArtifacts@1
         inputs:
