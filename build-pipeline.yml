@@ -93,7 +93,7 @@ jobs:
           packageApp: true
           signingOption: "manual"
           signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
-          provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'          
+          provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
             
       - task: CopyFiles@2
         displayName: 'Copy iOS build package'
@@ -114,8 +114,9 @@ jobs:
         displayName: "Install Apple p12 Distribution cert"
         inputs:
           certSecureFile: "TestFlightDistribution.p12"
-          certPwd: 'pondrop'
+          certPwd: "$(distributionCertPassword)"
           keychain: "temp"
+          deleteCert: false
               
       - task: InstallAppleProvisioningProfile@1
         displayName: "Install Apple Mobile Distribution Provisioning Profile"
