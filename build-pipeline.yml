@@ -1,22 +1,26 @@
 variables:
   - group: Pondrop-Mobile-Dev
+  
 jobs:
   - job: Mobile
     pool:
       vmImage: 'macOS-latest'
     steps:
+
       - task: JavaToolInstaller@0
         displayName: 'Install Java 11'
         inputs:
           versionSpec: '11'
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
+
       - task: FlutterInstall@0
         displayName: 'Install Flutter'
         inputs:
           mode: 'auto'
           channel: 'stable'
           version: 'latest'
+
       # - task: FlutterBuild@0
       #   displayName: "Android Flutter Build"
       #   inputs:
@@ -26,6 +30,7 @@ jobs:
       #     buildName: '1.0.$(Build.BuildId)'
       #     entryPoint: 'lib/main.dart'
       #     extraArgs: '--no-tree-shake-icons'
+
       - task: ios-bundle-version@1
         displayName: 'Set iOS version numbers'
         inputs:
@@ -33,6 +38,7 @@ jobs:
           versionCodeOption: 'buildid'
           versionCode: '$(Build.BuildId)'
           printFile: true
+
       - task: FlutterBuild@0
         displayName: "iOS Flutter Build"
         inputs:
@@ -41,10 +47,12 @@ jobs:
           entryPoint: 'lib/main.dart'
           iosCodesign: false
           extraArgs: '--no-tree-shake-icons'
+
       - task: FlutterTest@0
         displayName: "Run Flutter Tests"
         inputs:
           projectDirectory: '.'
+      
       # - task: AndroidSigning@2
       #   inputs:
       #     apkFiles: '**/*.aab'
@@ -56,26 +64,30 @@ jobs:
       #     # The two Arguments working there magic:
       #     jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
       #     zipalign: true     
+            
       # - task: CopyFiles@2
       #   displayName: 'Copy Android build package'
       #   inputs:
       #     contents: '**/*.aab'
       #     targetFolder: '$(build.artifactStagingDirectory)'
       #     OverWrite: true   
+
       - task: InstallAppleCertificate@2
         displayName: "Install Apple p12 cert"
         inputs:
-          certSecureFile: "pondrop.p12"
+          certSecureFile: "pondrop-adhoc.p12"
           certPwd: $(certPassword)
           keychain: "temp"
           deleteCert: false
           deleteCustomKeychain: true
+              
       - task: InstallAppleProvisioningProfile@1
         displayName: "Install Apple Mobile AdHoc Provisioning Profile"
         inputs:
           provisioningProfileLocation: "secureFiles"
           provProfileSecureFile: "adhoc.mobileprovision"
           removeProfile: true
+          
       - task: Xcode@5
         displayName: "Build iOS Ad-Hoc"
         inputs:
@@ -88,18 +100,30 @@ jobs:
           signingOption: "manual"
           signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
           provisioningProfileUuid: '$(adhocProfileUuid)'
+            
       - task: CopyFiles@2
         displayName: 'Copy Ad-Hoc iOS build package'
         inputs:
           contents: '**/*.ipa'
           targetFolder: '$(build.artifactStagingDirectory)/adhoc'
           OverWrite: true
+              
+      - task: InstallAppleCertificate@2
+        displayName: "Install Apple p12 cert"
+        inputs:
+          certSecureFile: "pondrop-dist.p12"
+          certPwd: $(distCertPassword)
+          keychain: "temp"
+          deleteCert: false
+          deleteCustomKeychain: false
+
       - task: InstallAppleProvisioningProfile@1
         displayName: "Install Apple Mobile Distribution Provisioning Profile"
         inputs:
           provisioningProfileLocation: "secureFiles"
           provProfileSecureFile: "distribution.mobileprovision"
           removeProfile: true
+            
       - task: Xcode@5
         displayName: "Build iOS Distribution"
         inputs:
@@ -112,12 +136,14 @@ jobs:
           signingOption: "manual"
           signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
           provisioningProfileUuid: '$(distProfileUuid)'
+                    
       - task: CopyFiles@2
         displayName: 'Copy Distribution iOS build package'
         inputs:
           contents: '**/*.ipa'
           targetFolder: '$(build.artifactStagingDirectory)/distribution'
           OverWrite: true
+
       - task: PublishBuildArtifacts@1
         inputs:
           artifactName: 'drop'
