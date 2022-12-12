@@ -16,13 +16,37 @@ class StoresList extends StatefulWidget {
   State<StoresList> createState() => _StoresListState();
 }
 
-class _StoresListState extends State<StoresList> {
+class _StoresListState extends State<StoresList> with WidgetsBindingObserver {
   final _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final bloc = context.read<StoreBloc>();
+      final durationSinceLastRefresh = Duration(
+          milliseconds: DateTime.now().millisecondsSinceEpoch -
+              bloc.state.campaignCountsRefreshedMs);
+      if (durationSinceLastRefresh > const Duration(minutes: 3)) {
+        bloc.add(StoreCampaignCountsRefreshed(
+            storeIds: bloc.state.stores.map((e) => e.id).toList()));
+      }
+    }
   }
 
   @override
@@ -31,12 +55,10 @@ class _StoresListState extends State<StoresList> {
       color: Theme.of(context).primaryColor,
       onRefresh: () {
         final bloc = context.read<StoreBloc>()..add(const StoreRefreshed());
-        return bloc.stream
-            .firstWhere((e) => e.status != StoreStatus.loading);
+        return bloc.stream.firstWhere((e) => e.status != StoreStatus.loading);
       },
       child: BlocBuilder<StoreBloc, StoreState>(
-        buildWhen: (previous, current) =>
-            current.status != StoreStatus.loading,
+        buildWhen: (previous, current) => current.status != StoreStatus.loading,
         builder: (context, state) {
           if (state.status == StoreStatus.initial) {
             return const Center(child: CircularProgressIndicator());
@@ -55,7 +77,7 @@ class _StoresListState extends State<StoresList> {
   Widget _storesList(StoreState state) {
     return Scrollbar(
       controller: _scrollController,
-      child: ListView.builder(        
+      child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
         itemBuilder: (BuildContext context, int index) {
           Widget getItem(int idx, List<Store> stores) {
@@ -63,13 +85,14 @@ class _StoresListState extends State<StoresList> {
                 ? const BottomLoader()
                 : StoreListItem(store: stores[index]);
           }
-    
+
           if (index == 0) {
             return Column(children: [
               // The header
               Container(
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(horizontal: Dims.large, vertical: Dims.medium),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: Dims.large, vertical: Dims.medium),
                 child: Text(widget.header,
                     style: TextStyle(
                         color: Colors.grey[800],
@@ -80,7 +103,7 @@ class _StoresListState extends State<StoresList> {
               getItem(index, state.stores)
             ]);
           }
-    
+
           return getItem(index, state.stores);
         },
         itemCount:
@@ -103,14 +126,6 @@ class _StoresListState extends State<StoresList> {
                 child: Text(l10n.noItemFound(l10n.stores.toLowerCase()))),
           ));
     });
-  }
-
-  @override
-  void dispose() {
-    _scrollController
-      ..removeListener(_onScroll)
-      ..dispose();
-    super.dispose();
   }
 
   void _onScroll() {

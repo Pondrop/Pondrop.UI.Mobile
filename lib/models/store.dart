@@ -1,16 +1,20 @@
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
+import 'package:pondrop/models/models.dart';
 
 class Store extends Equatable {
-  const Store(
-      {required this.id,
-      required this.retailer,
-      required this.name,
-      required this.displayName,
-      required this.address,
-      required this.latitude,
-      required this.longitude,
-      required this.lastKnowDistanceMetres});
+  const Store({
+    required this.id,
+    required this.retailer,
+    required this.name,
+    required this.displayName,
+    required this.address,
+    required this.latitude,
+    required this.longitude,
+    required this.lastKnowDistanceMetres,
+    this.categoryCampaigns = const [],
+    this.productCampaigns = const [],
+  });
 
   final String id;
   final String retailer;
@@ -20,6 +24,11 @@ class Store extends Equatable {
   final double latitude;
   final double longitude;
   final double lastKnowDistanceMetres;
+
+  final List<TaskIdentifier> categoryCampaigns;
+  final List<TaskIdentifier> productCampaigns;
+
+  int get campaignCount => categoryCampaigns.length + productCampaigns.length;
 
   String getDistanceDisplayString() {
     if (lastKnowDistanceMetres < 0) {
@@ -35,6 +44,26 @@ class Store extends Equatable {
     }
   }
 
+  Store copyWith({
+    double? lastKnowDistanceMetres,
+    List<TaskIdentifier>? categoryCampaigns,
+    List<TaskIdentifier>? productCampaigns,
+  }) {
+    return Store(
+      id: id,
+      retailer: retailer,
+      name: name,
+      displayName: displayName,
+      address: address,
+      latitude: latitude,
+      longitude: longitude,
+      lastKnowDistanceMetres:
+          lastKnowDistanceMetres ?? this.lastKnowDistanceMetres,
+      categoryCampaigns: categoryCampaigns ?? this.categoryCampaigns,
+      productCampaigns: productCampaigns ?? this.productCampaigns,
+    );
+  }
+
   @override
   List<Object> get props => [
         id,
@@ -43,6 +72,8 @@ class Store extends Equatable {
         address,
         latitude,
         longitude,
-        lastKnowDistanceMetres
+        lastKnowDistanceMetres,
+        categoryCampaigns,
+        productCampaigns
       ];
 }

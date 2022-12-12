@@ -30,8 +30,8 @@ class StoreReportPage extends StatelessWidget {
   const StoreReportPage({Key? key}) : super(key: key);
 
   static const routeName = '/stores/report';
-  static Route route(Store store) {
-    return MaterialWithModalsPageRoute<void>(
+  static Route<List<TaskIdentifier>> route(Store store) {
+    return MaterialWithModalsPageRoute<List<TaskIdentifier>>(
         builder: (_) => const StoreReportPage(),
         settings: RouteSettings(name: routeName, arguments: store));
   }
@@ -59,6 +59,19 @@ class StoreReportPage extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
                 elevation: 0,
+                leading: Builder(builder: (context) {
+                  return BackButton(
+                    onPressed: () {
+                      final bloc = context.read<StoreReportBloc>();
+                      Navigator.pop(
+                          context,
+                          bloc.state.submissions
+                              .map((e) =>
+                                  e.toTaskIdentifier(bloc.state.store.id))
+                              .toList());
+                    },
+                  );
+                }),
                 title: Text(
                   l10n.storeActivity,
                   style: PondropStyles.appBarTitleTextStyle,

@@ -184,7 +184,7 @@ void main() {
       final repo = SubmissionRepository(
           userRepository: userRepository, submissionApi: submissionApi);
 
-      final result = await repo.fetchCategoryCampaigns(storeId);
+      final result = await repo.fetchCategoryCampaigns([storeId]);
 
       expect(result, campaigns);
     });
@@ -199,7 +199,7 @@ void main() {
       final repo = SubmissionRepository(
           userRepository: userRepository, submissionApi: submissionApi);
 
-      final result = await repo.fetchCategoryCampaigns(storeId);
+      final result = await repo.fetchCategoryCampaigns([storeId]);
 
       expect(result, const []);
     });
@@ -215,7 +215,7 @@ void main() {
       final repo = SubmissionRepository(
           userRepository: userRepository, submissionApi: submissionApi);
 
-      final result = await repo.fetchProductCampaigns(storeId);
+      final result = await repo.fetchProductCampaigns([storeId]);
 
       expect(result, campaigns);
     });
@@ -230,7 +230,7 @@ void main() {
       final repo = SubmissionRepository(
           userRepository: userRepository, submissionApi: submissionApi);
 
-      final result = await repo.fetchProductCampaigns(storeId);
+      final result = await repo.fetchProductCampaigns([storeId]);
 
       expect(result, const []);
     });

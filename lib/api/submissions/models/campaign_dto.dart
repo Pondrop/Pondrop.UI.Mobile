@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pondrop/api/submissions/models/models.dart';
 
 part 'campaign_dto.g.dart';
 
@@ -7,6 +8,19 @@ enum CampaignType { unknown, task, orchestration }
 enum CampaignStatus { unknown, draft, live }
 
 enum CampaignFocusType { unknown, product, category }
+
+extension CampaignFocusTypeX on CampaignFocusType {
+  SubmissionFieldItemType toSubmissionFieldItemType() {
+    switch (this) {
+      case CampaignFocusType.unknown:
+        return SubmissionFieldItemType.unknown;
+      case CampaignFocusType.product:
+        return SubmissionFieldItemType.product;
+      case CampaignFocusType.category:
+        return SubmissionFieldItemType.category;
+    }
+  }
+}
 
 class CampaignDto {
   CampaignDto({
@@ -18,6 +32,7 @@ class CampaignDto {
     required this.requiredSubmissions,
     required this.submissionCount,
     required this.campaignPublishedDate,
+    required this.campaignStartDate,
     required this.campaignEndDate,
     required this.focusId,
     required this.focusName,
@@ -44,6 +59,8 @@ class CampaignDto {
 
   @JsonKey(name: 'campaignPublishedDate')
   final DateTime campaignPublishedDate;
+  @JsonKey(name: 'campaignStartDate')
+  final DateTime campaignStartDate;
   @JsonKey(name: 'campaignEndDate')
   final DateTime campaignEndDate;
 
@@ -76,6 +93,7 @@ class CategoryCampaignDto extends CampaignDto {
     required int submissionCount,
     required DateTime campaignPublishedDate,
     required DateTime campaignEndDate,
+    required DateTime campaignStartDate,
     required this.focusCategoryId,
     required this.focusCategoryName,
   }) : super(
@@ -87,6 +105,7 @@ class CategoryCampaignDto extends CampaignDto {
             requiredSubmissions: requiredSubmissions,
             submissionCount: submissionCount,
             campaignPublishedDate: campaignPublishedDate,
+            campaignStartDate: campaignStartDate,
             campaignEndDate: campaignEndDate,
             focusId: focusCategoryId,
             focusName: focusCategoryName,
@@ -114,6 +133,7 @@ class ProductCampaignDto extends CampaignDto {
     required int requiredSubmissions,
     required int submissionCount,
     required DateTime campaignPublishedDate,
+    required DateTime campaignStartDate,
     required DateTime campaignEndDate,
     required this.focusProductId,
     required this.focusProductName,
@@ -126,6 +146,7 @@ class ProductCampaignDto extends CampaignDto {
             requiredSubmissions: requiredSubmissions,
             submissionCount: submissionCount,
             campaignPublishedDate: campaignPublishedDate,
+            campaignStartDate: campaignStartDate,
             campaignEndDate: campaignEndDate,
             focusId: focusProductId,
             focusName: focusProductName,

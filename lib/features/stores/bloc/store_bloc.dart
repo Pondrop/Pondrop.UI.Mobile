@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
-import 'package:stream_transform/stream_transform.dart';
 
 part 'store_event.dart';
 part 'store_state.dart';
@@ -15,15 +14,20 @@ part 'store_state.dart';
 class StoreBloc extends Bloc<StoreEvent, StoreState> {
   StoreBloc(
       {required StoreRepository storeRepository,
+      required SubmissionRepository submissionRepository,
       required LocationRepository locationRepository})
       : _storeRepository = storeRepository,
+        _submissionRepository = submissionRepository,
         _locationRepository = locationRepository,
         super(const StoreState()) {
     on<StoreFetched>(_onStoreFetched);
     on<StoreRefreshed>(_onStoreRefresh);
+    on<StoreCompletedTasks>(_onStoreCompletedTasks);
+    on<StoreCampaignCountsRefreshed>(_onStoreCampaignCountsRefresh);
   }
 
   final StoreRepository _storeRepository;
+  final SubmissionRepository _submissionRepository;
   final LocationRepository _locationRepository;
 
   Future<void> _onStoreFetched(
@@ -41,17 +45,20 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
           ? await _locationRepository
               .getLastKnownOrCurrentPosition(const Duration(minutes: 1))
           : state.position;
-      final stores =
+      final storesResult =
           await _storeRepository.fetchStores('', state.stores.length, position);
 
       emit(
         state.copyWith(
           status: StoreStatus.success,
-          stores: List.of(state.stores)..addAll(stores.item1),
+          stores: List.of(state.stores)..addAll(storesResult.item1),
           position: position,
-          hasReachedMax: !stores.item2,
+          hasReachedMax: !storesResult.item2,
         ),
       );
+
+      final storeIds = storesResult.item1.map((i) => i.id).toList();
+      add(StoreCampaignCountsRefreshed(storeIds: storeIds));
     } catch (ex) {
       log(ex.toString());
       emit(state.copyWith(status: StoreStatus.failure));
@@ -71,19 +78,96 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     try {
       final position = await _locationRepository
           .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
-      final stores = await _storeRepository.fetchStores('', 0, position);
+      final storesResult = await _storeRepository.fetchStores('', 0, position);
 
       emit(
         state.copyWith(
           status: StoreStatus.success,
-          stores: List.of(state.stores)..addAll(stores.item1),
+          stores: List.of(state.stores)..addAll(storesResult.item1),
           position: position,
-          hasReachedMax: !stores.item2,
+          hasReachedMax: !storesResult.item2,
+        ),
+      );
+
+      final storeIds = storesResult.item1.map((i) => i.id).toList();
+      add(StoreCampaignCountsRefreshed(storeIds: storeIds));
+    } catch (ex) {
+      log(ex.toString());
+      emit(state.copyWith(status: StoreStatus.failure));
+    }
+  }
+
+  Future<void> _onStoreCompletedTasks(
+    StoreCompletedTasks event,
+    Emitter<StoreState> emit,
+  ) async {
+    if (event.completedTasks.isEmpty) return;
+
+    try {
+      final stores = List.of(state.stores);
+      final submissionMap =
+          groupBy(event.completedTasks, (TaskIdentifier i) => i.storeId);
+
+      for (final i in submissionMap.entries) {
+        final idx = stores.indexWhere((e) => e.id == i.key);
+        if (idx >= 0) {
+          stores[idx] = stores[idx].copyWith(
+            categoryCampaigns: List.of(stores[idx].categoryCampaigns)
+              ..removeWhere((e) => i.value.contains(e)),
+            productCampaigns: List.of(stores[idx].productCampaigns)
+              ..removeWhere((e) => i.value.contains(e)),
+          );
+        }
+      }
+
+      emit(state.copyWith(stores: stores));
+    } catch (ex) {
+      log(ex.toString());
+    }
+  }
+
+  Future<void> _onStoreCampaignCountsRefresh(
+    StoreCampaignCountsRefreshed event,
+    Emitter<StoreState> emit,
+  ) async {
+    if (event.storeIds.isEmpty) return;
+
+    try {
+      final categoryCampaignsTask =
+          _submissionRepository.fetchCategoryCampaigns(event.storeIds);
+      final productCampaignsTask =
+          _submissionRepository.fetchProductCampaigns(event.storeIds);
+
+      await Future.wait([categoryCampaignsTask, productCampaignsTask]);
+
+      final categoryCounts = groupBy(
+          (await categoryCampaignsTask)
+              .map((e) => TaskIdentifier.fromCampaignDto(e)),
+          (TaskIdentifier i) => i.storeId);
+      final productCounts = groupBy(
+          (await productCampaignsTask)
+              .map((e) => TaskIdentifier.fromCampaignDto(e)),
+          (TaskIdentifier i) => i.storeId);
+
+      final stores = List.of(state.stores);
+
+      for (final s
+          in state.stores.where((i) => event.storeIds.contains(i.id))) {
+        final idx = stores.indexOf(s);
+        stores[idx] = stores[idx].copyWith(
+          categoryCampaigns: categoryCounts[s.id] ?? const [],
+          productCampaigns: productCounts[s.id] ?? const [],
+        );
+      }
+
+      emit(
+        state.copyWith(
+          stores: stores,
+          campaignCountsRefreshedMs: DateTime.now().millisecondsSinceEpoch,
         ),
       );
     } catch (ex) {
       log(ex.toString());
-      emit(state.copyWith(status: StoreStatus.failure));
     }
   }
 }

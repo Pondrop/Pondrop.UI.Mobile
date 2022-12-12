@@ -19,6 +19,7 @@ CategoryCampaignDto _$CategoryCampaignDtoFromJson(Map<String, dynamic> json) =>
       campaignPublishedDate:
           DateTime.parse(json['campaignPublishedDate'] as String),
       campaignEndDate: DateTime.parse(json['campaignEndDate'] as String),
+      campaignStartDate: DateTime.parse(json['campaignStartDate'] as String),
       focusCategoryId: json['focusCategoryId'] as String,
       focusCategoryName: json['focusCategoryName'] as String,
     );
@@ -34,6 +35,7 @@ Map<String, dynamic> _$CategoryCampaignDtoToJson(
       'requiredSubmissions': instance.requiredSubmissions,
       'submissionCount': instance.submissionCount,
       'campaignPublishedDate': instance.campaignPublishedDate.toIso8601String(),
+      'campaignStartDate': instance.campaignStartDate.toIso8601String(),
       'campaignEndDate': instance.campaignEndDate.toIso8601String(),
       'focusCategoryId': instance.focusCategoryId,
       'focusCategoryName': instance.focusCategoryName,
@@ -63,6 +65,7 @@ ProductCampaignDto _$ProductCampaignDtoFromJson(Map<String, dynamic> json) =>
       submissionCount: json['submissionCount'] as int,
       campaignPublishedDate:
           DateTime.parse(json['campaignPublishedDate'] as String),
+      campaignStartDate: DateTime.parse(json['campaignStartDate'] as String),
       campaignEndDate: DateTime.parse(json['campaignEndDate'] as String),
       focusProductId: json['focusProductId'] as String,
       focusProductName: json['focusProductName'] as String,
@@ -78,6 +81,7 @@ Map<String, dynamic> _$ProductCampaignDtoToJson(ProductCampaignDto instance) =>
       'requiredSubmissions': instance.requiredSubmissions,
       'submissionCount': instance.submissionCount,
       'campaignPublishedDate': instance.campaignPublishedDate.toIso8601String(),
+      'campaignStartDate': instance.campaignStartDate.toIso8601String(),
       'campaignEndDate': instance.campaignEndDate.toIso8601String(),
       'focusProductId': instance.focusProductId,
       'focusProductName': instance.focusProductName,

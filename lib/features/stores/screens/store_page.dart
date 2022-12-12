@@ -76,7 +76,8 @@ class StorePage extends StatelessWidget {
                     iconColor: Colors.black,
                     selectedTileColor: PondropColors.selectedListItemColor,
                     onTap: () {
-                      Navigator.of(context).push(SearchItemPage.route(type: SearchItemType.category));
+                      Navigator.of(context).push(
+                          SearchItemPage.route(type: SearchItemType.category));
                     },
                   ),
                   ListTile(
@@ -86,7 +87,8 @@ class StorePage extends StatelessWidget {
                     iconColor: Colors.black,
                     selectedTileColor: PondropColors.selectedListItemColor,
                     onTap: () {
-                      Navigator.of(context).push(SearchItemPage.route(type: SearchItemType.product));
+                      Navigator.of(context).push(
+                          SearchItemPage.route(type: SearchItemType.product));
                     },
                   ),
                   ListTile(
@@ -134,10 +136,14 @@ class StorePage extends StatelessWidget {
                   if (snapshot.hasData) {
                     final packageInfo = snapshot.data as PackageInfo;
                     return Padding(
-                      padding: const EdgeInsets.fromLTRB(0, Dims.small, 0, Dims.xxLarge),
+                      padding: const EdgeInsets.fromLTRB(
+                          0, Dims.small, 0, Dims.xxLarge),
                       child: Text(
                         '${packageInfo.version} (${packageInfo.buildNumber})',
-                        style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 11),
+                        style: Theme.of(context)
+                            .textTheme
+                            .caption!
+                            .copyWith(fontSize: 11),
                       ),
                     );
                   }
@@ -149,6 +155,8 @@ class StorePage extends StatelessWidget {
         body: BlocProvider(
           create: (_) => StoreBloc(
             storeRepository: RepositoryProvider.of<StoreRepository>(context),
+            submissionRepository:
+                RepositoryProvider.of<SubmissionRepository>(context),
             locationRepository:
                 RepositoryProvider.of<LocationRepository>(context),
           )..add(const StoreFetched()),

@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
+import 'package:pondrop/models/models.dart';
 
 extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
   StoreSubmission toStoreSubmission({required String? campaignId}) {
@@ -116,6 +117,17 @@ extension StoreSubmissionResultMapping on StoreSubmission {
         ?.itemId;
   }
 
+  SubmissionFieldItemType? getFocusItemType() {
+    return steps
+        .expand((i) => i.fields)
+        .where((i) =>
+            i.fieldType == SubmissionFieldType.focus &&
+            i.itemType != null &&
+            i.itemType != SubmissionFieldItemType.unknown)
+        .firstOrNull
+        ?.itemType;
+  }
+
   String toFocusString({String separator = ', '}) {
     return steps
         .expand((e) => e.fields
@@ -123,6 +135,17 @@ extension StoreSubmissionResultMapping on StoreSubmission {
             .map((e) => e.toResultString()))
         .where((e) => e.isNotEmpty)
         .join(separator);
+  }
+
+  TaskIdentifier toTaskIdentifier(String storeId) {
+    return campaignId?.isNotEmpty == true
+        ? TaskIdentifier.campaign(
+            templateId: templateId,
+            storeId: storeId,
+            campaignId: campaignId!,
+            focusId: getFocusId()!,
+            focusType: getFocusItemType()!.toCampaignFocusType())
+        : TaskIdentifier(templateId: templateId, storeId: storeId);
   }
 }
 
