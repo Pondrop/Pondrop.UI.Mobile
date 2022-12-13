@@ -237,5 +237,21 @@
     "completed": "Completed",
     "@completed": {},
     "newSolo": "New",
-    "@newSolo": {}
+    "@newSolo": {},
+    "itemTask": "{item} task",
+    "@itemTask": {
+        "placeholders": {
+            "item": {
+                "type": "int"
+            }
+        }
+    },
+    "itemTasks": "{item} tasks",
+    "@itemTasks": {
+        "placeholders": {
+            "item": {
+                "type": "int"
+            }
+        }
+    }
 }

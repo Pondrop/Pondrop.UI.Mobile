@@ -11,34 +11,41 @@ class MockLocationRepository extends Mock implements LocationRepository {}
 
 class MockStoreRepository extends Mock implements StoreRepository {}
 
+class MockSubmissionRepository extends Mock implements SubmissionRepository {}
+
 void main() {
   late LocationRepository locationRepository;
   late StoreRepository storeRepository;
+  late SubmissionRepository submissionRepository;
 
   setUp(() {
     locationRepository = MockLocationRepository();
     storeRepository = MockStoreRepository();
+    submissionRepository = MockSubmissionRepository();
   });
 
   group('StoreBloc', () {
     test('initial state is Initial', () {
       expect(
-        StoreBloc(
-          storeRepository: storeRepository,
-          locationRepository: locationRepository,).state,
-        equals(const StoreState()));
+          StoreBloc(
+            storeRepository: storeRepository,
+            submissionRepository: submissionRepository,
+            locationRepository: locationRepository,
+          ).state,
+          equals(const StoreState()));
     });
 
     test('emit stores when StoreFetched', () async {
-      final stores = [ FakeStore.fakeStore() ];
+      final stores = [FakeStore.fakeStore()];
 
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));      
+          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
 
       final bloc = StoreBloc(
         storeRepository: storeRepository,
+        submissionRepository: submissionRepository,
         locationRepository: locationRepository,
       );
 
@@ -52,15 +59,16 @@ void main() {
     });
 
     test('emit stores when StoreFetched set hasReachedMax', () async {
-      final stores = [ FakeStore.fakeStore() ];
+      final stores = [FakeStore.fakeStore()];
 
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));      
+          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
 
       final bloc = StoreBloc(
         storeRepository: storeRepository,
+        submissionRepository: submissionRepository,
         locationRepository: locationRepository,
       );
 
@@ -81,15 +89,16 @@ void main() {
     });
 
     test('emit failure when StoreFetched throws', () async {
-      final stores = [ FakeStore.fakeStore() ];
+      final stores = [FakeStore.fakeStore()];
 
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenThrow(Exception());      
+          .thenThrow(Exception());
 
       final bloc = StoreBloc(
         storeRepository: storeRepository,
+        submissionRepository: submissionRepository,
         locationRepository: locationRepository,
       );
 
@@ -100,15 +109,16 @@ void main() {
     });
 
     test('emit stores when StoreRefreshed', () async {
-      final stores = [ FakeStore.fakeStore() ];
+      final stores = [FakeStore.fakeStore()];
 
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));      
+          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
 
       final bloc = StoreBloc(
         storeRepository: storeRepository,
+        submissionRepository: submissionRepository,
         locationRepository: locationRepository,
       );
 
@@ -121,7 +131,7 @@ void main() {
     });
 
     test('emit failure when StoreRefreshed throws', () async {
-      final stores = [ FakeStore.fakeStore() ];
+      final stores = [FakeStore.fakeStore()];
 
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((invocation) => Future<Position?>.value(null));
@@ -130,6 +140,7 @@ void main() {
 
       final bloc = StoreBloc(
         storeRepository: storeRepository,
+        submissionRepository: submissionRepository,
         locationRepository: locationRepository,
       );
 
@@ -138,5 +149,5 @@ void main() {
 
       expect(bloc.state.status, StoreStatus.failure);
     });
-  });  
+  });
 }

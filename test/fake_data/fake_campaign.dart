@@ -21,6 +21,7 @@ class FakeCampaign {
           requiredSubmissions: rng.nextInt(9) + 1,
           submissionCount: 0,
           campaignPublishedDate: DateTime.now().add(const Duration(days: -7)),
+          campaignStartDate: DateTime.now().add(const Duration(days: -7)),
           campaignEndDate: DateTime.now().add(const Duration(days: 7)),
           focusCategoryId: const Uuid().v4(),
           focusCategoryName: 'Focus Category ${i + 1}'));
@@ -46,6 +47,7 @@ class FakeCampaign {
           requiredSubmissions: rng.nextInt(9) + 1,
           submissionCount: 0,
           campaignPublishedDate: DateTime.now().add(const Duration(days: -7)),
+          campaignStartDate: DateTime.now().add(const Duration(days: -7)),
           campaignEndDate: DateTime.now().add(const Duration(days: 7)),
           focusProductId: const Uuid().v4(),
           focusProductName: 'Focus Product ${i + 1}'));

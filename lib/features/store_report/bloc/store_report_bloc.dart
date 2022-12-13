@@ -67,9 +67,9 @@ class StoreReportBloc extends Bloc<StoreReportEvent, StoreReportState> {
     if (state.visit != null) {
       try {
         final categoryCampaignsTask =
-            _submissionRepository.fetchCategoryCampaigns(state.store.id);
+            _submissionRepository.fetchCategoryCampaigns([state.store.id]);
         final productCampaignsTask =
-            _submissionRepository.fetchProductCampaigns(state.store.id);
+            _submissionRepository.fetchProductCampaigns([state.store.id]);
 
         await Future.wait([categoryCampaignsTask, productCampaignsTask]);
 

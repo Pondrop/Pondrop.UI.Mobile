@@ -8,4 +8,7 @@ class PondropColors {
 
   static const errorColor = Color(0xFFBA1A1A);
   static const linkColor = Color(0xFF007AFF);
+
+  static const badgeBgBlueColor = Color(0xFFC4E7FF);
+  static const badgeFgBlueColor = Color(0xFF00668A);
 }

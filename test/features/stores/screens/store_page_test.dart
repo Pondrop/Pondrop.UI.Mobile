@@ -20,18 +20,22 @@ class MockLocationRepository extends Mock implements LocationRepository {}
 
 class MockStoreRepository extends Mock implements StoreRepository {}
 
+class MockSubmissionRepository extends Mock implements SubmissionRepository {}
+
 class MockAuthenticationBloc extends Mock implements AuthenticationBloc {}
 
 void main() {
   late AuthenticationRepository authenticationRepository;
   late LocationRepository locationRepository;
   late StoreRepository storeRepository;
+  late SubmissionRepository submissionRepository;
   late AuthenticationBloc authenticationBloc;
 
   setUp(() {
     authenticationRepository = MockAuthenticationRepository();
     locationRepository = MockLocationRepository();
     storeRepository = MockStoreRepository();
+    submissionRepository = MockSubmissionRepository();
     authenticationBloc = MockAuthenticationBloc();
   });
 
@@ -55,6 +59,7 @@ void main() {
           providers: [
             RepositoryProvider.value(value: authenticationRepository),
             RepositoryProvider.value(value: storeRepository),
+            RepositoryProvider.value(value: submissionRepository),
             RepositoryProvider.value(value: locationRepository),
           ],
           child: BlocProvider.value(
@@ -79,13 +84,14 @@ void main() {
       when(() => authenticationBloc.state).thenReturn(authState);
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((_) => Future.value(null));
-      when(() => storeRepository.fetchStores(any(), any(), any()))
-          .thenAnswer((_) => Future.value(Tuple2([FakeStore.fakeStore()], false)));
+      when(() => storeRepository.fetchStores(any(), any(), any())).thenAnswer(
+          (_) => Future.value(Tuple2([FakeStore.fakeStore()], false)));
 
       await tester.pumpApp(MultiRepositoryProvider(
           providers: [
             RepositoryProvider.value(value: authenticationRepository),
             RepositoryProvider.value(value: storeRepository),
+            RepositoryProvider.value(value: submissionRepository),
             RepositoryProvider.value(value: locationRepository),
           ],
           child: BlocProvider.value(

@@ -41,13 +41,13 @@ class SubmissionRepository {
   }
 
   Future<List<CategoryCampaignDto>> fetchCategoryCampaigns(
-      String storeId) async {
+      List<String> storeIds) async {
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
       try {
-        final campaigns = await _submissionApi
-            .fetchCategoryCampaigns(user!.accessToken, [storeId]);
+        final campaigns = await _submissionApi.fetchCategoryCampaigns(
+            user!.accessToken, storeIds);
         return campaigns;
       } catch (e) {
         log(e.toString());
@@ -57,13 +57,14 @@ class SubmissionRepository {
     return const [];
   }
 
-  Future<List<ProductCampaignDto>> fetchProductCampaigns(String storeId) async {
+  Future<List<ProductCampaignDto>> fetchProductCampaigns(
+      List<String> storeIds) async {
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
       try {
-        final campaigns = await _submissionApi
-            .fetchProductCampaigns(user!.accessToken, [storeId]);
+        final campaigns = await _submissionApi.fetchProductCampaigns(
+            user!.accessToken, storeIds);
         return campaigns;
       } catch (e) {
         log(e.toString());

@@ -14,3 +14,19 @@ class StoreFetched extends StoreEvent {
 class StoreRefreshed extends StoreEvent {
   const StoreRefreshed();
 }
+
+class StoreCompletedTasks extends StoreEvent {
+  const StoreCompletedTasks({
+    required this.completedTasks,
+  });
+
+  final List<TaskIdentifier> completedTasks;
+}
+
+class StoreCampaignCountsRefreshed extends StoreEvent {
+  const StoreCampaignCountsRefreshed({
+    required this.storeIds,
+  });
+
+  final List<String> storeIds;
+}

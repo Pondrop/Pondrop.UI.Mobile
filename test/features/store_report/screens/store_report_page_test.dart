@@ -121,9 +121,9 @@ void main() {
           .thenAnswer((invocation) => Stream.fromIterable([]));
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value(templates));
-      when(() => submissionRepository.fetchCategoryCampaigns(store.id))
+      when(() => submissionRepository.fetchCategoryCampaigns([store.id]))
           .thenAnswer((invocation) => Future.value(categoryCampaigns.cast()));
-      when(() => submissionRepository.fetchProductCampaigns(store.id))
+      when(() => submissionRepository.fetchProductCampaigns([store.id]))
           .thenAnswer((invocation) => Future.value(productCampaigns.cast()));
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value(templates));

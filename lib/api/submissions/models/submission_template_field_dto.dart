@@ -1,9 +1,36 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pondrop/api/submissions/models/models.dart';
 
 part 'submission_template_field_dto.g.dart';
 
-enum SubmissionFieldType { unknown, photo, text, multilineText, integer, currency, picker, search, focus, date, barcode }
+enum SubmissionFieldType {
+  unknown,
+  photo,
+  text,
+  multilineText,
+  integer,
+  currency,
+  picker,
+  search,
+  focus,
+  date,
+  barcode
+}
+
 enum SubmissionFieldItemType { unknown, product, category }
+
+extension SubmissionFieldItemTypeX on SubmissionFieldItemType {
+  CampaignFocusType toCampaignFocusType() {
+    switch (this) {
+      case SubmissionFieldItemType.unknown:
+        return CampaignFocusType.unknown;
+      case SubmissionFieldItemType.product:
+        return CampaignFocusType.product;
+      case SubmissionFieldItemType.category:
+        return CampaignFocusType.category;
+    }
+  }
+}
 
 @JsonSerializable(explicitToJson: true)
 class SubmissionTemplateFieldDto {
@@ -35,10 +62,9 @@ class SubmissionTemplateFieldDto {
   final List<String>? pickerValues;
   @JsonKey(name: 'itemType')
   final SubmissionFieldItemType? itemType;
-  
-  static SubmissionTemplateFieldDto fromJson(Map<String, dynamic> json) =>
-    _$SubmissionTemplateFieldDtoFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-    _$SubmissionTemplateFieldDtoToJson(this);
+  static SubmissionTemplateFieldDto fromJson(Map<String, dynamic> json) =>
+      _$SubmissionTemplateFieldDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubmissionTemplateFieldDtoToJson(this);
 }

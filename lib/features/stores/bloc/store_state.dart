@@ -8,6 +8,7 @@ class StoreState extends Equatable {
     this.stores = const <Store>[],
     this.position,
     this.hasReachedMax = false,
+    this.campaignCountsRefreshedMs = 0,
   });
 
   final StoreStatus status;
@@ -15,17 +16,22 @@ class StoreState extends Equatable {
   final Position? position;
   final bool hasReachedMax;
 
+  final int campaignCountsRefreshedMs;
+
   StoreState copyWith({
     StoreStatus? status,
     List<Store>? stores,
     Position? position,
     bool? hasReachedMax,
+    int? campaignCountsRefreshedMs,
   }) {
     return StoreState(
       status: status ?? this.status,
       stores: stores ?? this.stores,
       position: position ?? this.position,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      campaignCountsRefreshedMs:
+          campaignCountsRefreshedMs ?? this.campaignCountsRefreshedMs,
     );
   }
 
@@ -35,5 +41,6 @@ class StoreState extends Equatable {
   }
 
   @override
-  List<Object> get props => [status, stores, hasReachedMax];
+  List<Object> get props =>
+      [status, stores, hasReachedMax, campaignCountsRefreshedMs];
 }
