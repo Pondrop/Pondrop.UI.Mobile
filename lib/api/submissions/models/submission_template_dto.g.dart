@@ -14,6 +14,7 @@ SubmissionTemplateDto _$SubmissionTemplateDtoFromJson(
       description: json['description'] as String,
       iconCodePoint: json['iconCodePoint'] as int,
       iconFontFamily: json['iconFontFamily'] as String,
+      manualEnabled: json['isForManualSubmissions'] as bool,
       steps: (json['steps'] as List<dynamic>)
           .map((e) =>
               SubmissionTemplateStepDto.fromJson(e as Map<String, dynamic>))
@@ -28,5 +29,6 @@ Map<String, dynamic> _$SubmissionTemplateDtoToJson(
       'description': instance.description,
       'iconCodePoint': instance.iconCodePoint,
       'iconFontFamily': instance.iconFontFamily,
+      'isForManualSubmissions': instance.manualEnabled,
       'steps': instance.steps.map((e) => e.toJson()).toList(),
     };
