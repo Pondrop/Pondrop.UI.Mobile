@@ -28,8 +28,8 @@ class SubmissionApi {
     final headers = _getCommonHeaders(accessToken);
 
     final response = await _httpClient.get(
-        Uri.https(
-            _baseUrl, '/SubmissionTemplate', {'offset': '0', 'limit': '-1'}),
+        Uri.https(_baseUrl, '/SubmissionTemplate/active',
+            {'offset': '0', 'limit': '-1'}),
         headers: headers);
 
     response.ensureSuccessStatusCode();

@@ -10,6 +10,7 @@ class FakeStoreSubmissionTemplates {
         description: 'Report low or empty stock levels',
         iconCodePoint: 0xe4ee,
         iconFontFamily: 'MaterialIcons',
+        manualEnabled: true,
         steps: [
           SubmissionTemplateStepDto(
               id: const Uuid().v4(),
@@ -28,12 +29,11 @@ class FakeStoreSubmissionTemplates {
                     fieldType: SubmissionFieldType.photo,
                     maxValue: 1),
                 SubmissionTemplateFieldDto(
-                  id: const Uuid().v4(),
-                  label: 'Product',
-                  mandatory: false,
-                  fieldType: SubmissionFieldType.search,
-                  itemType: SubmissionFieldItemType.product
-                ),
+                    id: const Uuid().v4(),
+                    label: 'Product',
+                    mandatory: false,
+                    fieldType: SubmissionFieldType.search,
+                    itemType: SubmissionFieldItemType.product),
                 SubmissionTemplateFieldDto(
                   id: const Uuid().v4(),
                   label: 'Name',
@@ -46,7 +46,7 @@ class FakeStoreSubmissionTemplates {
                   mandatory: false,
                   fieldType: SubmissionFieldType.barcode,
                 ),
-                 SubmissionTemplateFieldDto(
+                SubmissionTemplateFieldDto(
                   id: const Uuid().v4(),
                   label: 'Use By date',
                   mandatory: false,

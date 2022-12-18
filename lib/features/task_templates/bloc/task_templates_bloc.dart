@@ -7,8 +7,7 @@ part 'task_templates_event.dart';
 part 'task_templates_state.dart';
 
 class TaskTemplatesBloc extends Bloc<TaskTemplatesEvent, TaskTemplatesState> {
-  TaskTemplatesBloc(
-      {required SubmissionRepository submissionRepository})
+  TaskTemplatesBloc({required SubmissionRepository submissionRepository})
       : _submissionRepository = submissionRepository,
         super(const TaskTemplatesState()) {
     on<TaskTemplatesFetched>(_onTemplatesFetched);
@@ -39,8 +38,9 @@ class TaskTemplatesBloc extends Bloc<TaskTemplatesEvent, TaskTemplatesState> {
 
   Future<void> _loadTemplates(Emitter<TaskTemplatesState> emit) async {
     try {
-      final templates =
-          await _submissionRepository.fetchTemplates();
+      final templates = (await _submissionRepository.fetchTemplates())
+          .where((e) => e.manualEnabled)
+          .toList();
       emit(state.copyWith(
           status: TaskTemplateStatus.success, templates: templates));
     } on Exception {

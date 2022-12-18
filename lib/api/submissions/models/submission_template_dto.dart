@@ -12,6 +12,7 @@ class SubmissionTemplateDto {
     required this.description,
     required this.iconCodePoint,
     required this.iconFontFamily,
+    required this.manualEnabled,
     required this.steps,
   });
 
@@ -26,12 +27,14 @@ class SubmissionTemplateDto {
   @JsonKey(name: 'iconFontFamily')
   final String iconFontFamily;
 
+  @JsonKey(name: 'isForManualSubmissions')
+  final bool manualEnabled;
+
   @JsonKey(name: 'steps')
   final List<SubmissionTemplateStepDto> steps;
-  
-  static SubmissionTemplateDto fromJson(Map<String, dynamic> json) =>
-    _$SubmissionTemplateDtoFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-    _$SubmissionTemplateDtoToJson(this);
+  static SubmissionTemplateDto fromJson(Map<String, dynamic> json) =>
+      _$SubmissionTemplateDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SubmissionTemplateDtoToJson(this);
 }
