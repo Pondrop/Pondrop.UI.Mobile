@@ -154,7 +154,8 @@ void main() {
 
     test('Submission created', () async {
       final templates = FakeStoreSubmissionTemplates.fakeTemplates();
-      final submission = templates.first.toStoreSubmission(campaignId: null);
+      final submission = templates.first.toStoreSubmission(
+          storeVisit: storeVisitDto, store: store, campaignId: null);
 
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value(templates));

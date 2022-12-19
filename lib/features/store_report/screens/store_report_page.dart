@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:pondrop/features/app/app.dart';
 import 'package:pondrop/features/store_submission/screens/store_submission_page.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
@@ -39,15 +40,15 @@ class StoreReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+
     return BlocProvider(
-        create: (_) => StoreReportBloc(
-              store: ModalRoute.of(context)!.settings.arguments as Store,
-              locationRepository:
-                  RepositoryProvider.of<LocationRepository>(context),
-              submissionRepository:
-                  RepositoryProvider.of<SubmissionRepository>(context),
-            ),
-        child: BlocListener<StoreReportBloc, StoreReportState>(
+      create: (_) => StoreReportBloc(
+        store: ModalRoute.of(context)!.settings.arguments as Store,
+        locationRepository: RepositoryProvider.of<LocationRepository>(context),
+        submissionRepository:
+            RepositoryProvider.of<SubmissionRepository>(context),
+      ),
+      child: BlocListener<StoreReportBloc, StoreReportState>(
           listener: (context, state) {
             if (state.status == StoreReportStatus.failed) {
               showDialog(
@@ -56,104 +57,168 @@ class StoreReportPage extends StatelessWidget {
               );
             }
           },
-          child: Scaffold(
-            appBar: AppBar(
-                elevation: 0,
-                leading: Builder(builder: (context) {
-                  return BackButton(
-                    onPressed: () {
-                      final bloc = context.read<StoreReportBloc>();
-                      Navigator.pop(
-                          context,
-                          bloc.state.submissions
-                              .map((e) =>
-                                  e.toTaskIdentifier(bloc.state.store.id))
-                              .toList());
-                    },
-                  );
-                }),
-                title: Text(
-                  l10n.storeActivity,
-                  style: PondropStyles.appBarTitleTextStyle,
-                ),
-                centerTitle: true),
-            body: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Material(
-                    color: Theme.of(context).appBarTheme.backgroundColor,
-                    elevation: 4,
-                    child: _storeHeader(context),
-                  ),
-                  Theme(
-                    data: Theme.of(context)
-                        .copyWith(dividerColor: Colors.transparent),
-                    child: Expanded(
-                      child: BlocBuilder<StoreReportBloc, StoreReportState>(
-                          builder: (context, state) {
-                        return RefreshIndicator(
-                          onRefresh: () {
-                            final bloc = context.read<StoreReportBloc>()
-                              ..add(const StoreReportRefreshed());
-                            return bloc.stream.firstWhere(
-                                (e) => e.status != StoreReportStatus.loading);
-                          },
-                          child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 0, vertical: Dims.small),
-                            itemBuilder: (BuildContext context, int index) {
-                              switch (_groups[index]) {
-                                case StoreReportGroups.newSubmissions:
-                                  return _newSubmissionsTile(context, state);
-                                case StoreReportGroups.completedSubmissions:
-                                  return _completedSubmissionsTile(
-                                      context, state);
-                                default:
-                                  return const SizedBox.shrink();
-                              }
-                            },
-                            itemCount: _groups.length,
+          listenWhen: (previous, current) => previous.status != current.status,
+          child: BlocListener<StoreReportBloc, StoreReportState>(
+              listener: (context, state) {
+                final loadingOverlay = LoadingOverlay.of(context);
+                if (state.pendingState.submitting) {
+                  loadingOverlay.show(l10n.sendingItemOfItemSubmissions(
+                      state.pendingState.currentCount,
+                      state.pendingState.totalCount));
+                } else if (state.pendingState.popOnComplete) {
+                  loadingOverlay.hide();
+
+                  if (state.pendingState.popOnComplete &&
+                      state.pendingState.retrySuccessful) {
+                    Navigator.pop(
+                        context,
+                        state.submissions
+                            .map((e) => e.toTaskIdentifier(state.store.id))
+                            .toList());
+                  } else if (!state.pendingState.retrySuccessful) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Padding(
+                          padding: Dims.smallEdgeInsets,
+                          child: Icon(
+                            Icons.warning_amber_outlined,
+                            color: PondropColors.warningColor,
                           ),
-                        );
-                      }),
-                    ),
-                  )
-                ]),
-            floatingActionButton:
-                BlocBuilder<StoreReportBloc, StoreReportState>(
-              builder: (context, state) {
-                switch (state.status) {
-                  case StoreReportStatus.loading:
-                    return ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: PondropColors.primaryLightColor,
-                            foregroundColor: Colors.black),
-                        onPressed: () {},
-                        child: const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(),
-                        ));
-                  case StoreReportStatus.loaded:
-                    return ElevatedButton.icon(
-                      icon: const Icon(Icons.add),
-                      label: Text(l10n.addItem(l10n.task.toLowerCase())),
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: PondropColors.primaryLightColor,
-                          foregroundColor: Colors.black),
-                      onPressed: () async {
-                        await Navigator.of(context)
-                            .push(TaskTemplatesPage.route(state.visit!));
-                      },
-                    );
-                  default:
-                    return const SizedBox.shrink();
+                        ),
+                        Expanded(
+                            child: Text(
+                          l10n.itemFailedPleaseTryAgain(l10n.submitting),
+                        ))
+                      ],
+                    )));
+                  }
                 }
               },
-            ),
-          ),
-        ));
+              listenWhen: (previous, current) =>
+                  previous.pendingState != current.pendingState,
+              child: Builder(builder: (context) {
+                return WillPopScope(
+                  onWillPop: () async {
+                    final navigator = Navigator.of(context);
+                    final bloc = context.read<StoreReportBloc>();
+
+                    final retrySubmissions = bloc.state.hasPendingSubmissions &&
+                        (await showDialog<bool>(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) =>
+                                    _retryFailedSubmissionsDialog(context)) ??
+                            true);
+
+                    if (!retrySubmissions) {
+                      navigator.pop(bloc.state.submissions
+                          .where((e) => e.submitted)
+                          .map((e) => e.toTaskIdentifier(bloc.state.store.id))
+                          .toList());
+                    } else {
+                      bloc.add(const StoreReportRetryPending());
+                    }
+
+                    return false;
+                  },
+                  child: Scaffold(
+                    appBar: AppBar(
+                        elevation: 0,
+                        title: Text(
+                          l10n.storeActivity,
+                          style: PondropStyles.appBarTitleTextStyle,
+                        ),
+                        centerTitle: true),
+                    body: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Material(
+                            color:
+                                Theme.of(context).appBarTheme.backgroundColor,
+                            elevation: 4,
+                            child: _storeHeader(context),
+                          ),
+                          Theme(
+                            data: Theme.of(context)
+                                .copyWith(dividerColor: Colors.transparent),
+                            child: Expanded(
+                              child: BlocBuilder<StoreReportBloc,
+                                  StoreReportState>(builder: (context, state) {
+                                return RefreshIndicator(
+                                  onRefresh: () {
+                                    final bloc = context.read<StoreReportBloc>()
+                                      ..add(const StoreReportRefreshed());
+                                    return bloc.stream.firstWhere((e) =>
+                                        e.status != StoreReportStatus.loading);
+                                  },
+                                  child: ListView.builder(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0, vertical: Dims.small),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      switch (_groups[index]) {
+                                        case StoreReportGroups.newSubmissions:
+                                          return _newSubmissionsTile(
+                                              context, state);
+                                        case StoreReportGroups
+                                            .completedSubmissions:
+                                          return _completedSubmissionsTile(
+                                              context, state);
+                                        default:
+                                          return const SizedBox.shrink();
+                                      }
+                                    },
+                                    itemCount: _groups.length,
+                                  ),
+                                );
+                              }),
+                            ),
+                          )
+                        ]),
+                    floatingActionButton:
+                        BlocBuilder<StoreReportBloc, StoreReportState>(
+                      builder: (context, state) {
+                        switch (state.status) {
+                          case StoreReportStatus.loading:
+                            return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        PondropColors.primaryLightColor,
+                                    foregroundColor: Colors.black),
+                                onPressed: () {},
+                                child: const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(),
+                                ));
+                          case StoreReportStatus.loaded:
+                            return ElevatedButton.icon(
+                              icon: const Icon(Icons.add),
+                              label:
+                                  Text(l10n.addItem(l10n.task.toLowerCase())),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      PondropColors.primaryLightColor,
+                                  foregroundColor: Colors.black),
+                              onPressed: () async {
+                                await Navigator.of(context).push(
+                                    TaskTemplatesPage.route(
+                                        state.visit!, state.store));
+                              },
+                            );
+                          default:
+                            return const SizedBox.shrink();
+                        }
+                      },
+                    ),
+                  ),
+                );
+              }))),
+    );
   }
 
   Widget _storeHeader(BuildContext context) {
@@ -218,7 +283,10 @@ class StoreReportPage extends StatelessWidget {
                 context: context,
                 builder: (context) => StoreSubmissionPage(
                   visit: state.visit!,
-                  submission: template.toStoreSubmission(campaignId: i.id),
+                  submission: template.toStoreSubmission(
+                      storeVisit: state.visit!,
+                      store: state.store,
+                      campaignId: i.id),
                   campaign: i,
                 ),
                 enableDrag: false,
@@ -263,6 +331,7 @@ class StoreReportPage extends StatelessWidget {
             title: template.title,
             subTitle: focus.isNotEmpty ? focus : template.description,
             photoCount: i.photoCount(),
+            hasError: !i.submitted,
             onTap: () => Navigator.of(context)
                 .push(StoreSubmissionSummaryPage.route(i))));
       }
@@ -300,6 +369,37 @@ class StoreReportPage extends StatelessWidget {
             Navigator.pop(context);
           },
           child: Text(l10n.ok),
+        ),
+      ],
+    );
+  }
+
+  AlertDialog _retryFailedSubmissionsDialog(BuildContext context) {
+    final l10n = context.l10n;
+    return AlertDialog(
+      title: Text(l10n.sendPendingTasks),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            Text(l10n.submissionsPendingAvoidLosingData),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: Text(l10n.send),
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+        ),
+        TextButton(
+          child: Text(
+            l10n.ignore,
+            style: const TextStyle(color: Colors.red),
+          ),
+          onPressed: () {
+            Navigator.of(context).pop(false);
+          },
         ),
       ],
     );

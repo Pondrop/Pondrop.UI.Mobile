@@ -6,6 +6,7 @@ class PondropColors {
 
   static const selectedListItemColor = Color(0x88C9E6FF);
 
+  static const warningColor = Color(0xFFFD7F20);
   static const errorColor = Color(0xFFBA1A1A);
   static const linkColor = Color(0xFF007AFF);
 

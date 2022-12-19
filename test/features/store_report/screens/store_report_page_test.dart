@@ -23,6 +23,7 @@ void main() {
   late LocationRepository locationRepository;
 
   late Store store;
+  late StoreVisitDto storeVisitDto;
 
   setUp(() {
     storeRepository = MockStoreRepository();
@@ -38,6 +39,12 @@ void main() {
         latitude: 0,
         longitude: 0,
         lastKnowDistanceMetres: -1);
+    storeVisitDto = StoreVisitDto(
+        id: const Uuid().v4(),
+        storeId: store.id,
+        userId: const Uuid().v4(),
+        latitude: 0,
+        longitude: 0);
   });
 
   group('Store Report', () {
@@ -70,7 +77,8 @@ void main() {
 
     testWidgets('renders a Store Report page with Submissions', (tester) async {
       final templates = FakeStoreSubmissionTemplates.fakeTemplates();
-      final submission = templates.first.toStoreSubmission(campaignId: null);
+      final submission = templates.first.toStoreSubmission(
+          storeVisit: storeVisitDto, store: store, campaignId: null);
 
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value(templates));

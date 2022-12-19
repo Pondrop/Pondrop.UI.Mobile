@@ -6,8 +6,14 @@ import 'package:pondrop/api/submissions/models/models.dart';
 import 'package:pondrop/models/models.dart';
 
 extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
-  StoreSubmission toStoreSubmission({required String? campaignId}) {
+  StoreSubmission toStoreSubmission(
+      {required StoreVisitDto storeVisit,
+      required Store store,
+      required String? campaignId}) {
+    final now = DateTime.now();
     return StoreSubmission(
+      storeVisit: storeVisit,
+      store: store,
       templateId: id,
       campaignId: campaignId,
       title: title,
@@ -39,6 +45,8 @@ extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
                     .toList(),
               ))
           .toList(),
+      dateCreated: now,
+      dateUpdated: now,
     );
   }
 
@@ -55,13 +63,14 @@ extension SubmissionTemplateDtoMapping on SubmissionTemplateDto {
 }
 
 extension StoreSubmissionResultMapping on StoreSubmission {
-  SubmissionResultDto toSubmissionResultDto(String storeVisitId) {
+  SubmissionResultDto toSubmissionResultDto() {
     return SubmissionResultDto(
       submissionTemplateId: templateId,
       campaignId: campaignId,
-      storeVisitId: storeVisitId,
+      storeVisitId: storeVisit.id,
       latitude: latitude,
       longitude: longitude,
+      completedDate: DateTime.now().toUtc(),
       steps: steps
           .map((step) => SubmissionStepResultDto(
                 templateStepId: step.stepId,
@@ -150,7 +159,9 @@ extension StoreSubmissionResultMapping on StoreSubmission {
 }
 
 class StoreSubmission extends Equatable {
-  StoreSubmission({
+  const StoreSubmission({
+    required this.storeVisit,
+    required this.store,
     required this.templateId,
     required this.campaignId,
     required this.title,
@@ -158,23 +169,40 @@ class StoreSubmission extends Equatable {
     this.latitude = 0,
     this.longitude = 0,
     required this.steps,
+    required this.dateCreated,
+    required this.dateUpdated,
+    this.result,
     this.submittedDate,
   });
+
+  final StoreVisitDto storeVisit;
+  final Store store;
 
   final String templateId;
   final String? campaignId;
   final String title;
   final String description;
 
-  double latitude;
-  double longitude;
+  final double latitude;
+  final double longitude;
 
   final List<StoreSubmissionStep> steps;
 
+  final DateTime dateCreated;
+  final DateTime dateUpdated;
+
+  final SubmissionResultDto? result;
   final DateTime? submittedDate;
 
-  StoreSubmission copy({LatLng? location, DateTime? submittedDate}) {
+  bool get submitted => result != null && submittedDate != null;
+
+  StoreSubmission copy(
+      {LatLng? location,
+      SubmissionResultDto? result,
+      DateTime? submittedDate}) {
     return StoreSubmission(
+      storeVisit: storeVisit,
+      store: store,
       templateId: templateId,
       campaignId: campaignId,
       title: title,
@@ -182,13 +210,25 @@ class StoreSubmission extends Equatable {
       longitude: location?.longitude ?? longitude,
       description: description,
       steps: steps.map((e) => e.copy()).toList(),
+      dateCreated: dateCreated,
+      dateUpdated: DateTime.now(),
+      result: result ?? this.result,
       submittedDate: submittedDate ?? this.submittedDate,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [templateId, campaignId, title, description, steps];
+  List<Object?> get props => [
+        storeVisit,
+        store,
+        templateId,
+        campaignId,
+        title,
+        description,
+        steps,
+        submitted,
+        dateCreated
+      ];
 }
 
 class StoreSubmissionStep extends Equatable {

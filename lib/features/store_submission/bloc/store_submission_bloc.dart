@@ -98,11 +98,9 @@ class StoreSubmissionBloc
         break;
       case SubmissionStatus.submitting:
         final position = await _locationRepository.getCurrentPosition();
-        if (await _submissionRepository.submitResult(
-            state.visit.id,
-            state.submission.copy(
-                location: LatLng(
-                    position?.latitude ?? 0, position?.longitude ?? 0)))) {
+        if (await _submissionRepository.submitResult(state.submission.copy(
+            location:
+                LatLng(position?.latitude ?? 0, position?.longitude ?? 0)))) {
           emit(state.copyWith(action: SubmissionStatus.submitSuccess));
         } else {
           emit(state.copyWith(action: SubmissionStatus.submitFailed));

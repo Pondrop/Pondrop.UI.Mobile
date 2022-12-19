@@ -32,17 +32,18 @@ class SubmissionSummaryListView extends StatelessWidget {
     final listViewLength = stepIdx + fields.length + 1;
 
     return ListView.builder(
-        padding: const EdgeInsets.fromLTRB(Dims.large, Dims.small, Dims.large, Dims.xLarge),
+        padding: const EdgeInsets.fromLTRB(
+            Dims.large, Dims.small, Dims.large, Dims.xLarge),
         controller: ModalScrollController.of(context),
         itemBuilder: (BuildContext context, int index) {
           if (index == listViewLength - 1) {
-            if (submission.submittedDate != null) {
+            if (submission.result?.completedDate != null) {
               return Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
                       padding: Dims.xSmallEdgeInsets,
-                      child: Text(
-                          submission.submittedDate!.toShortString(context))));
+                      child: Text(submission.result!.completedDate
+                          .toShortString(context))));
             }
 
             return const SizedBox.shrink();

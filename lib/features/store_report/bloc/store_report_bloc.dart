@@ -22,6 +22,7 @@ class StoreReportBloc extends Bloc<StoreReportEvent, StoreReportState> {
         super(StoreReportState(store: store)) {
     on<StoreReportRefreshed>(_onStoreReportRefreshed);
     on<StoreReportSubmitted>(_onStoreReportSubmitted);
+    on<StoreReportRetryPending>(_onStoreReportRetryPending);
 
     _storeSubmissionSubscription = _submissionRepository.submissions.listen(
       (submission) => add(StoreReportSubmitted(submission: submission)),
@@ -102,10 +103,52 @@ class StoreReportBloc extends Bloc<StoreReportEvent, StoreReportState> {
           e.focusId == event.submission.getFocusId());
     }
 
+    final submissions = List<StoreSubmission>.from(state.submissions);
+    final idx = submissions.indexWhere((e) =>
+        e.storeVisit == event.submission.storeVisit &&
+        e.templateId == event.submission.templateId &&
+        e.dateCreated == event.submission.dateCreated);
+
+    if (idx >= 0) {
+      submissions[idx] = event.submission;
+    } else {
+      submissions.add(event.submission);
+    }
+
+    emit(state.copyWith(submissions: submissions, campaigns: campaigns));
+  }
+
+  Future<void> _onStoreReportRetryPending(
+    StoreReportRetryPending event,
+    Emitter<StoreReportState> emit,
+  ) async {
+    if (state.pendingState.submitting) return;
+
+    final pending = state.pendingSubmissions;
+
+    if (pending.isEmpty) return;
+
     emit(state.copyWith(
-        submissions: List<StoreSubmission>.from(state.submissions)
-          ..add(event.submission),
-        campaigns: campaigns));
+        pendingState: state.pendingState.copyWith(
+            submitting: true,
+            currentCount: 1,
+            totalCount: pending.length,
+            submittedCount: 0,
+            popOnComplete: event.popOnComplete)));
+
+    for (final submission in pending) {
+      final success = await _submissionRepository.submitResult(submission);
+      emit(state.copyWith(
+          pendingState: state.pendingState.copyWith(
+        currentCount: state.pendingState.currentCount + 1,
+        submittedCount: state.pendingState.submittedCount + (success ? 1 : 0),
+      )));
+    }
+
+    emit(state.copyWith(
+        pendingState: state.pendingState.copyWith(
+      submitting: false,
+    )));
   }
 
   @override

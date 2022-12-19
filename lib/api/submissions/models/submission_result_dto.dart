@@ -13,6 +13,7 @@ class SubmissionResultDto extends Equatable {
     this.campaignId,
     this.latitude = 0,
     this.longitude = 0,
+    required this.completedDate,
     required this.steps,
   });
 
@@ -28,6 +29,9 @@ class SubmissionResultDto extends Equatable {
   final double latitude;
   @JsonKey(name: 'longitude')
   final double longitude;
+
+  @JsonKey(name: 'completedDate')
+  final DateTime completedDate;
 
   @JsonKey(name: 'steps')
   final List<SubmissionStepResultDto> steps;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pondrop/api/submissions/models/models.dart';
+import 'package:pondrop/l10n/l10n.dart';
+import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/features/styles/styles.dart';
 
@@ -8,17 +10,24 @@ import '../bloc/task_templates_bloc.dart';
 import '../widgets/task_templates.dart';
 
 class TaskTemplatesPage extends StatelessWidget {
-  const TaskTemplatesPage({Key? key, required this.visit}) : super(key: key);
+  const TaskTemplatesPage({Key? key, required this.visit, required this.store})
+      : super(key: key);
 
-  static Route route(StoreVisitDto visit) {
+  static Route route(StoreVisitDto visit, Store store) {
     return RouteTransitions.modalSlideRoute(
-        pageBuilder: (_) => TaskTemplatesPage(visit: visit));
+        pageBuilder: (_) => TaskTemplatesPage(
+              visit: visit,
+              store: store,
+            ));
   }
 
   final StoreVisitDto visit;
+  final Store store;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return BlocProvider(
       create: (_) => TaskTemplatesBloc(
         submissionRepository:
@@ -27,8 +36,8 @@ class TaskTemplatesPage extends StatelessWidget {
       child: Scaffold(
           appBar: AppBar(
               elevation: 0,
-              title: const Text(
-                'Select a task',
+              title: Text(
+                l10n.selectAItem(l10n.task),
                 style: PondropStyles.appBarTitleTextStyle,
               ),
               centerTitle: true,
@@ -43,6 +52,7 @@ class TaskTemplatesPage extends StatelessWidget {
           body: Builder(builder: (context) {
             return TaskTemplates(
               visit: visit,
+              store: store,
             );
           })),
     );

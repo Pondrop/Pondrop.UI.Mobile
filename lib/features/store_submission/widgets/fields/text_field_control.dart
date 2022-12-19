@@ -17,6 +17,8 @@ class TextFieldControl extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       key: Key(field.fieldId),
+      enableInteractiveSelection: !readOnly,
+      focusNode: readOnly ? _AlwaysDisabledFocusNode() : null,
       readOnly: readOnly,
       initialValue: field.toResultString(),
       decoration: InputDecoration(
@@ -39,4 +41,9 @@ class TextFieldControl extends StatelessWidget {
       },
     );
   }
+}
+
+class _AlwaysDisabledFocusNode extends FocusNode {
+  @override
+  bool get hasFocus => false;
 }

@@ -24,17 +24,24 @@ void main() {
   group('Task Templates Page', () {
     test('is routable', () {
       expect(
-          TaskTemplatesPage.route(FakeStoreVisit.fakeVist()), isA<PageRoute>());
+          TaskTemplatesPage.route(
+              FakeStoreVisit.fakeVist(), FakeStore.fakeStore()),
+          isA<PageRoute>());
     });
 
     testWidgets('renders TaskTemplates', (tester) async {
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value(templates));
 
-      await tester.pumpApp(MultiRepositoryProvider(providers: [
-        RepositoryProvider.value(value: submissionRepository),
-      ], child: TaskTemplatesPage(visit: FakeStoreVisit.fakeVist())));
-      
+      await tester.pumpApp(MultiRepositoryProvider(
+          providers: [
+            RepositoryProvider.value(value: submissionRepository),
+          ],
+          child: TaskTemplatesPage(
+            visit: FakeStoreVisit.fakeVist(),
+            store: FakeStore.fakeStore(),
+          )));
+
       expect(find.byType(TaskTemplates), findsOneWidget);
     });
 
@@ -42,10 +49,15 @@ void main() {
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value([]));
 
-      await tester.pumpApp(MultiRepositoryProvider(providers: [
-        RepositoryProvider.value(value: submissionRepository),
-      ], child: TaskTemplatesPage(visit: FakeStoreVisit.fakeVist())));
-      
+      await tester.pumpApp(MultiRepositoryProvider(
+          providers: [
+            RepositoryProvider.value(value: submissionRepository),
+          ],
+          child: TaskTemplatesPage(
+            visit: FakeStoreVisit.fakeVist(),
+            store: FakeStore.fakeStore(),
+          )));
+
       expect(find.byType(ListView), findsNothing);
     });
   });
