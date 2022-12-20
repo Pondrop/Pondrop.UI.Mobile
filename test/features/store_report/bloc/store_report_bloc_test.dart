@@ -76,7 +76,7 @@ void main() {
         locationRepository: locationRepository,
       );
 
-      await Future.delayed(const Duration(milliseconds: 250));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       verify(() => submissionRepository.startStoreVisit(store.id, any()))
           .called(1);
@@ -101,7 +101,7 @@ void main() {
         locationRepository: locationRepository,
       );
 
-      await Future.delayed(const Duration(milliseconds: 250));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       expect(bloc.state.visit, null);
       expect(bloc.state.status, StoreReportStatus.failed);
@@ -139,7 +139,7 @@ void main() {
         locationRepository: locationRepository,
       );
 
-      await Future.delayed(const Duration(milliseconds: 250));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       verify(() => submissionRepository.startStoreVisit(store.id, any()))
           .called(1);
@@ -154,13 +154,21 @@ void main() {
 
     test('Submission created', () async {
       final templates = FakeStoreSubmissionTemplates.fakeTemplates();
-      final submission = templates.first.toStoreSubmission(
-          storeVisit: storeVisitDto, store: store, campaignId: null);
+      final storeSubmission = templates.first
+          .toStoreSubmission(
+              storeVisit: storeVisitDto, store: store, campaignId: null)
+          .copyWith(
+              result: SubmissionResultDto(
+                  submissionTemplateId: templates.first.id,
+                  storeVisitId: storeVisitDto.id,
+                  completedDate: DateTime.now(),
+                  steps: const []),
+              submittedDate: DateTime.now());
 
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value(templates));
       when(() => submissionRepository.submissions)
-          .thenAnswer((invocation) => Stream.fromIterable([submission]));
+          .thenAnswer((invocation) => Stream.fromIterable([storeSubmission]));
       when(() => submissionRepository.startStoreVisit(store.id, any()))
           .thenAnswer((invocation) => Future.value(storeVisitDto));
       when(() => locationRepository.getLastKnownPosition())
@@ -172,12 +180,98 @@ void main() {
         locationRepository: locationRepository,
       );
 
-      await Future.delayed(const Duration(milliseconds: 250));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       expect(bloc.state.visit, storeVisitDto);
       expect(bloc.state.status, StoreReportStatus.loaded);
       expect(bloc.state.templates, templates);
-      expect(bloc.state.submissions, [submission]);
+      expect(bloc.state.submissions, [storeSubmission]);
+    });
+
+    test('close', () async {
+      final templates = FakeStoreSubmissionTemplates.fakeTemplates();
+
+      when(() => submissionRepository.fetchTemplates())
+          .thenAnswer((invocation) => Future.value(templates));
+      when(() => submissionRepository.submissions)
+          .thenAnswer((invocation) => Stream.fromIterable([]));
+      when(() => submissionRepository.startStoreVisit(store.id, any()))
+          .thenAnswer((invocation) => Future.value(storeVisitDto));
+      when(() => submissionRepository.endStoreVisit(storeVisitDto.id, any()))
+          .thenAnswer((invocation) => Future.value(storeVisitDto));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((invocation) => Future.value(position));
+
+      final bloc = StoreReportBloc(
+        store: store,
+        submissionRepository: submissionRepository,
+        locationRepository: locationRepository,
+      );
+
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      await bloc.close();
+
+      verify(() => submissionRepository.endStoreVisit(storeVisitDto.id, any()))
+          .called(1);
+    });
+
+    test('Submission hasPending', () async {
+      final templates = FakeStoreSubmissionTemplates.fakeTemplates();
+      final storeSubmission = templates.first.toStoreSubmission(
+          storeVisit: storeVisitDto, store: store, campaignId: null);
+
+      when(() => submissionRepository.fetchTemplates())
+          .thenAnswer((invocation) => Future.value(templates));
+      when(() => submissionRepository.submissions)
+          .thenAnswer((invocation) => Stream.fromIterable([storeSubmission]));
+      when(() => submissionRepository.startStoreVisit(store.id, any()))
+          .thenAnswer((invocation) => Future.value(storeVisitDto));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((invocation) => Future.value(position));
+
+      final bloc = StoreReportBloc(
+        store: store,
+        submissionRepository: submissionRepository,
+        locationRepository: locationRepository,
+      );
+
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      expect(bloc.state.submissions.first.submitted, false);
+      expect(bloc.state.pendingSubmissions, [storeSubmission]);
+      expect(bloc.state.pendingSubmissionCount, 1);
+      expect(bloc.state.hasPendingSubmissions, true);
+    });
+
+    test('Submission retry pending', () async {
+      final templates = FakeStoreSubmissionTemplates.fakeTemplates();
+      final storeSubmission = templates.first.toStoreSubmission(
+          storeVisit: storeVisitDto, store: store, campaignId: null);
+
+      when(() => submissionRepository.fetchTemplates())
+          .thenAnswer((invocation) => Future.value(templates));
+      when(() => submissionRepository.submissions)
+          .thenAnswer((invocation) => Stream.fromIterable([storeSubmission]));
+      when(() => submissionRepository.startStoreVisit(store.id, any()))
+          .thenAnswer((invocation) => Future.value(storeVisitDto));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((invocation) => Future.value(position));
+      when(() => submissionRepository.submitResult(storeSubmission))
+          .thenAnswer((invocation) => Future.value(true));
+
+      final bloc = StoreReportBloc(
+        store: store,
+        submissionRepository: submissionRepository,
+        locationRepository: locationRepository,
+      );
+
+      await Future.delayed(const Duration(milliseconds: 100));
+      bloc.add(const StoreReportRetryPending());
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      verify(() => submissionRepository.submitResult(storeSubmission))
+          .called(1);
     });
   });
 }

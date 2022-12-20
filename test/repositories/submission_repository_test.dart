@@ -77,7 +77,12 @@ void main() {
       final repo = SubmissionRepository(
           userRepository: userRepository, submissionApi: submissionApi);
 
-      expect(repo.submissions, emits(submission));
+      expect(
+          repo.submissions,
+          emits(predicate<StoreSubmission>((i) =>
+              i.templateId == submission.templateId &&
+              i.dateCreated == submission.dateCreated &&
+              i.submitted)));
 
       final result = await repo.submitResult(submission);
 

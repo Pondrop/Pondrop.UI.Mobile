@@ -136,12 +136,12 @@ class SubmissionRepository {
       try {
         await _submissionApi.submitResult(user!.accessToken, result);
         _controller.add(
-            submission.copy(result: result, submittedDate: DateTime.now()));
+            submission.copyWith(result: result, submittedDate: DateTime.now()));
         return true;
       } catch (e) {
         log(e.toString());
 
-        _controller.add(submission.copy(result: result));
+        _controller.add(submission.copyWith(result: result));
         return false;
       }
     }

@@ -196,7 +196,7 @@ class StoreSubmission extends Equatable {
 
   bool get submitted => result != null && submittedDate != null;
 
-  StoreSubmission copy(
+  StoreSubmission copyWith(
       {LatLng? location,
       SubmissionResultDto? result,
       DateTime? submittedDate}) {

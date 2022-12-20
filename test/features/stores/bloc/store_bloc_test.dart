@@ -1,9 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pondrop/api/submissions/models/models.dart';
+import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/features/stores/bloc/store_bloc.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../fake_data/fake_data.dart';
 
@@ -131,8 +134,6 @@ void main() {
     });
 
     test('emit failure when StoreRefreshed throws', () async {
-      final stores = [FakeStore.fakeStore()];
-
       when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
@@ -148,6 +149,88 @@ void main() {
       await bloc.stream.firstWhere((e) => e.status != StoreStatus.loading);
 
       expect(bloc.state.status, StoreStatus.failure);
+    });
+
+    test('emit stores with task counts', () async {
+      final stores = [FakeStore.fakeStore()];
+      final storeIds = stores.map((e) => e.id).toList();
+      final categoryCampaigns = FakeCampaign.fakeCategoryCampaignDtos(
+              storeId: storeIds.first, length: 1)
+          .whereType<CategoryCampaignDto>()
+          .toList();
+      final productCampaigns = FakeCampaign.fakeProductCampaignDtos(
+              storeId: storeIds.first, length: 1)
+          .whereType<ProductCampaignDto>()
+          .toList();
+
+      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+          .thenAnswer((invocation) => Future<Position?>.value(null));
+      when(() => storeRepository.fetchStores(any(), any(), any()))
+          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
+      when(() => submissionRepository.fetchCategoryCampaigns(storeIds))
+          .thenAnswer((invocation) => Future.value(categoryCampaigns));
+      when(() => submissionRepository.fetchProductCampaigns(storeIds))
+          .thenAnswer((invocation) => Future.value(productCampaigns));
+
+      final bloc = StoreBloc(
+        storeRepository: storeRepository,
+        submissionRepository: submissionRepository,
+        locationRepository: locationRepository,
+      );
+
+      bloc.add(const StoreRefreshed());
+
+      final nowMs = DateTime.now().millisecondsSinceEpoch;
+      await bloc.stream.firstWhere((e) => e.campaignCountsRefreshedMs > nowMs);
+
+      expect(bloc.state.stores.first.categoryCampaigns.length, 1);
+      expect(bloc.state.stores.first.productCampaigns.length, 1);
+      expect(bloc.state.stores.first.campaignCount, 2);
+    });
+
+    test('reduce campaign task count', () async {
+      final stores = [FakeStore.fakeStore()];
+      final storeIds = stores.map((e) => e.id).toList();
+      final categoryCampaigns = FakeCampaign.fakeCategoryCampaignDtos(
+              storeId: storeIds.first, length: 1)
+          .whereType<CategoryCampaignDto>()
+          .toList();
+      final productCampaigns = FakeCampaign.fakeProductCampaignDtos(
+              storeId: storeIds.first, length: 1)
+          .whereType<ProductCampaignDto>()
+          .toList();
+
+      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+          .thenAnswer((invocation) => Future<Position?>.value(null));
+      when(() => storeRepository.fetchStores(any(), any(), any()))
+          .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
+      when(() => submissionRepository.fetchCategoryCampaigns(storeIds))
+          .thenAnswer((invocation) => Future.value(categoryCampaigns));
+      when(() => submissionRepository.fetchProductCampaigns(storeIds))
+          .thenAnswer((invocation) => Future.value(productCampaigns));
+
+      final bloc = StoreBloc(
+        storeRepository: storeRepository,
+        submissionRepository: submissionRepository,
+        locationRepository: locationRepository,
+      );
+
+      bloc.add(const StoreRefreshed());
+
+      final nowMs = DateTime.now().millisecondsSinceEpoch;
+      await bloc.stream.firstWhere((e) => e.campaignCountsRefreshedMs > nowMs);
+
+      final taskIdentifiers = [
+        TaskIdentifier.fromCampaignDto(categoryCampaigns.first),
+        TaskIdentifier(templateId: const Uuid().v4(), storeId: storeIds.first),
+      ];
+
+      bloc.add(StoreCompletedTasks(completedTasks: taskIdentifiers));
+      await bloc.stream.first;
+
+      expect(bloc.state.stores.first.categoryCampaigns.length, 0);
+      expect(bloc.state.stores.first.productCampaigns.length, 1);
+      expect(bloc.state.stores.first.campaignCount, 1);
     });
   });
 }

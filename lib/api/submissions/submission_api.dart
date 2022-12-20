@@ -135,6 +135,7 @@ class SubmissionApi {
         .post(Uri.https(_baseUrl, '/Submission/create'),
             headers: headers, body: json)
         .timeout(
+      // cancel submission if > 10secs
       const Duration(milliseconds: 10000),
       onTimeout: () {
         return http.Response('Timeout', 408);
