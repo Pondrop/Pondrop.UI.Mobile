@@ -21,3 +21,12 @@ class StoreReportSubmitted extends StoreReportEvent {
   @override
   List<Object> get props => [submission];
 }
+
+class StoreReportRetryPending extends StoreReportEvent {
+  const StoreReportRetryPending({this.popOnComplete = true});
+
+  final bool popOnComplete;
+
+  @override
+  List<Object> get props => [popOnComplete];
+}

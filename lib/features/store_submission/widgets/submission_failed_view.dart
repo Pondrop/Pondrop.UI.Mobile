@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/features/styles/styles.dart';
 
-class SubmissionSuccessView extends StatelessWidget {
-  const SubmissionSuccessView({Key? key}) : super(key: key);
+class SubmissionFailedView extends StatelessWidget {
+  const SubmissionFailedView({Key? key}) : super(key: key);
 
   static Route route() {
     return RouteTransitions.modalSlideRoute(
-        pageBuilder: (_) => const SubmissionSuccessView());
+        pageBuilder: (_) => const SubmissionFailedView());
   }
 
-  static const okayButtonKey = Key('SubmissionSuccessView_Okay_Button');
+  static const okayButtonKey = Key('SubmissionFailedView_Okay_Button');
 
   @override
   Widget build(BuildContext context) {
@@ -36,19 +35,23 @@ class SubmissionSuccessView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Spacer(),
-            SvgPicture.asset('assets/hand_success.svg'),
+            const Icon(
+              Icons.warning_amber_outlined,
+              color: PondropColors.warningColor,
+              size: 128,
+            ),
             const SizedBox(
               height: Dims.large,
             ),
             Text(
-              l10n.itemBang(l10n.success),
+              l10n.submissionPending,
               style: Theme.of(context).textTheme.headline5,
             ),
             const SizedBox(
               height: Dims.medium,
             ),
             Text(
-              l10n.thankYouForSupportingCommunity,
+              l10n.submissionPendingDescription,
               style:
                   Theme.of(context).textTheme.bodyText1!.copyWith(height: 1.5),
               textAlign: TextAlign.center,
@@ -61,7 +64,7 @@ class SubmissionSuccessView extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text(l10n.done)),
+                child: Text(l10n.gotIt)),
             const Spacer(),
           ],
         ),

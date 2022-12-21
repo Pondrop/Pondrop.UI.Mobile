@@ -62,13 +62,14 @@ void main() {
     });
 
     test('Submit submission', () async {
-      final visitId = const Uuid().v4();
       final template = FakeStoreSubmissionTemplates.fakeTemplates().first;
-      final submission =
-          template.toStoreSubmission(campaignId: const Uuid().v4());
+      final submission = template.toStoreSubmission(
+          storeVisit: FakeStoreVisit.fakeVist(),
+          store: FakeStore.fakeStore(),
+          campaignId: const Uuid().v4());
       submission.steps.first.fields.first.results.first.stringValue =
           'test value';
-      final submissionDto = submission.toSubmissionResultDto(visitId);
+      final submissionDto = submission.toSubmissionResultDto();
 
       when(() => submissionApi.submitResult(user.accessToken, submissionDto))
           .thenAnswer((invocation) => Future.value(null));
@@ -76,19 +77,25 @@ void main() {
       final repo = SubmissionRepository(
           userRepository: userRepository, submissionApi: submissionApi);
 
-      expect(repo.submissions, emits(submission));
+      expect(
+          repo.submissions,
+          emits(predicate<StoreSubmission>((i) =>
+              i.templateId == submission.templateId &&
+              i.dateCreated == submission.dateCreated &&
+              i.submitted)));
 
-      final result = await repo.submitResult(visitId, submission);
+      final result = await repo.submitResult(submission);
 
       expect(result, true);
     });
 
     test('Submit submission - failure returns false', () async {
-      final visitId = const Uuid().v4();
       final template = FakeStoreSubmissionTemplates.fakeTemplates().first;
-      final submission =
-          template.toStoreSubmission(campaignId: const Uuid().v4());
-      final submissionDto = submission.toSubmissionResultDto(visitId);
+      final submission = template.toStoreSubmission(
+          storeVisit: FakeStoreVisit.fakeVist(),
+          store: FakeStore.fakeStore(),
+          campaignId: const Uuid().v4());
+      final submissionDto = submission.toSubmissionResultDto();
 
       when(() => submissionApi.submitResult(user.accessToken, submissionDto))
           .thenThrow(Exception());
@@ -96,7 +103,7 @@ void main() {
       final repo = SubmissionRepository(
           userRepository: userRepository, submissionApi: submissionApi);
 
-      final result = await repo.submitResult(visitId, submission);
+      final result = await repo.submitResult(submission);
 
       expect(result, false);
     });

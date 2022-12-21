@@ -78,6 +78,7 @@ class CampaignDto {
       focusName.isNotEmpty &&
       submissionCount < requiredSubmissions &&
       campaignPublishedDate.isBefore(DateTime.now()) &&
+      campaignStartDate.isBefore(DateTime.now()) &&
       campaignEndDate.isAfter(DateTime.now());
 }
 

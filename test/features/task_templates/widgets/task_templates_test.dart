@@ -35,8 +35,11 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: taskTemplatesBloc,
-          child:
-              Scaffold(body: TaskTemplates(visit: FakeStoreVisit.fakeVist())),
+          child: Scaffold(
+              body: TaskTemplates(
+            visit: FakeStoreVisit.fakeVist(),
+            store: FakeStore.fakeStore(),
+          )),
         ),
       );
 
@@ -61,8 +64,11 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: taskTemplatesBloc,
-          child:
-              Scaffold(body: TaskTemplates(visit: FakeStoreVisit.fakeVist())),
+          child: Scaffold(
+              body: TaskTemplates(
+            visit: FakeStoreVisit.fakeVist(),
+            store: FakeStore.fakeStore(),
+          )),
         ),
       );
 
@@ -88,8 +94,11 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: taskTemplatesBloc,
-          child:
-              Scaffold(body: TaskTemplates(visit: FakeStoreVisit.fakeVist())),
+          child: Scaffold(
+              body: TaskTemplates(
+            visit: FakeStoreVisit.fakeVist(),
+            store: FakeStore.fakeStore(),
+          )),
         ),
       );
 

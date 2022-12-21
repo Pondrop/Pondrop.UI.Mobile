@@ -8,6 +8,7 @@ class StoreReportListItem extends StatelessWidget {
       required this.title,
       this.subTitle = '',
       this.photoCount = 0,
+      this.hasError = false,
       this.onTap});
 
   final IconData iconData;
@@ -16,6 +17,8 @@ class StoreReportListItem extends StatelessWidget {
   final String subTitle;
 
   final int photoCount;
+
+  final bool hasError;
 
   final GestureTapCallback? onTap;
 
@@ -78,7 +81,7 @@ class StoreReportListItem extends StatelessWidget {
                         ],
                       ),
                     ),
-                    if (photoCount > 0)
+                    if (photoCount > 0 && !hasError)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(
                             Dims.small, 0, Dims.medium, 0),
@@ -91,7 +94,15 @@ class StoreReportListItem extends StatelessWidget {
                             Text('$photoCount'),
                           ],
                         ),
-                      )
+                      ),
+                    if (hasError)
+                      const Padding(
+                        padding: Dims.smallEdgeInsets,
+                        child: Icon(
+                          Icons.warning_amber_outlined,
+                          color: PondropColors.warningColor,
+                        ),
+                      ),
                   ],
                 ))),
       ),

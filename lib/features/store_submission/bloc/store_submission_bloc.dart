@@ -34,7 +34,7 @@ class StoreSubmissionBloc
 
   void _onResult(StoreSubmissionFieldResultEvent event,
       Emitter<StoreSubmissionState> emit) {
-    final newSubmission = state.submission.copy();
+    final newSubmission = state.submission.copyWith();
     final step = newSubmission.steps[state.currentStepIdx];
     final field = step.fields.firstWhere((e) => e.fieldId == event.fieldId);
 
@@ -98,11 +98,9 @@ class StoreSubmissionBloc
         break;
       case SubmissionStatus.submitting:
         final position = await _locationRepository.getCurrentPosition();
-        if (await _submissionRepository.submitResult(
-            state.visit.id,
-            state.submission.copy(
-                location: LatLng(
-                    position?.latitude ?? 0, position?.longitude ?? 0)))) {
+        if (await _submissionRepository.submitResult(state.submission.copyWith(
+            location:
+                LatLng(position?.latitude ?? 0, position?.longitude ?? 0)))) {
           emit(state.copyWith(action: SubmissionStatus.submitSuccess));
         } else {
           emit(state.copyWith(action: SubmissionStatus.submitFailed));

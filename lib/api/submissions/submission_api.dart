@@ -131,10 +131,16 @@ class SubmissionApi {
 
     final headers = _getCommonHeaders(accessToken);
 
-    final response = await _httpClient.post(
-        Uri.https(_baseUrl, '/Submission/create'),
-        headers: headers,
-        body: json);
+    final response = await _httpClient
+        .post(Uri.https(_baseUrl, '/Submission/create'),
+            headers: headers, body: json)
+        .timeout(
+      // cancel submission if > 10secs
+      const Duration(milliseconds: 10000),
+      onTimeout: () {
+        return http.Response('Timeout', 408);
+      },
+    );
 
     response.ensureSuccessStatusCode();
   }

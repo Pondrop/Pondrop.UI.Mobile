@@ -10,9 +10,11 @@ import 'package:pondrop/features/store_submission/store_submission.dart';
 import '../bloc/task_templates_bloc.dart';
 
 class TaskTemplates extends StatelessWidget {
-  const TaskTemplates({Key? key, required this.visit}) : super(key: key);
+  const TaskTemplates({Key? key, required this.visit, required this.store})
+      : super(key: key);
 
   final StoreVisitDto visit;
+  final Store store;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,8 @@ class TaskTemplates extends StatelessWidget {
                       context: context,
                       builder: (context) => StoreSubmissionPage(
                         visit: visit,
-                        submission: item.toStoreSubmission(campaignId: null),
+                        submission: item.toStoreSubmission(
+                            storeVisit: visit, store: store, campaignId: null),
                       ),
                       enableDrag: false,
                     );

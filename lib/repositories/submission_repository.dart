@@ -107,23 +107,27 @@ class SubmissionRepository {
     return null;
   }
 
-  Future<bool> submitResult(
-      String storeVisitId, StoreSubmission submission) async {
+  Future<bool> submitResult(StoreSubmission submission) async {
+    if (submission.submitted) return true;
+
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
-      final result = submission.toSubmissionResultDto(storeVisitId);
+      var result = submission.result;
 
-      for (final field in result.steps.expand((e) => e.fields)) {
-        for (var i = 0; i < field.values.length; i++) {
-          final result = field.values[i];
-          final path = result.photoPathValue ?? '';
-          if (path.isNotEmpty) {
-            final file = File(path);
-            if (await file.exists()) {
-              result.photoFileName =
-                  '${field.templateFieldId}_${i + 1}${p.extension(path)}';
-              result.photoBase64 = _toBase64(await _readFileBytes(file));
+      if (result == null) {
+        result = submission.toSubmissionResultDto();
+        for (final field in result.steps.expand((e) => e.fields)) {
+          for (var i = 0; i < field.values.length; i++) {
+            final result = field.values[i];
+            final path = result.photoPathValue ?? '';
+            if (path.isNotEmpty) {
+              final file = File(path);
+              if (await file.exists()) {
+                result.photoFileName =
+                    '${field.templateFieldId}_${i + 1}${p.extension(path)}';
+                result.photoBase64 = _toBase64(await _readFileBytes(file));
+              }
             }
           }
         }
@@ -131,10 +135,14 @@ class SubmissionRepository {
 
       try {
         await _submissionApi.submitResult(user!.accessToken, result);
-        _controller.add(submission.copy(submittedDate: DateTime.now()));
+        _controller.add(
+            submission.copyWith(result: result, submittedDate: DateTime.now()));
         return true;
       } catch (e) {
         log(e.toString());
+
+        _controller.add(submission.copyWith(result: result));
+        return false;
       }
     }
 

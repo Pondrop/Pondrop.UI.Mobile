@@ -253,5 +253,32 @@
                 "type": "int"
             }
         }
+    },    
+    "taskHasntBeenSumbitted": "This task hasn't been submitted.",
+    "@taskHasntBeenSumbitted": {},
+    "tapSendToRetry": "Tap 'Send' to retry.",
+    "@tapSendToRetry": {},
+    "sendPendingTasks": "Send Pending Tasks",
+    "@sendPendingTasks": {},
+    "submissionsPendingAvoidLosingData": "You have submissions pending. To avoid losing the data, ensure you have network connectivity and click Send.",
+    "@submissionsPendingAvoidLosingData": {},   
+    "ignore": "Ignore",
+    "@ignore": {},
+    "submissionPending": "Submission Pending",
+    "@submissionPending": {},
+    "submissionPendingDescription": "Your task cannot be submitted right now. We've saved the task details in your Store activity. Once you're finished shopping, please try re-submitting the task.",
+    "@submissionPendingDescription": {},
+    "gotIt": "Got it",
+    "@gotIt": {},
+    "sendingItemOfItemSubmissions": "Sending {current} of {total} submissions",
+    "@sendingItemOfItemSubmissions": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
     }
 }

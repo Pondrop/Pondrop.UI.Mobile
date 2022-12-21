@@ -7,6 +7,8 @@ import 'package:pondrop/features/dialogs/dialogs.dart';
 import 'package:pondrop/features/search_items/search_items.dart';
 import 'package:pondrop/features/search_items/widgets/search_list_item.dart';
 import 'package:pondrop/features/store_submission/widgets/fields/fields.dart';
+import 'package:pondrop/features/store_submission/widgets/submission_failed_view.dart';
+import 'package:pondrop/models/models.dart';
 import 'package:pondrop/models/store_submission.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/features/store_submission/store_submission.dart';
@@ -14,6 +16,7 @@ import 'package:pondrop/features/store_submission/widgets/camera_access_view.dar
 import 'package:pondrop/features/store_submission/widgets/submission_success_view.dart';
 import 'package:pondrop/features/store_submission/widgets/submission_summary_list_view.dart';
 import 'package:tuple/tuple.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../fake_data/fake_data.dart';
 import '../../../helpers/helpers.dart';
@@ -33,6 +36,7 @@ void main() {
   late ProductRepository productRepository;
 
   late StoreVisitDto visit;
+  late Store store;
   late StoreSubmission submission;
 
   setUp(() {
@@ -41,10 +45,25 @@ void main() {
     submissionRepository = MockSubmissionRepository();
     productRepository = MockProductRepository();
 
-    visit = FakeStoreVisit.fakeVist();
+    store = const Store(
+        id: 'ID',
+        retailer: 'Superfoods',
+        name: 'Seaford',
+        displayName: 'Superfoods Seaford',
+        address: '123 St, City',
+        latitude: 0,
+        longitude: 0,
+        lastKnowDistanceMetres: -1);
+    visit = StoreVisitDto(
+        id: const Uuid().v4(),
+        storeId: store.id,
+        userId: const Uuid().v4(),
+        latitude: 0,
+        longitude: 0);
+
     submission = FakeStoreSubmissionTemplates.fakeTemplates()
         .first
-        .toStoreSubmission(campaignId: null);
+        .toStoreSubmission(storeVisit: visit, store: store, campaignId: null);
   });
 
   group('Store Submission Page', () {
@@ -207,7 +226,7 @@ void main() {
           .thenAnswer((_) => Future.value(null));
       when(() => locationRepository.getCurrentPosition())
           .thenAnswer((_) => Future.value(null));
-      when(() => submissionRepository.submitResult(visit.id, submission))
+      when(() => submissionRepository.submitResult(submission))
           .thenAnswer((_) => Future.value(true));
 
       await tester.pumpApp(MultiRepositoryProvider(
@@ -234,8 +253,7 @@ void main() {
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
       await tester.pumpAndSettle();
 
-      verify(() => submissionRepository.submitResult(visit.id, submission))
-          .called(1);
+      verify(() => submissionRepository.submitResult(submission)).called(1);
       expect(find.byType(SubmissionSuccessView), findsOneWidget);
     });
 
@@ -251,7 +269,7 @@ void main() {
           .thenAnswer((_) => Future.value(null));
       when(() => locationRepository.getCurrentPosition())
           .thenAnswer((_) => Future.value(null));
-      when(() => submissionRepository.submitResult(visit.id, submission))
+      when(() => submissionRepository.submitResult(submission))
           .thenAnswer((_) => Future.value(false));
 
       await tester.pumpApp(MultiRepositoryProvider(
@@ -278,9 +296,8 @@ void main() {
       await tester.tap(find.byKey(StoreSubmissionPage.nextButtonKey));
       await tester.pumpAndSettle();
 
-      verify(() => submissionRepository.submitResult(visit.id, submission))
-          .called(1);
-      expect(find.byType(SubmissionSummaryListView), findsOneWidget);
+      verify(() => submissionRepository.submitResult(submission)).called(1);
+      expect(find.byType(SubmissionFailedView), findsOneWidget);
     });
 
     testWidgets('product search', (tester) async {
