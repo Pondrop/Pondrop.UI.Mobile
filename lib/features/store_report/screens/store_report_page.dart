@@ -48,17 +48,21 @@ class StoreReportPage extends StatelessWidget {
         submissionRepository:
             RepositoryProvider.of<SubmissionRepository>(context),
       ),
-      child: BlocListener<StoreReportBloc, StoreReportState>(
-          listener: (context, state) {
-            if (state.status == StoreReportStatus.failed) {
-              showDialog(
-                context: context,
-                builder: (_) => _storeVisitFailed(context),
-              );
-            }
-          },
-          listenWhen: (previous, current) => previous.status != current.status,
-          child: BlocListener<StoreReportBloc, StoreReportState>(
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<StoreReportBloc, StoreReportState>(
+              listener: (context, state) {
+                if (state.status == StoreReportStatus.failed) {
+                  showDialog(
+                    context: context,
+                    builder: (_) => _storeVisitFailed(context),
+                  );
+                }
+              },
+              listenWhen: (previous, current) =>
+                  previous.status != current.status &&
+                  current.status == StoreReportStatus.failed),
+          BlocListener<StoreReportBloc, StoreReportState>(
               listener: (context, state) {
                 final loadingOverlay = LoadingOverlay.of(context);
                 if (state.pendingState.submitting) {
@@ -98,127 +102,127 @@ class StoreReportPage extends StatelessWidget {
                 }
               },
               listenWhen: (previous, current) =>
-                  previous.pendingState != current.pendingState,
-              child: Builder(builder: (context) {
-                return WillPopScope(
-                  onWillPop: () async {
-                    final navigator = Navigator.of(context);
+                  previous.pendingState != current.pendingState),
+        ],
+        child: Scaffold(
+          appBar: AppBar(
+              elevation: 0,
+              title: Text(
+                l10n.storeActivity,
+                style: PondropStyles.appBarTitleTextStyle,
+              ),
+              centerTitle: true),
+          body: Builder(builder: (context) {
+            return WillPopScope(
+                onWillPop: () async {
+                  if (await _canPop(context)) {
                     final bloc = context.read<StoreReportBloc>();
+                    Navigator.pop(
+                        context,
+                        bloc.state.submissions
+                            .where((e) => e.submitted)
+                            .map((e) => e.toTaskIdentifier(bloc.state.store.id))
+                            .toList());
+                  }
 
-                    final retrySubmissions = bloc.state.hasPendingSubmissions &&
-                        (await showDialog<bool>(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (_) =>
-                                    _retryFailedSubmissionsDialog(context)) ??
-                            true);
-
-                    if (!retrySubmissions) {
-                      navigator.pop(bloc.state.submissions
-                          .where((e) => e.submitted)
-                          .map((e) => e.toTaskIdentifier(bloc.state.store.id))
-                          .toList());
-                    } else {
-                      bloc.add(const StoreReportRetryPending());
-                    }
-
-                    return false;
-                  },
-                  child: Scaffold(
-                    appBar: AppBar(
-                        elevation: 0,
-                        title: Text(
-                          l10n.storeActivity,
-                          style: PondropStyles.appBarTitleTextStyle,
-                        ),
-                        centerTitle: true),
-                    body: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Material(
-                            color:
-                                Theme.of(context).appBarTheme.backgroundColor,
-                            elevation: 4,
-                            child: _storeHeader(context),
-                          ),
-                          Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
-                            child: Expanded(
-                              child: BlocBuilder<StoreReportBloc,
-                                  StoreReportState>(builder: (context, state) {
-                                return RefreshIndicator(
-                                  onRefresh: () {
-                                    final bloc = context.read<StoreReportBloc>()
-                                      ..add(const StoreReportRefreshed());
-                                    return bloc.stream.firstWhere((e) =>
-                                        e.status != StoreReportStatus.loading);
-                                  },
-                                  child: ListView.builder(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 0, vertical: Dims.small),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      switch (_groups[index]) {
-                                        case StoreReportGroups.newSubmissions:
-                                          return _newSubmissionsTile(
-                                              context, state);
-                                        case StoreReportGroups
-                                            .completedSubmissions:
-                                          return _completedSubmissionsTile(
-                                              context, state);
-                                        default:
-                                          return const SizedBox.shrink();
-                                      }
-                                    },
-                                    itemCount: _groups.length,
-                                  ),
-                                );
-                              }),
-                            ),
-                          )
-                        ]),
-                    floatingActionButton:
-                        BlocBuilder<StoreReportBloc, StoreReportState>(
-                      builder: (context, state) {
-                        switch (state.status) {
-                          case StoreReportStatus.loading:
-                            return ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        PondropColors.primaryLightColor,
-                                    foregroundColor: Colors.black),
-                                onPressed: () {},
-                                child: const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(),
-                                ));
-                          case StoreReportStatus.loaded:
-                            return ElevatedButton.icon(
-                              icon: const Icon(Icons.add),
-                              label:
-                                  Text(l10n.addItem(l10n.task.toLowerCase())),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      PondropColors.primaryLightColor,
-                                  foregroundColor: Colors.black),
-                              onPressed: () async {
-                                await Navigator.of(context).push(
-                                    TaskTemplatesPage.route(
-                                        state.visit!, state.store));
+                  return false;
+                },
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Material(
+                        color: Theme.of(context).appBarTheme.backgroundColor,
+                        elevation: 4,
+                        child: _storeHeader(context),
+                      ),
+                      Theme(
+                        data: Theme.of(context)
+                            .copyWith(dividerColor: Colors.transparent),
+                        child: Expanded(
+                          child: BlocBuilder<StoreReportBloc, StoreReportState>(
+                              builder: (context, state) {
+                            return RefreshIndicator(
+                              onRefresh: () {
+                                final bloc = context.read<StoreReportBloc>()
+                                  ..add(const StoreReportRefreshed());
+                                return bloc.stream.firstWhere((e) =>
+                                    e.status != StoreReportStatus.loading);
                               },
+                              child: ListView.builder(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: Dims.small),
+                                itemBuilder: (BuildContext context, int index) {
+                                  switch (_groups[index]) {
+                                    case StoreReportGroups.newSubmissions:
+                                      return _newSubmissionsTile(
+                                          context, state);
+                                    case StoreReportGroups.completedSubmissions:
+                                      return _completedSubmissionsTile(
+                                          context, state);
+                                    default:
+                                      return const SizedBox.shrink();
+                                  }
+                                },
+                                itemCount: _groups.length,
+                              ),
                             );
-                          default:
-                            return const SizedBox.shrink();
-                        }
-                      },
-                    ),
-                  ),
-                );
-              }))),
+                          }),
+                        ),
+                      )
+                    ]));
+          }),
+          floatingActionButton: BlocBuilder<StoreReportBloc, StoreReportState>(
+            builder: (context, state) {
+              switch (state.status) {
+                case StoreReportStatus.loading:
+                  return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: PondropColors.primaryLightColor,
+                          foregroundColor: Colors.black),
+                      onPressed: () {},
+                      child: const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(),
+                      ));
+                case StoreReportStatus.loaded:
+                  return ElevatedButton.icon(
+                    icon: const Icon(Icons.add),
+                    label: Text(l10n.addItem(l10n.task.toLowerCase())),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: PondropColors.primaryLightColor,
+                        foregroundColor: Colors.black),
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                          TaskTemplatesPage.route(state.visit!, state.store));
+                    },
+                  );
+                default:
+                  return const SizedBox.shrink();
+              }
+            },
+          ),
+        ),
+      ),
     );
+  }
+
+  Future<bool> _canPop(BuildContext context) async {
+    final bloc = context.read<StoreReportBloc>();
+    final retrySubmissions = bloc.state.hasPendingSubmissions &&
+        (await showDialog<bool>(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => _retryFailedSubmissionsDialog(context)) ??
+            true);
+
+    if (!retrySubmissions) {
+      return true;
+    }
+
+    bloc.add(const StoreReportRetryPending());
+    return false;
   }
 
   Widget _storeHeader(BuildContext context) {

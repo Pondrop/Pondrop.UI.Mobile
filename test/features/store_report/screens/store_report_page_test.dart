@@ -77,8 +77,16 @@ void main() {
 
     testWidgets('renders a Store Report page with Submissions', (tester) async {
       final templates = FakeStoreSubmissionTemplates.fakeTemplates();
-      final submission = templates.first.toStoreSubmission(
-          storeVisit: storeVisitDto, store: store, campaignId: null);
+      final submission = templates.first
+          .toStoreSubmission(
+              storeVisit: storeVisitDto, store: store, campaignId: null)
+          .copyWith(
+              result: SubmissionResultDto(
+                  submissionTemplateId: templates.first.id,
+                  storeVisitId: storeVisitDto.id,
+                  completedDate: DateTime.now(),
+                  steps: const []),
+              submittedDate: DateTime.now());
 
       when(() => submissionRepository.fetchTemplates())
           .thenAnswer((invocation) => Future.value(templates));
@@ -105,6 +113,7 @@ void main() {
 
       expect(find.text(store.displayName), findsOneWidget);
       expect(find.text(submission.title), findsOneWidget);
+      expect(find.byIcon(Icons.warning_amber_outlined), findsNothing);
     });
 
     testWidgets('renders a Store Report page with Campaigns', (tester) async {
