@@ -43,6 +43,7 @@ class SubmissionSummaryListView extends StatelessWidget {
                   child: Padding(
                       padding: Dims.xSmallEdgeInsets,
                       child: Text(submission.result!.completedDate
+                          .toLocal()
                           .toShortString(context))));
             }
 

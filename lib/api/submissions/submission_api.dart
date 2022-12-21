@@ -127,9 +127,6 @@ class SubmissionApi {
 
   Future<void> submitResult(
       String accessToken, SubmissionResultDto result) async {
-    final die = http.Response('Timeout', 408);
-    die.ensureSuccessStatusCode();
-
     final json = jsonEncode(result);
 
     final headers = _getCommonHeaders(accessToken);
