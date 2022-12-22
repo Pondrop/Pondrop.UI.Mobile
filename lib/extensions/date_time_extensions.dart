@@ -4,19 +4,19 @@ import 'package:intl/intl.dart';
 extension DateTimeExtensions on DateTime {
   DateTime date() {
     if (isUtc) {
-      return DateTime.utc(year, day, month);
+      return DateTime.utc(year, month, day);
     } else {
-      return DateTime(year, day, month);
+      return DateTime(year, month, day);
     }
   }
 
   Duration time() {
     return Duration(
-      minutes: minute,
-      seconds: second,
-      milliseconds: millisecond,
-      microseconds: microsecond
-    );
+        hours: hour,
+        minutes: minute,
+        seconds: second,
+        milliseconds: millisecond,
+        microseconds: microsecond);
   }
 
   String toShortString(BuildContext context) {

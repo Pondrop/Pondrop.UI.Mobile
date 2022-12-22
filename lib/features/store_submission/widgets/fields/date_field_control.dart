@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:pondrop/features/global/global.dart';
 import 'package:pondrop/features/styles/styles.dart';
 import 'package:pondrop/models/models.dart';
 
@@ -47,11 +48,13 @@ class _DateFieldControlState extends State<DateFieldControl> {
               if (widget.field.mandatory && widget.field.results.first.isEmpty)
                 const RequiredView(),
               const Icon(Icons.calendar_month_outlined),
-              const SizedBox(width: Dims.small,),
+              const SizedBox(
+                width: Dims.small,
+              ),
             ],
           )),
       controller: textController,
-      focusNode: _AlwaysDisabledFocusNode(),
+      focusNode: AlwaysDisabledFocusNode(),
       readOnly: true,
       onTap: !widget.readOnly
           ? () async {
@@ -64,7 +67,8 @@ class _DateFieldControlState extends State<DateFieldControl> {
               final bloc = context.read<StoreSubmissionBloc>();
               final locale = Localizations.localeOf(context);
 
-              final initialDate = widget.field.results.first.dateTimeValue ?? DateTime.now();
+              final initialDate =
+                  widget.field.results.first.dateTimeValue ?? DateTime.now();
 
               final dateValue = await showDatePicker(
                   context: context,
@@ -86,9 +90,4 @@ class _DateFieldControlState extends State<DateFieldControl> {
           : null,
     );
   }
-}
-
-class _AlwaysDisabledFocusNode extends FocusNode {
-  @override
-  bool get hasFocus => false;
 }
