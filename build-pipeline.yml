@@ -21,15 +21,15 @@ jobs:
           channel: 'stable'
           version: 'latest'
 
-      # - task: FlutterBuild@0
-      #   displayName: "Android Flutter Build"
-      #   inputs:
-      #     target: 'aab'
-      #     projectDirectory: '.'
-      #     buildNumber: '$(Build.BuildId)'
-      #     buildName: '1.0.$(Build.BuildId)'
-      #     entryPoint: 'lib/main.dart'
-      #     extraArgs: '--no-tree-shake-icons'
+      - task: FlutterBuild@0
+        displayName: "Android Flutter Build"
+        inputs:
+          target: 'aab'
+          projectDirectory: '.'
+          buildNumber: '$(Build.BuildId)'
+          buildName: '1.0.$(Build.BuildId)'
+          entryPoint: 'lib/main.dart'
+          extraArgs: '--no-tree-shake-icons'
 
       - task: ios-bundle-version@1
         displayName: 'Set iOS version numbers'
@@ -53,24 +53,24 @@ jobs:
         inputs:
           projectDirectory: '.'
       
-      # - task: AndroidSigning@2
-      #   inputs:
-      #     apkFiles: '**/*.aab'
-      #     jarsign: true
-      #     jarsignerKeystoreFile: 'key.jks'
-      #     jarsignerKeystorePassword: 'pondrop1!'
-      #     jarsignerKeystoreAlias: 'pondrop'
-      #     jarsignerKeyPassword: 'pondrop1!'
-      #     # The two Arguments working there magic:
-      #     jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
-      #     zipalign: true     
+      - task: AndroidSigning@2
+        inputs:
+          apkFiles: '**/*.aab'
+          jarsign: true
+          jarsignerKeystoreFile: 'key.jks'
+          jarsignerKeystorePassword: 'pondrop1!'
+          jarsignerKeystoreAlias: 'pondrop'
+          jarsignerKeyPassword: 'pondrop1!'
+          # The two Arguments working there magic:
+          jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
+          zipalign: true     
             
-      # - task: CopyFiles@2
-      #   displayName: 'Copy Android build package'
-      #   inputs:
-      #     contents: '**/*.aab'
-      #     targetFolder: '$(build.artifactStagingDirectory)'
-      #     OverWrite: true   
+      - task: CopyFiles@2
+        displayName: 'Copy Android build package'
+        inputs:
+          contents: '**/*.aab'
+          targetFolder: '$(build.artifactStagingDirectory)'
+          OverWrite: true   
 
       - task: InstallAppleCertificate@2
         displayName: "Install Apple p12 cert"
