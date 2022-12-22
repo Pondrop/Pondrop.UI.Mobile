@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pondrop/api/submission_api.dart';
+import 'package:pondrop/features/global/global.dart';
 import 'package:pondrop/models/models.dart';
 
 import '../../bloc/store_submission_bloc.dart';
@@ -18,7 +19,7 @@ class TextFieldControl extends StatelessWidget {
     return TextFormField(
       key: Key(field.fieldId),
       enableInteractiveSelection: !readOnly,
-      focusNode: readOnly ? _AlwaysDisabledFocusNode() : null,
+      focusNode: readOnly ? AlwaysDisabledFocusNode() : null,
       readOnly: readOnly,
       initialValue: field.toResultString(),
       decoration: InputDecoration(
@@ -41,9 +42,4 @@ class TextFieldControl extends StatelessWidget {
       },
     );
   }
-}
-
-class _AlwaysDisabledFocusNode extends FocusNode {
-  @override
-  bool get hasFocus => false;
 }

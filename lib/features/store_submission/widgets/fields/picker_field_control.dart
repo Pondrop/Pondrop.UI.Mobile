@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/features/global/global.dart';
 import 'package:pondrop/models/models.dart';
 
 import '../../bloc/store_submission_bloc.dart';
@@ -43,7 +44,7 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
             : null,
       ),
       controller: textController,
-      focusNode: _AlwaysDisabledFocusNode(),
+      focusNode: AlwaysDisabledFocusNode(),
       readOnly: true,
       onTap: !widget.readOnly
           ? () {
@@ -63,8 +64,8 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
                     ))));
                 final currentIdx =
                     widget.field.results.first.stringValue?.isNotEmpty == true
-                        ? widget.field.pickerValues!
-                                .indexOf(widget.field.results.first.stringValue!) +
+                        ? widget.field.pickerValues!.indexOf(
+                                widget.field.results.first.stringValue!) +
                             1
                         : 0;
 
@@ -100,9 +101,4 @@ class _PickerFieldControlState extends State<PickerFieldControl> {
           : null,
     );
   }
-}
-
-class _AlwaysDisabledFocusNode extends FocusNode {
-  @override
-  bool get hasFocus => false;
 }

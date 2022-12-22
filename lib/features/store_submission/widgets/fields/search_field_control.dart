@@ -62,7 +62,7 @@ class SearchFieldControl extends StatelessWidget {
                 )
               : null,
         ),
-        focusNode: _AlwaysDisabledFocusNode(),
+        focusNode: AlwaysDisabledFocusNode(),
         readOnly: true,
       ));
 
@@ -128,8 +128,12 @@ class SearchFieldControl extends StatelessWidget {
                                   context: context,
                                   builder: (context) => kDebugMode
                                       ? CreateProductPage(
-                                          name: name.isEmpty ? 'Test product' : name,
-                                          barcode: barcode.isEmpty ? '9323222999992' : barcode,
+                                          name: name.isEmpty
+                                              ? 'Test product'
+                                              : name,
+                                          barcode: barcode.isEmpty
+                                              ? '9323222999992'
+                                              : barcode,
                                         )
                                       : CreateProductPage(
                                           name: name,
@@ -182,9 +186,4 @@ class SearchFieldControl extends StatelessWidget {
             ? 0
             : (field.maxValue ?? 0) + 1));
   }
-}
-
-class _AlwaysDisabledFocusNode extends FocusNode {
-  @override
-  bool get hasFocus => false;
 }
