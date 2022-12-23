@@ -53,17 +53,17 @@ jobs:
         inputs:
           projectDirectory: '.'
       
-      - task: AndroidSigning@2
-        inputs:
-          apkFiles: '**/*.aab'
-          jarsign: true
-          jarsignerKeystoreFile: 'key.jks'
-          jarsignerKeystorePassword: 'pondrop1!'
-          jarsignerKeystoreAlias: 'pondrop'
-          jarsignerKeyPassword: 'pondrop1!'
-          # The two Arguments working there magic:
-          jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
-          zipalign: true     
+      # - task: AndroidSigning@2
+      #   inputs:
+      #     apkFiles: '**/*.aab'
+      #     jarsign: true
+      #     jarsignerKeystoreFile: 'key.jks'
+      #     jarsignerKeystorePassword: 'pondrop1!'
+      #     jarsignerKeystoreAlias: 'pondrop'
+      #     jarsignerKeyPassword: 'pondrop1!'
+      #     # The two Arguments working there magic:
+      #     jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
+      #     zipalign: true     
             
       - task: CopyFiles@2
         displayName: 'Copy Android build package'
