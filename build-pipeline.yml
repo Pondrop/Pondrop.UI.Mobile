@@ -63,7 +63,16 @@ jobs:
       #     jarsignerKeyPassword: 'pondrop1!'
       #     # The two Arguments working there magic:
       #     jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
-      #     zipalign: true     
+      #     zipalign: true
+
+      - task: AndroidSigning@3
+        displayName: "Android Signing"
+        inputs:
+          apkFiles: '**/*.aab'
+          apksignerKeystoreFile: key.jks 
+          apksignerKeystorePassword: $(androidKeystorePassword)
+          apksignerKeystoreAlias: '$(androidKeystoreAlias)'
+          apksignerKeyPassword: '$(androidKeystorePassword)'
             
       - task: CopyFiles@2
         displayName: 'Copy Android build package'
