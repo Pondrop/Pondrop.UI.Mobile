@@ -30,6 +30,16 @@ jobs:
           buildName: '1.0.$(Build.BuildId)'
           entryPoint: 'lib/main.dart'
           extraArgs: '--no-tree-shake-icons'
+          
+      # - task: AndroidSigning@3
+      #   displayName: "Android Signing"
+      #   inputs:
+      #     apkFiles: '**/*.aab'
+      #     apksignerKeystoreFile: key.jks 
+      #     apksignerKeystorePassword: $(androidKeystorePassword)
+      #     apksignerKeystoreAlias: '$(androidKeystoreAlias)'
+      #     apksignerKeyPassword: '$(androidKeystorePassword)'
+      #     apksignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
 
       - task: ios-bundle-version@1
         displayName: 'Set iOS version numbers'
@@ -51,28 +61,7 @@ jobs:
       - task: FlutterTest@0
         displayName: "Run Flutter Tests"
         inputs:
-          projectDirectory: '.'
-      
-      # - task: AndroidSigning@2
-      #   inputs:
-      #     apkFiles: '**/*.aab'
-      #     jarsign: true
-      #     jarsignerKeystoreFile: 'key.jks'
-      #     jarsignerKeystorePassword: 'pondrop1!'
-      #     jarsignerKeystoreAlias: 'pondrop'
-      #     jarsignerKeyPassword: 'pondrop1!'
-      #     # The two Arguments working there magic:
-      #     jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
-      #     zipalign: true
-
-      - task: AndroidSigning@3
-        displayName: "Android Signing"
-        inputs:
-          apkFiles: '**/*.aab'
-          apksignerKeystoreFile: key.jks 
-          apksignerKeystorePassword: $(androidKeystorePassword)
-          apksignerKeystoreAlias: '$(androidKeystoreAlias)'
-          apksignerKeyPassword: '$(androidKeystorePassword)'
+          projectDirectory: '.'           
             
       - task: CopyFiles@2
         displayName: 'Copy Android build package'
