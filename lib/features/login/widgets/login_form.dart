@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pondrop/features/global/global.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/features/login/login.dart';
 import 'package:pondrop/features/styles/styles.dart';
@@ -40,6 +42,10 @@ class LoginForm extends StatelessWidget {
             ),
             const SizedBox(height: Dims.xLarge),
             _emailField(),
+            const SizedBox(
+              height: Dims.medium,
+            ),
+            const TsAndCs(),
             //const Padding(padding: EdgeInsets.all(Dims.medium)),
             //_passwordField(),
             //const Padding(padding: EdgeInsets.all(Dims.medium)),
@@ -118,25 +124,24 @@ class LoginForm extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         } else if (formStatus is FormSubmissionStatusSuccess) {
           return const Center(
-            child: Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 48,
-            )
-          );
+              child: Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 48,
+          ));
         } else {
           return SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               key: submitButtonKey,
               onPressed: !state.isEmailEmpty
-                ? () {
-                    final currentState = _formKey.currentState;
-                    if (currentState != null && currentState.validate()) {
-                      context.read<LoginBloc>().add(const LoginSubmitted());
+                  ? () {
+                      final currentState = _formKey.currentState;
+                      if (currentState != null && currentState.validate()) {
+                        context.read<LoginBloc>().add(const LoginSubmitted());
+                      }
                     }
-                  }
-                : null,
+                  : null,
               child: Text(l10n.loginPageButtonText),
             ),
           );

@@ -280,5 +280,9 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "disclaimer": "Disclaimer",
+    "@disclaimer": {},
+    "termsAndConditions": "Terms and Conditions",
+    "@termsAndConditions": {}
 }
