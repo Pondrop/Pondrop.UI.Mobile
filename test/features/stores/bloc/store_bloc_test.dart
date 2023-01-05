@@ -41,7 +41,7 @@ void main() {
     test('emit stores when StoreFetched', () async {
       final stores = [FakeStore.fakeStore()];
 
-      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+      when(() => locationRepository.getCurrentPosition())
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
@@ -64,7 +64,7 @@ void main() {
     test('emit stores when StoreFetched set hasReachedMax', () async {
       final stores = [FakeStore.fakeStore()];
 
-      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+      when(() => locationRepository.getCurrentPosition())
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
@@ -114,7 +114,7 @@ void main() {
     test('emit stores when StoreRefreshed', () async {
       final stores = [FakeStore.fakeStore()];
 
-      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+      when(() => locationRepository.getCurrentPosition())
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
@@ -163,7 +163,7 @@ void main() {
           .whereType<ProductCampaignDto>()
           .toList();
 
-      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+      when(() => locationRepository.getCurrentPosition())
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
@@ -200,7 +200,7 @@ void main() {
           .whereType<ProductCampaignDto>()
           .toList();
 
-      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+      when(() => locationRepository.getCurrentPosition())
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
