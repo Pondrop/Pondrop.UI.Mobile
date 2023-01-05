@@ -46,8 +46,7 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
     }
 
     try {
-      final position = await _locationRepository
-          .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
+      final position = await _locationRepository.getCurrentPosition();
       final stores = await _storeService.fetchStores(searchTerm, 0, position);
 
       emit(

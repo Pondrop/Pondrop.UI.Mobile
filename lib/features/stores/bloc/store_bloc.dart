@@ -42,8 +42,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
       emit(state.copyWith(status: StoreStatus.loading));
 
       final position = state.stores.isEmpty
-          ? await _locationRepository
-              .getLastKnownOrCurrentPosition(const Duration(minutes: 1))
+          ? await _locationRepository.getCurrentPosition()
           : state.position;
       final storesResult =
           await _storeRepository.fetchStores('', state.stores.length, position);
@@ -76,8 +75,7 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     emit(state.copyWith(status: StoreStatus.loading));
 
     try {
-      final position = await _locationRepository
-          .getLastKnownOrCurrentPosition(const Duration(minutes: 1));
+      final position = await _locationRepository.getCurrentPosition();
       final storesResult = await _storeRepository.fetchStores('', 0, position);
 
       emit(
