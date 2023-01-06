@@ -45,13 +45,12 @@ void main() {
 
     test('emit stores when Search Text is changed', () async {
       const query = 'search term';
-      final stores = [ FakeStore.fakeStore() ];
+      final stores = [FakeStore.fakeStore()];
 
-      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+      when(() => locationRepository.getCurrentPosition())
           .thenAnswer((invocation) => Future<Position?>.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
-      
 
       final bloc = SearchStoreBloc(
         storeRepository: storeRepository,
@@ -71,7 +70,7 @@ void main() {
       const query = 'search term';
 
       when(() => locationRepository.getLastKnownOrCurrentPosition())
-          .thenThrow(Exception());      
+          .thenThrow(Exception());
 
       final bloc = SearchStoreBloc(
         storeRepository: storeRepository,

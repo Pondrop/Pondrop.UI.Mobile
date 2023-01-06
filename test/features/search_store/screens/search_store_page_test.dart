@@ -40,17 +40,18 @@ void main() {
     testWidgets('renders a SearchStoreListItem', (tester) async {
       const query = 'Flutter';
 
-      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
-          .thenAnswer((_) => Future.value(null));
-      when(() => storeRepository.fetchStores(query, 0, any()))
-          .thenAnswer((_) => Future.value(Tuple2([FakeStore.fakeStore()], true)));
-      
+      when(() => locationRepository.getCurrentPosition())
+          .thenAnswer((invocation) => Future.value(null));
+      when(() => storeRepository.fetchStores(query, 0, any())).thenAnswer(
+          (_) => Future.value(Tuple2([FakeStore.fakeStore()], true)));
+
       await tester.pumpApp(MultiRepositoryProvider(providers: [
         RepositoryProvider.value(value: storeRepository),
         RepositoryProvider.value(value: locationRepository),
       ], child: const SearchStorePage()));
 
-      await tester.enterText(find.byKey(SearchStorePage.searchTextFieldKey), query);
+      await tester.enterText(
+          find.byKey(SearchStorePage.searchTextFieldKey), query);
       await tester.pumpAndSettle();
 
       verify(() => storeRepository.fetchStores(query, 0, any())).called(1);
@@ -62,17 +63,18 @@ void main() {
     testWidgets('renders a Empty list', (tester) async {
       const query = 'Flutter';
 
-      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+      when(() => locationRepository.getCurrentPosition())
           .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(query, 0, any()))
           .thenAnswer((_) => Future.value(const Tuple2([], false)));
-      
+
       await tester.pumpApp(MultiRepositoryProvider(providers: [
         RepositoryProvider.value(value: storeRepository),
         RepositoryProvider.value(value: locationRepository),
       ], child: const SearchStorePage()));
 
-      await tester.enterText(find.byKey(SearchStorePage.searchTextFieldKey), query);
+      await tester.enterText(
+          find.byKey(SearchStorePage.searchTextFieldKey), query);
       await tester.pumpAndSettle();
 
       verify(() => storeRepository.fetchStores(query, 0, any())).called(1);

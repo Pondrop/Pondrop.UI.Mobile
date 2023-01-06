@@ -83,7 +83,7 @@ void main() {
       when(() => authenticationBloc.stream).thenAnswer(
           (_) => Stream<AuthenticationState>.fromIterable([authState]));
       when(() => authenticationBloc.state).thenReturn(authState);
-      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+      when(() => locationRepository.getCurrentPosition())
           .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any())).thenAnswer(
           (_) => Future.value(Tuple2([FakeStore.fakeStore()], false)));
@@ -128,7 +128,7 @@ void main() {
       when(() => authenticationBloc.stream).thenAnswer(
           (_) => Stream<AuthenticationState>.fromIterable([authState]));
       when(() => authenticationBloc.state).thenReturn(authState);
-      when(() => locationRepository.getLastKnownOrCurrentPosition(any()))
+      when(() => locationRepository.getCurrentPosition())
           .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
