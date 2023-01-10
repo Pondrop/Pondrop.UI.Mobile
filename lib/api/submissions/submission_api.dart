@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:cancellation_token_http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:pondrop/api/common/common.dart';
 import 'package:pondrop/extensions/extensions.dart';
@@ -131,16 +131,13 @@ class SubmissionApi {
 
     final headers = _getCommonHeaders(accessToken);
 
-    final response = await _httpClient
-        .post(Uri.https(_baseUrl, '/Submission/create'),
-            headers: headers, body: json)
-        .timeout(
-      // cancel submission if > 10secs
-      const Duration(milliseconds: 10000),
-      onTimeout: () {
-        return http.Response('Timeout', 408);
-      },
-    );
+    final ct = http.TimeoutCancellationToken(const Duration(seconds: 10));
+
+    final response = await _httpClient.post(
+        Uri.https(_baseUrl, '/Submission/create'),
+        headers: headers,
+        body: json,
+        cancellationToken: ct);
 
     response.ensureSuccessStatusCode();
   }

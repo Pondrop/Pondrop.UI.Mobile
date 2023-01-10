@@ -32,6 +32,7 @@ dependencies:
   bloc: ^8.1.0
   bloc_concurrency: ^0.2.0
   
+  cancellation_token_http: ^1.2.0
   collection: ^1.16.0
 
   # The following adds the Cupertino Icons font to your application.
