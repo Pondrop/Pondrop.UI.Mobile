@@ -16,21 +16,21 @@ class TsAndCs extends StatelessWidget {
             text: TextSpan(
               children: [
                 TextSpan(
-                    text: l10n.disclaimer,
-                    style: _linkStyle(context: context),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        Navigator.of(context).push(LocalWebPage.route(
-                            l10n.disclaimer, 'assets/disclaimer.html'));
-                      }),
-                const TextSpan(text: '\n\n'),
-                TextSpan(
                     text: l10n.termsAndConditions,
                     style: _linkStyle(context: context),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         Navigator.of(context).push(LocalWebPage.route(
                             l10n.termsAndConditions, 'assets/terms.html'));
+                      }),
+                const TextSpan(text: '\n\n'),
+                TextSpan(
+                    text: l10n.privacyPolicy,
+                    style: _linkStyle(context: context),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.of(context).push(LocalWebPage.route(
+                            l10n.privacyPolicy, 'assets/privacy.html'));
                       }),
               ],
             )));

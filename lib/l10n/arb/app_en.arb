@@ -281,8 +281,8 @@
             }
         }
     },
-    "disclaimer": "Disclaimer",
-    "@disclaimer": {},
-    "termsAndConditions": "Terms and Conditions",
+    "privacyPolicy": "Privacy Policy",
+    "@privacyPolicy": {},
+    "termsAndConditions": "Terms & Conditions",
     "@termsAndConditions": {}
 }

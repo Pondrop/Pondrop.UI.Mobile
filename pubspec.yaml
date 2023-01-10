@@ -105,7 +105,7 @@ flutter:
     - assets/pondrop.svg
     - assets/barcode_scanner.svg
 
-    - assets/disclaimer.html
+    - assets/privacy.html
     - assets/terms.html
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
