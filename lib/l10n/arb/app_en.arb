@@ -280,5 +280,9 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "privacyPolicy": "Privacy Policy",
+    "@privacyPolicy": {},
+    "termsAndConditions": "Terms & Conditions",
+    "@termsAndConditions": {}
 }

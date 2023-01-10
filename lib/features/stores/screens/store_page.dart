@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pondrop/features/app/widgets/loading_overlay.dart';
 import 'package:pondrop/features/authentication/bloc/authentication_bloc.dart';
 import 'package:pondrop/features/barcode_scanner/barcode_scanner.dart';
+import 'package:pondrop/features/global/global.dart';
 import 'package:pondrop/features/stores/widgets/store_list.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/repositories/repositories.dart';
@@ -130,6 +132,9 @@ class StorePage extends StatelessWidget {
                 ],
               ),
             ),
+            const Padding(
+                padding: EdgeInsets.symmetric(vertical: Dims.small),
+                child: TsAndCs()),
             FutureBuilder(
                 future: PackageInfo.fromPlatform(),
                 builder: (context, snapshot) {
