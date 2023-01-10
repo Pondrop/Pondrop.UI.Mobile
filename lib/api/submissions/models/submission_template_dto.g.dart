@@ -14,7 +14,9 @@ SubmissionTemplateDto _$SubmissionTemplateDtoFromJson(
       description: json['description'] as String,
       iconCodePoint: json['iconCodePoint'] as int,
       iconFontFamily: json['iconFontFamily'] as String,
-      manualEnabled: json['isForManualSubmissions'] as bool,
+      status: $enumDecode(_$SubmissionTemplateStatusEnumMap, json['status']),
+      initiatedBy: $enumDecode(
+          _$SubmissionTemplateinitiatedByEnumMap, json['initiatedBy']),
       steps: (json['steps'] as List<dynamic>)
           .map((e) =>
               SubmissionTemplateStepDto.fromJson(e as Map<String, dynamic>))
@@ -29,6 +31,21 @@ Map<String, dynamic> _$SubmissionTemplateDtoToJson(
       'description': instance.description,
       'iconCodePoint': instance.iconCodePoint,
       'iconFontFamily': instance.iconFontFamily,
-      'isForManualSubmissions': instance.manualEnabled,
+      'status': _$SubmissionTemplateStatusEnumMap[instance.status]!,
+      'initiatedBy':
+          _$SubmissionTemplateinitiatedByEnumMap[instance.initiatedBy]!,
       'steps': instance.steps.map((e) => e.toJson()).toList(),
     };
+
+const _$SubmissionTemplateStatusEnumMap = {
+  SubmissionTemplateStatus.unknown: 'unknown',
+  SubmissionTemplateStatus.active: 'active',
+  SubmissionTemplateStatus.inactive: 'inactive',
+};
+
+const _$SubmissionTemplateinitiatedByEnumMap = {
+  SubmissionTemplateinitiatedBy.unknown: 'unknown',
+  SubmissionTemplateinitiatedBy.shopper: 'shopper',
+  SubmissionTemplateinitiatedBy.brand: 'brand',
+  SubmissionTemplateinitiatedBy.pondrop: 'pondrop',
+};
