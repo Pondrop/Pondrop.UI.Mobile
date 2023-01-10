@@ -10,7 +10,8 @@ class FakeStoreSubmissionTemplates {
         description: 'Report low or empty stock levels',
         iconCodePoint: 0xe4ee,
         iconFontFamily: 'MaterialIcons',
-        manualEnabled: true,
+        status: SubmissionTemplateStatus.active,
+        initiatedBy: SubmissionTemplateinitiatedBy.shopper,
         steps: [
           SubmissionTemplateStepDto(
               id: const Uuid().v4(),
