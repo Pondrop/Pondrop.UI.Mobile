@@ -4,6 +4,10 @@ import 'models.dart';
 
 part 'submission_template_dto.g.dart';
 
+enum SubmissionTemplateStatus { unknown, active, inactive }
+
+enum SubmissionTemplateinitiatedBy { unknown, shopper, brand, pondrop }
+
 @JsonSerializable(explicitToJson: true)
 class SubmissionTemplateDto {
   SubmissionTemplateDto({
@@ -12,7 +16,8 @@ class SubmissionTemplateDto {
     required this.description,
     required this.iconCodePoint,
     required this.iconFontFamily,
-    required this.manualEnabled,
+    required this.status,
+    required this.initiatedBy,
     required this.steps,
   });
 
@@ -27,11 +32,17 @@ class SubmissionTemplateDto {
   @JsonKey(name: 'iconFontFamily')
   final String iconFontFamily;
 
-  @JsonKey(name: 'isForManualSubmissions')
-  final bool manualEnabled;
+  @JsonKey(name: 'status')
+  final SubmissionTemplateStatus status;
+  @JsonKey(name: 'initiatedBy')
+  final SubmissionTemplateinitiatedBy initiatedBy;
 
   @JsonKey(name: 'steps')
   final List<SubmissionTemplateStepDto> steps;
+
+  bool get manualEnabled =>
+      status == SubmissionTemplateStatus.active &&
+      initiatedBy == SubmissionTemplateinitiatedBy.shopper;
 
   static SubmissionTemplateDto fromJson(Map<String, dynamic> json) =>
       _$SubmissionTemplateDtoFromJson(json);
