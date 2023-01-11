@@ -107,31 +107,30 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
     }
 
     var success = false;
+
     final idx = state.items.indexWhere((e) => e.id == event.id);
-    final item = state.items[idx];
 
-    try {
-      emit(state.copyWith(status: ShoppingListStatus.success));
+    if (idx >= 0) {
+      final orig = List<ShoppingListItem>.from(state.items);
 
-      success =
-          await _shoppingRepository.deleteItemFromList(state.list.id, event.id);
+      final newItems = List<ShoppingListItem>.from(state.items)
+        ..removeWhere((e) => e.id == event.id);
 
-      if (success) {
+      try {
         emit(state.copyWith(
-            items: List.from(state.items)..removeWhere((e) => e.id == event.id),
-            status: ShoppingListStatus.success));
+            items: newItems, status: ShoppingListStatus.success));
+        success = await _shoppingRepository.deleteItemFromList(
+            state.list.id, event.id);
+      } catch (e) {
+        log(e.toString());
       }
-    } catch (e) {
-      log(e.toString());
-    }
 
-    if (!success) {
-      emit(state.copyWith(
-          items: idx < state.items.length
-              ? (List.from(state.items)..insert(idx, item))
-              : (List.from(state.items)..add(item)),
-          status: ShoppingListStatus.failure,
-          action: ShoppingListAction.delete));
+      if (!success) {
+        emit(state.copyWith(
+            items: orig,
+            status: ShoppingListStatus.failure,
+            action: ShoppingListAction.delete));
+      }
     }
   }
 
@@ -144,28 +143,27 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
     }
 
     var success = false;
+
     final idx = state.items.indexWhere((e) => e.id == event.id);
 
     if (idx >= 0) {
-      emit(state.copyWith(status: ShoppingListStatus.success));
+      final orig = List<ShoppingListItem>.from(state.items);
 
       final item = state.items[idx];
+      final newItems = List<ShoppingListItem>.from(state.items)
+        ..replaceRange(idx, idx + 1, [item.copyWith(checked: event.checked)]);
 
       try {
+        emit(state.copyWith(
+            items: newItems, status: ShoppingListStatus.success));
         success = await _shoppingRepository.checkItem(state.list.id, event.id);
-
-        if (success) {
-          emit(state.copyWith(
-              items: List<ShoppingListItem>.from(state.items)
-                ..replaceRange(
-                    idx, idx + 1, [item.copyWith(checked: event.checked)])));
-        }
       } catch (e) {
         log(e.toString());
       }
 
       if (!success) {
         emit(state.copyWith(
+            items: orig,
             status: ShoppingListStatus.failure,
             action: ShoppingListAction.checked));
       }
