@@ -120,31 +120,25 @@ class ShoppingBloc extends Bloc<ShoppingEvent, ShoppingState> {
     }
 
     var success = false;
+
     final idx = state.lists.indexWhere((e) => e.id == event.id);
 
     if (idx >= 0) {
-      emit(state.copyWith(status: ShoppingStatus.success));
+      final orig = List<ShoppingList>.from(state.lists);
 
-      final list = state.lists[idx];
+      final newLists = List<ShoppingList>.from(state.lists)
+        ..removeWhere((e) => e.id == event.id);
 
       try {
+        emit(state.copyWith(lists: newLists, status: ShoppingStatus.success));
         success = await _shoppingRepository.deleteList(event.id);
-
-        if (success) {
-          emit(state.copyWith(
-              lists: List.from(state.lists)
-                ..removeWhere((e) => e.id == event.id),
-              status: ShoppingStatus.success));
-        }
       } catch (e) {
         log(e.toString());
       }
 
       if (!success) {
         emit(state.copyWith(
-            lists: idx < state.lists.length
-                ? (List.from(state.lists)..insert(idx, list))
-                : (List.from(state.lists)..add(list)),
+            lists: orig,
             status: ShoppingStatus.failure,
             action: ShoppingAction.delete));
       }
