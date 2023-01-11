@@ -34,6 +34,10 @@ class App extends StatelessWidget {
         RepositoryProvider.value(value: locationRepository),
         RepositoryProvider.value(value: storeRepository),
         RepositoryProvider(
+            create: (context) => ShoppingRepository(
+                userRepository:
+                    RepositoryProvider.of<UserRepository>(context))),
+        RepositoryProvider(
             create: (context) => SubmissionRepository(
                 userRepository:
                     RepositoryProvider.of<UserRepository>(context))),
@@ -116,6 +120,9 @@ class _AppViewState extends State<AppView> {
                       color: PondropColors.primaryColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w500))),
+          checkboxTheme: CheckboxThemeData(
+              checkColor:
+                  MaterialStateProperty.all(PondropColors.primaryLightColor)),
           inputDecorationTheme: const InputDecorationTheme(
             floatingLabelStyle: TextStyle(color: PondropColors.primaryColor),
             focusedBorder: OutlineInputBorder(

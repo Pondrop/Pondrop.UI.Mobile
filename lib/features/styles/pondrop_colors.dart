@@ -12,4 +12,6 @@ class PondropColors {
 
   static const badgeBgBlueColor = Color(0xFFC4E7FF);
   static const badgeFgBlueColor = Color(0xFF00668A);
+
+  static const bottomSheetBgColor = Color(0xFFDDE3EA);
 }

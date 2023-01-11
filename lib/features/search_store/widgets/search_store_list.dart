@@ -83,19 +83,16 @@ class NoResultsFound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            l10n.noResultsFound,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-          ),
-          Padding(
-              padding: Dims.xSmallTopEdgeInsets,
-              child: Center(child: Text(l10n.tryAgainUsingOtherSearchTerms))),
-        ]);
+    return Column(children: [
+      Text(
+        l10n.noResultsFound,
+        style: PondropStyles.titleTextStyle,
+      ),
+      const SizedBox(
+        height: Dims.small,
+      ),
+      Text(l10n.tryAgainUsingOtherSearchTerms),
+    ]);
   }
 }
 

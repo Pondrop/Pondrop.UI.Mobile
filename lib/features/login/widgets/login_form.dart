@@ -50,6 +50,16 @@ class LoginForm extends StatelessWidget {
             //_passwordField(),
             //const Padding(padding: EdgeInsets.all(Dims.medium)),
             const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: Dims.medium, vertical: Dims.small),
+              child: Center(
+                child: Text(
+                  l10n.agreeToTandCs,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
             _loginButton(),
           ],
         ),
