@@ -284,5 +284,77 @@
     "privacyPolicy": "Privacy Policy",
     "@privacyPolicy": {},
     "termsAndConditions": "Terms & Conditions",
-    "@termsAndConditions": {}
+    "@termsAndConditions": {},
+    "offers": "Offers",
+    "@offers": {},
+    "createFirstList": "Create your first list",
+    "@createFirstList": {},
+    "addListToStart": "Add a list to get started",
+    "@addListToStart": {},
+    "myLists": "My lists",
+    "@myLists": {},
+    "list": "List",
+    "@list": {},
+    "newItem": "New {item}",
+    "@newItem": {
+        "placeholders": {
+            "item": {
+                "type": "String"
+            }
+        }
+    },
+    "name": "Name",
+    "@name": {},
+    "itemItem": "{item} item",
+    "@itemItem": {
+        "placeholders": {
+            "item": {
+                "type": "int"
+            }
+        }
+    },
+    "itemItems": "{item} items",
+    "@itemItems": {
+        "placeholders": {
+            "item": {
+                "type": "int"
+            }
+        }
+    },
+    "needSomethingShops": "Need something from the shops?",
+    "@needSomethingShops": {},
+    "searchToAddToShoppingList": "Search for item below to add it to your shopping list",
+    "@searchToAddToShoppingList": {},
+    "egItem": "e.g. {item}",
+    "@egItem": {
+        "placeholders": {
+            "item": {
+                "type": "String"
+            }
+        }
+    },
+    "milk": "Milk",
+    "@milk": {},
+    "refreshing": "Refreshing",
+    "@refreshing": {},
+    "addingItem": "Adding {item}",
+    "@addingItem": {
+        "placeholders": {
+            "item": {
+                "type": "String"
+            }
+        }
+    },
+    "removingItem": "Removing {item}",
+    "@removingItem": {
+        "placeholders": {
+            "item": {
+                "type": "String"
+            }
+        }
+    },
+    "adding": "Adding",
+    "@adding": {},
+    "removing": "Removing",
+    "@removing": {}
 }

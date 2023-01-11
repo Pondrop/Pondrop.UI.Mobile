@@ -104,7 +104,9 @@ flutter:
     - assets/camera_access.svg
     - assets/hand_success.svg
     - assets/pondrop.svg
-    - assets/barcode_scanner.svg
+    - assets/barcode_scanner.svg    
+    - assets/shopping_list.svg
+    - assets/shopping.svg
 
     - assets/privacy.html
     - assets/terms.html
