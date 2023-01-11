@@ -52,6 +52,8 @@ class _LocalWebPageState extends State<LocalWebPage> {
 
   @override
   Widget build(BuildContext context) {
+    _controller.setBackgroundColor(Theme.of(context).scaffoldBackgroundColor);
+
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: SafeArea(
