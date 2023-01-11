@@ -109,6 +109,9 @@ class ShoppingPage extends StatelessWidget {
       case ShoppingAction.delete:
         actionString = l10n.removingItem(l10n.list);
         break;
+      case ShoppingAction.reorder:
+        actionString = l10n.reorderingItem(l10n.list);
+        break;
       default:
         return;
     }

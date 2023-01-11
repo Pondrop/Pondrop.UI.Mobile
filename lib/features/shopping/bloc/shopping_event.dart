@@ -31,8 +31,8 @@ class ListDeleted extends ShoppingEvent {
 }
 
 class ListReordered extends ShoppingEvent {
-  const ListReordered({required this.id, required this.sortOrder});
+  const ListReordered({required this.oldIdx, required this.newIdx});
 
-  final String id;
-  final int sortOrder;
+  final int oldIdx;
+  final int newIdx;
 }

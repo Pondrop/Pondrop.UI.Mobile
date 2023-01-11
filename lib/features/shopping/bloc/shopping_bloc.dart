@@ -104,7 +104,7 @@ class ShoppingBloc extends Bloc<ShoppingEvent, ShoppingState> {
       final idx = state.lists.indexWhere((e) => e.id == event.list.id);
       if (idx >= 0) {
         emit(state.copyWith(
-            lists: (List<ShoppingList>.from(state.lists)..[0] = event.list)));
+            lists: (List<ShoppingList>.from(state.lists)..[idx] = event.list)));
       }
     } catch (e) {
       log(e.toString());
@@ -154,5 +154,36 @@ class ShoppingBloc extends Bloc<ShoppingEvent, ShoppingState> {
   Future<void> _onListReordered(
     ListReordered event,
     Emitter<ShoppingState> emit,
-  ) async {}
+  ) async {
+    final orig = List<ShoppingList>.from(state.lists);
+
+    final newLists = List<ShoppingList>.from(state.lists);
+    final list = newLists.removeAt(event.oldIdx);
+    newLists.insert(
+        event.newIdx > event.oldIdx ? event.newIdx - 1 : event.newIdx, list);
+
+    final orderMap = <String, int>{};
+
+    for (var i = 0; i < newLists.length; i++) {
+      final l = newLists[i];
+      newLists[i] = l.copyWith(sortOrder: i);
+      orderMap[l.id] = i;
+    }
+
+    var success = false;
+
+    try {
+      emit(state.copyWith(lists: newLists, status: ShoppingStatus.success));
+      success = await _shoppingRepository.updateListSortOrders(orderMap);
+    } catch (e) {
+      log(e.toString());
+    }
+
+    if (!success) {
+      emit(state.copyWith(
+          lists: orig,
+          status: ShoppingStatus.failure,
+          action: ShoppingAction.reorder));
+    }
+  }
 }

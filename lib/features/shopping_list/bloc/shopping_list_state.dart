@@ -8,6 +8,7 @@ enum ShoppingListAction {
   create,
   delete,
   checked,
+  reorder,
   categorySearch
 }
 

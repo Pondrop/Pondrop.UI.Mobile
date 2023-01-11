@@ -34,10 +34,10 @@ class ItemChecked extends ShoppingListEvent {
 }
 
 class ItemReordered extends ShoppingListEvent {
-  const ItemReordered({required this.id, required this.sortOrder});
+  const ItemReordered({required this.oldIdx, required this.newIdx});
 
-  final String id;
-  final int sortOrder;
+  final int oldIdx;
+  final int newIdx;
 }
 
 class ItemCategorySearchTextChanged extends ShoppingListEvent {

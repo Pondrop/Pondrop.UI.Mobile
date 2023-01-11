@@ -253,21 +253,43 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
       child: TextField(
         controller: _searchTextController,
         decoration: InputDecoration(
-          border: const OutlineInputBorder(
-            borderSide: BorderSide(width: 0, style: BorderStyle.none),
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(width: 0, style: BorderStyle.none),
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-          ),
-          filled: true,
-          fillColor: Theme.of(context).scaffoldBackgroundColor,
-          hintText: _currentExtent == _maxExtent
-              ? l10n.egItem(l10n.milk)
-              : l10n.itemEllipsis(l10n.search),
-          prefixIcon: const Icon(Icons.search),
-        ),
+            border: const OutlineInputBorder(
+              borderSide: BorderSide(width: 0, style: BorderStyle.none),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(width: 0, style: BorderStyle.none),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            filled: true,
+            fillColor: Theme.of(context).scaffoldBackgroundColor,
+            hintText: _currentExtent == _maxExtent
+                ? l10n.egItem(l10n.milk)
+                : l10n.itemEllipsis(l10n.search),
+            prefixIcon: const Icon(
+              Icons.search,
+              color: Colors.grey,
+            ),
+            suffixIcon: BlocBuilder<ShoppingListBloc, ShoppingListState>(
+                buildWhen: (previous, current) =>
+                    previous.categorySearchText != current.categorySearchText,
+                builder: (context, state) {
+                  if (state.categorySearchText.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return IconButton(
+                    icon: const Icon(
+                      Icons.clear,
+                      color: Colors.black,
+                    ),
+                    onPressed: (() {
+                      final bloc = context.read<ShoppingListBloc>();
+                      bloc.add(const ItemCategorySearchTextChanged(text: ''));
+                      _searchTextController.text = '';
+                    }),
+                  );
+                })),
         onChanged: (value) {
           final bloc = context.read<ShoppingListBloc>();
           bloc.add(ItemCategorySearchTextChanged(text: value));
@@ -331,6 +353,9 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
         break;
       case ShoppingListAction.delete:
         actionString = l10n.removing;
+        break;
+      case ShoppingListAction.reorder:
+        actionString = l10n.reordering;
         break;
       default:
         return;

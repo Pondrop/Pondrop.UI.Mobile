@@ -175,7 +175,38 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
   Future<void> _onItemReordered(
     ItemReordered event,
     Emitter<ShoppingListState> emit,
-  ) async {}
+  ) async {
+    final orig = List<ShoppingListItem>.from(state.items);
+
+    final newItems = List<ShoppingListItem>.from(state.items);
+    final list = newItems.removeAt(event.oldIdx);
+    newItems.insert(
+        event.newIdx > event.oldIdx ? event.newIdx - 1 : event.newIdx, list);
+
+    final orderMap = <String, int>{};
+
+    for (var i = 0; i < newItems.length; i++) {
+      final l = newItems[i];
+      newItems[i] = l.copyWith(sortOrder: i);
+      orderMap[l.id] = i;
+    }
+
+    var success = false;
+
+    try {
+      emit(state.copyWith(items: newItems, status: ShoppingListStatus.success));
+      success = await _shoppingRepository.updateListSortOrders(orderMap);
+    } catch (e) {
+      log(e.toString());
+    }
+
+    if (!success) {
+      emit(state.copyWith(
+          items: orig,
+          status: ShoppingListStatus.failure,
+          action: ShoppingListAction.reorder));
+    }
+  }
 
   Future<void> _onItemCategorySearchTextChanged(
       ItemCategorySearchTextChanged event,

@@ -2,12 +2,7 @@ part of 'shopping_bloc.dart';
 
 enum ShoppingStatus { initial, loading, success, failure }
 
-enum ShoppingAction {
-  none,
-  refresh,
-  create,
-  delete,
-}
+enum ShoppingAction { none, refresh, create, delete, reorder }
 
 class ShoppingState extends Equatable {
   const ShoppingState({

@@ -142,4 +142,10 @@ class ShoppingRepository {
 
     return false;
   }
+
+  Future<bool> updateItemSortOrders(
+      String listId, Map<String, int> itemIdToSortOrder) async {
+    await Future.delayed(const Duration(milliseconds: 350));
+    return true;
+  }
 }

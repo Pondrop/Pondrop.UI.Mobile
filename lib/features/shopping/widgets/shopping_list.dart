@@ -32,15 +32,16 @@ class ShoppingList extends StatelessWidget {
             return _empty();
           }
 
-          return _shoppingList(state);
+          return _shoppingList(context: context, state: state);
         },
       ),
     );
   }
 
-  Widget _shoppingList(ShoppingState state) {
+  Widget _shoppingList(
+      {required BuildContext context, required ShoppingState state}) {
     return Scrollbar(
-      child: ListView.builder(
+      child: ReorderableListView.builder(
         padding: const EdgeInsets.fromLTRB(0, 15, 5, 10),
         itemBuilder: (BuildContext context, int index) {
           final list = state.lists[index];
@@ -61,6 +62,10 @@ class ShoppingList extends StatelessWidget {
           );
         },
         itemCount: state.lists.length,
+        onReorder: (oldIndex, newIndex) {
+          final bloc = context.read<ShoppingBloc>();
+          bloc.add(ListReordered(oldIdx: oldIndex, newIdx: newIndex));
+        },
       ),
     );
   }

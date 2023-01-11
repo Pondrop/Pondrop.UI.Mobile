@@ -353,8 +353,20 @@
             }
         }
     },
+    "reorderingItem": "Reordering {item}",
+    "@reorderingItem": {
+        "placeholders": {
+            "item": {
+                "type": "String"
+            }
+        }
+    },
     "adding": "Adding",
     "@adding": {},
     "removing": "Removing",
-    "@removing": {}
+    "@removing": {},
+    "reordering": "Reordering",
+    "@reordering": {},
+    "agreeToTandCs": "By clicking Continue, you agree to our Terms and Conditions and Privacy Policy.",
+    "@agreeToTandCs": {}    
 }
