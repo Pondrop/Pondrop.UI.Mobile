@@ -11,11 +11,11 @@ ShoppingListDto _$ShoppingListDtoFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       name: json['name'] as String,
       type: $enumDecode(_$ShoppingListTypeEnumMap, json['shoppingListType']),
-      storeIds: (json['selectedStoreIds'] as List<dynamic>)
-          .map((e) => e as String)
+      stores: (json['stores'] as List<dynamic>)
+          .map((e) => ShoppingListStoreDto.fromJson(e as Map<String, dynamic>))
           .toList(),
-      sharedListShopperIds: (json['sharedListShopperIds'] as List<dynamic>)
-          .map((e) => e as String)
+      sharedListShoppers: (json['sharedListShoppers'] as List<dynamic>)
+          .map((e) => SharedShopperDto.fromJson(e as Map<String, dynamic>))
           .toList(),
       listItemIds: (json['listItemIds'] as List<dynamic>)
           .map((e) => e as String)
@@ -30,8 +30,8 @@ Map<String, dynamic> _$ShoppingListDtoToJson(ShoppingListDto instance) =>
       'id': instance.id,
       'name': instance.name,
       'shoppingListType': _$ShoppingListTypeEnumMap[instance.type]!,
-      'selectedStoreIds': instance.storeIds,
-      'sharedListShopperIds': instance.sharedListShopperIds,
+      'stores': instance.stores,
+      'sharedListShoppers': instance.sharedListShoppers,
       'listItemIds': instance.listItemIds,
       'sortOrder': instance.sortOrder,
       'createdUtc': instance.createdUtc.toIso8601String(),

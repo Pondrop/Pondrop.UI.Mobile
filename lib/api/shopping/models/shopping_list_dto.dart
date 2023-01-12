@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pondrop/api/shopping/models/shared_shopper_dto.dart';
+import 'package:pondrop/api/shopping/models/shopping_list_store_dto.dart';
 
 part 'shopping_list_dto.g.dart';
 
@@ -10,8 +12,8 @@ class ShoppingListDto {
     required this.id,
     required this.name,
     required this.type,
-    required this.storeIds,
-    required this.sharedListShopperIds,
+    required this.stores,
+    required this.sharedListShoppers,
     required this.listItemIds,
     required this.sortOrder,
     required this.createdUtc,
@@ -26,10 +28,10 @@ class ShoppingListDto {
   @JsonKey(name: 'shoppingListType')
   final ShoppingListType type;
 
-  @JsonKey(name: 'selectedStoreIds')
-  final List<String> storeIds;
-  @JsonKey(name: 'sharedListShopperIds')
-  final List<String> sharedListShopperIds;
+  @JsonKey(name: 'stores')
+  final List<ShoppingListStoreDto> stores;
+  @JsonKey(name: 'sharedListShoppers')
+  final List<SharedShopperDto> sharedListShoppers;
   @JsonKey(name: 'listItemIds')
   final List<String> listItemIds;
 

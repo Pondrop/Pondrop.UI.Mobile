@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 
@@ -70,17 +69,15 @@ class ShoppingBloc extends Bloc<ShoppingEvent, ShoppingState> {
           await _shoppingRepository.createList(event.name, event.sortOrder);
 
       if (newList != null) {
-        final lists = List<ShoppingList>.from(state.lists)
+        final newLists = List<ShoppingList>.from(state.lists)
           ..insert(event.sortOrder, newList);
 
-        final newOrders = <String, int>{};
-        for (var i = 0; i < lists.length; i++) {
-          lists[i] = lists[i].copyWith(sortOrder: i);
-          newOrders[lists[i].id] = i;
+        for (var i = 0; i < newLists.length; i++) {
+          newLists[i] = newLists[i].copyWith(sortOrder: i);
         }
 
-        await _shoppingRepository.updateListSortOrders(newOrders);
-        emit(state.copyWith(lists: lists, status: ShoppingStatus.success));
+        await _shoppingRepository.updateLists(newLists);
+        emit(state.copyWith(lists: newLists, status: ShoppingStatus.success));
       } else {
         emit(state.copyWith(
             status: ShoppingStatus.failure, action: ShoppingAction.create));
@@ -126,12 +123,12 @@ class ShoppingBloc extends Bloc<ShoppingEvent, ShoppingState> {
     if (idx >= 0) {
       final orig = List<ShoppingList>.from(state.lists);
 
-      final newLists = List<ShoppingList>.from(state.lists)
-        ..removeWhere((e) => e.id == event.id);
+      final list = orig[idx];
+      final newLists = List<ShoppingList>.from(state.lists)..removeAt(idx);
 
       try {
         emit(state.copyWith(lists: newLists, status: ShoppingStatus.success));
-        success = await _shoppingRepository.deleteList(event.id);
+        success = await _shoppingRepository.deleteList(list.id, list.shopperId);
       } catch (e) {
         log(e.toString());
       }
@@ -156,19 +153,18 @@ class ShoppingBloc extends Bloc<ShoppingEvent, ShoppingState> {
     newLists.insert(
         event.newIdx > event.oldIdx ? event.newIdx - 1 : event.newIdx, list);
 
-    final orderMap = <String, int>{};
-
     for (var i = 0; i < newLists.length; i++) {
       final l = newLists[i];
       newLists[i] = l.copyWith(sortOrder: i);
-      orderMap[l.id] = i;
     }
 
     var success = false;
 
     try {
       emit(state.copyWith(lists: newLists, status: ShoppingStatus.success));
-      success = await _shoppingRepository.updateListSortOrders(orderMap);
+      final toUpdate = List<ShoppingList>.from(newLists);
+      toUpdate.removeWhere((e) => orig.contains(e));
+      success = await _shoppingRepository.updateLists(toUpdate);
     } catch (e) {
       log(e.toString());
     }

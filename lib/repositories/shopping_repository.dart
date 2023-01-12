@@ -1,7 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:pondrop/api/shopping_api.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
-import 'package:uuid/uuid.dart';
+import 'package:tuple/tuple.dart';
 
 class ShoppingRepository {
   ShoppingRepository(
@@ -13,34 +14,31 @@ class ShoppingRepository {
   final ShoppingApi _shoppingApi;
 
   Future<List<ShoppingList>> fetchLists() async {
-    await Future.delayed(const Duration(milliseconds: 1250));
-
-    return [
-      ShoppingList(
-        id: const Uuid().v4().toString(),
-        name: "My List 1",
-        itemCount: 0,
-        sortOrder: 0,
-      ),
-      ShoppingList(
-        id: const Uuid().v4().toString(),
-        name: "My List 2",
-        itemCount: 0,
-        sortOrder: 0,
-      )
-    ];
-
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
       final result = await _shoppingApi.fetchLists(user!.accessToken);
 
       final lists = result
+          .where(
+              (e) => e.sharedListShoppers.any((sls) => sls.userId == user.id))
+          .sorted((e1, e2) => e1.sortOrder.compareTo(e2.sortOrder))
           .map((e) => ShoppingList(
                 id: e.id,
+                shopperId: e.sharedListShoppers
+                    .where((e) => e.userId == user.id)
+                    .first
+                    .id,
                 name: e.name,
                 itemCount: e.listItemIds.length,
-                sortOrder: e.sortOrder,
+                stores: e.stores
+                    .sorted((e1, e2) => e1.sortOrder.compareTo(e2.sortOrder))
+                    .map((e) => ShoppingListStore(
+                        storeId: e.storeId,
+                        name: e.name,
+                        sortOrder: e.sortOrder))
+                    .toList(),
+                sortOrder: 0,
               ))
           .toList();
 
@@ -51,25 +49,110 @@ class ShoppingRepository {
   }
 
   Future<ShoppingList?> createList(String name, int sortOrder) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    return ShoppingList(
-      id: const Uuid().v4().toString(),
-      name: name,
-      itemCount: 0,
-      sortOrder: 0,
-    );
-
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
       final result = await _shoppingApi.createList(user!.accessToken, name,
           sortOrder: sortOrder);
 
-      final list = ShoppingList(
+      if (result.sharedListShoppers.any((e) => e.userId == user.id)) {
+        final list = ShoppingList(
+          id: result.id,
+          shopperId: result.sharedListShoppers
+              .where((e) => e.userId == user.id)
+              .first
+              .id,
+          name: result.name,
+          itemCount: result.listItemIds.length,
+          stores: const [],
+          sortOrder: 0,
+        );
+
+        return list;
+      }
+    }
+
+    return null;
+  }
+
+  Future<bool> deleteList(String listId, String sharedShopperId) async {
+    final user = await _userRepository.getUser();
+
+    if (user?.accessToken.isNotEmpty == true &&
+        listId.isNotEmpty &&
+        sharedShopperId.isNotEmpty) {
+      return await _shoppingApi.deleteList(
+          user!.accessToken, sharedShopperId, sharedShopperId);
+    }
+
+    return false;
+  }
+
+  Future<bool> updateLists(List<ShoppingList> lists) async {
+    final user = await _userRepository.getUser();
+
+    if (user?.accessToken.isNotEmpty == true) {
+      final updateMap =
+          <String, Tuple3<String, List<Tuple3<String, String, int>>, int>>{};
+
+      for (final i in lists) {
+        updateMap[i.id] = Tuple3(
+            i.name,
+            i.stores
+                .map((e) => Tuple3(e.storeId, e.name, e.sortOrder))
+                .toList(),
+            i.sortOrder);
+      }
+
+      return await _shoppingApi.updateLists(user!.accessToken, updateMap);
+    }
+
+    return false;
+  }
+
+  Future<List<ShoppingListItem>> fetchListItems(String listId) async {
+    final user = await _userRepository.getUser();
+
+    if (user?.accessToken.isNotEmpty == true && listId.isNotEmpty) {
+      final result = await _shoppingApi.fetchItems(user!.accessToken, listId);
+
+      final lists = result
+          .sorted((e1, e2) => e1.sortOrder.compareTo(e2.sortOrder))
+          .map((e) => ShoppingListItem(
+                id: e.id,
+                listId: listId,
+                categoryId: e.categoryId,
+                name: e.name,
+                storeId: e.storeId,
+                checked: e.checked,
+                sortOrder: e.sortOrder,
+              ))
+          .toList();
+
+      return lists;
+    }
+
+    return const [];
+  }
+
+  Future<ShoppingListItem?> addItemToList(
+      String listId, String categoryId, String name, int sortOrder) async {
+    final user = await _userRepository.getUser();
+
+    if (user?.accessToken.isNotEmpty == true &&
+        listId.isNotEmpty &&
+        categoryId.isNotEmpty) {
+      final result = await _shoppingApi.createListItem(
+          user!.accessToken, listId, name, categoryId,
+          sortOrder: sortOrder);
+
+      final list = ShoppingListItem(
         id: result.id,
+        listId: listId,
+        categoryId: result.categoryId,
         name: result.name,
-        itemCount: result.listItemIds.length,
+        storeId: result.storeId,
+        checked: result.checked,
         sortOrder: result.sortOrder,
       );
 
@@ -79,73 +162,34 @@ class ShoppingRepository {
     return null;
   }
 
-  Future<bool> deleteList(String id) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return true;
-
+  Future<bool> deleteListItem(String listId, String itemId) async {
     final user = await _userRepository.getUser();
 
-    if (user?.accessToken.isNotEmpty == true) {
-      return await _shoppingApi.deleteList(user!.accessToken, id);
+    if (user?.accessToken.isNotEmpty == true &&
+        listId.isNotEmpty &&
+        itemId.isNotEmpty) {
+      return await _shoppingApi.deleteListItem(
+          user!.accessToken, listId, itemId);
     }
 
     return false;
   }
 
-  Future<bool> updateListSortOrders(Map<String, int> listIdToSortOrder) async {
-    await Future.delayed(const Duration(milliseconds: 350));
-    return true;
-  }
-
-  Future<List<ShoppingListItem>> fetchListItems(String listId) async {
-    await Future.delayed(const Duration(milliseconds: 350));
-    return const [];
-  }
-
-  Future<ShoppingListItem> addItemToList(
-      String listId, String categoryId, String name, int sortOrder) async {
-    await Future.delayed(const Duration(milliseconds: 350));
-    return ShoppingListItem(
-        id: const Uuid().v4().toString(),
-        listId: listId,
-        categoryId: categoryId,
-        name: name,
-        sortOrder: 0);
-  }
-
-  Future<bool> checkItem(String listId, String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return true;
-
+  Future<bool> updateListItems(
+      String listId, List<ShoppingListItem> items) async {
     final user = await _userRepository.getUser();
 
-    if (listId.isNotEmpty &&
-        id.isNotEmpty &&
-        user?.accessToken.isNotEmpty == true) {
-      //return await _shoppingApi.deleteListItem(user!.accessToken, listId, id);
+    if (user?.accessToken.isNotEmpty == true && listId.isNotEmpty) {
+      final updateMap = <String, Tuple3<String?, bool, int>>{};
+
+      for (final i in items) {
+        updateMap[i.id] = Tuple3(i.storeId, i.checked, i.sortOrder);
+      }
+
+      return await _shoppingApi.updateListItems(
+          user!.accessToken, listId, updateMap);
     }
 
     return false;
-  }
-
-  Future<bool> deleteItemFromList(String listId, String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return true;
-
-    final user = await _userRepository.getUser();
-
-    if (listId.isNotEmpty &&
-        id.isNotEmpty &&
-        user?.accessToken.isNotEmpty == true) {
-      //return await _shoppingApi.deleteListItem(user!.accessToken, listId, id);
-    }
-
-    return false;
-  }
-
-  Future<bool> updateItemSortOrders(
-      String listId, Map<String, int> itemIdToSortOrder) async {
-    await Future.delayed(const Duration(milliseconds: 350));
-    return true;
   }
 }
