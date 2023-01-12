@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:stream_transform/stream_transform.dart';
@@ -60,8 +58,8 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
         action: ShoppingListAction.refresh));
 
     try {
-      await _shoppingRepository.fetchListItems(state.list.id);
-      emit(state.copyWith(status: ShoppingListStatus.success));
+      final items = await _shoppingRepository.fetchListItems(state.list.id);
+      emit(state.copyWith(items: items, status: ShoppingListStatus.success));
     } catch (e) {
       log(e.toString());
       emit(state.copyWith(
@@ -87,9 +85,15 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
       final newItem = await _shoppingRepository.addItemToList(
           state.list.id, event.categoryId, event.name, event.sortOrder);
 
-      emit(state.copyWith(
-          items: List<ShoppingListItem>.of(state.items)..insert(0, newItem),
-          status: ShoppingListStatus.success));
+      if (newItem != null) {
+        emit(state.copyWith(
+            items: List<ShoppingListItem>.of(state.items)..insert(0, newItem),
+            status: ShoppingListStatus.success));
+      } else {
+        emit(state.copyWith(
+            status: ShoppingListStatus.failure,
+            action: ShoppingListAction.create));
+      }
     } catch (e) {
       log(e.toString());
       emit(state.copyWith(
@@ -119,8 +123,8 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
       try {
         emit(state.copyWith(
             items: newItems, status: ShoppingListStatus.success));
-        success = await _shoppingRepository.deleteItemFromList(
-            state.list.id, event.id);
+        success =
+            await _shoppingRepository.deleteListItem(state.list.id, event.id);
       } catch (e) {
         log(e.toString());
       }
@@ -149,14 +153,15 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
     if (idx >= 0) {
       final orig = List<ShoppingListItem>.from(state.items);
 
-      final item = state.items[idx];
+      final item = state.items[idx].copyWith(checked: event.checked);
       final newItems = List<ShoppingListItem>.from(state.items)
-        ..replaceRange(idx, idx + 1, [item.copyWith(checked: event.checked)]);
+        ..replaceRange(idx, idx + 1, [item]);
 
       try {
         emit(state.copyWith(
             items: newItems, status: ShoppingListStatus.success));
-        success = await _shoppingRepository.checkItem(state.list.id, event.id);
+        success =
+            await _shoppingRepository.updateListItems(state.list.id, [item]);
       } catch (e) {
         log(e.toString());
       }
@@ -181,19 +186,19 @@ class ShoppingListBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
     newItems.insert(
         event.newIdx > event.oldIdx ? event.newIdx - 1 : event.newIdx, list);
 
-    final orderMap = <String, int>{};
-
     for (var i = 0; i < newItems.length; i++) {
       final l = newItems[i];
       newItems[i] = l.copyWith(sortOrder: i);
-      orderMap[l.id] = i;
     }
 
     var success = false;
 
     try {
       emit(state.copyWith(items: newItems, status: ShoppingListStatus.success));
-      success = await _shoppingRepository.updateListSortOrders(orderMap);
+      final toUpdate = List<ShoppingListItem>.from(newItems);
+      toUpdate.removeWhere((e) => orig.contains(e));
+      success =
+          await _shoppingRepository.updateListItems(state.list.id, toUpdate);
     } catch (e) {
       log(e.toString());
     }

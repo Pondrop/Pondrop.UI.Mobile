@@ -19,7 +19,7 @@ class ListItem extends StatelessWidget {
         onTap: () {},
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
-              Dims.xLarge, Dims.medium, 0, Dims.xSmall),
+              Dims.small, Dims.medium, 0, Dims.xSmall),
           child: Column(
             children: [
               Row(
