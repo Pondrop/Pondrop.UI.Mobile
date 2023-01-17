@@ -14,6 +14,7 @@ class FakeStore {
         address: '123 Street, Kingdom',
         latitude: 0,
         longitude: 0,
+        communityStore: false,
         lastKnowDistanceMetres: 150);
   }
 
@@ -40,7 +41,8 @@ class FakeStore {
           postcode: '0000',
           country: 'AUS',
           latitude: -33.86749,
-          longitude: 151.20699));
+          longitude: 151.20699,
+          isCommunityStore: false));
     }
 
     return items;

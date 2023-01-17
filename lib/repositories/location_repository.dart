@@ -16,16 +16,15 @@ class LocationRepository {
       altitude: 0,
       heading: 0,
       speed: 0,
-      speedAccuracy: 0
-    );
+      speedAccuracy: 0);
 
   final GeoCode _geoCode;
-  
+
   Future<bool> isLocationServiceEnabled() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       // Location services are not enabled don't continue
-      // accessing the position and request users of the 
+      // accessing the position and request users of the
       // App to enable the location services.
       return Future.error('Location services are disabled.');
     }
@@ -41,18 +40,17 @@ class LocationRepository {
 
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
-
       }
 
       return permission == LocationPermission.always ||
-             permission == LocationPermission.whileInUse;
+          permission == LocationPermission.whileInUse;
     }
 
     return false;
   }
 
   Future<Position?> getLastKnownPosition() async {
-    if (await checkAndRequestPermissions()) {      
+    if (await checkAndRequestPermissions()) {
       return Geolocator.getLastKnownPosition();
     }
 
@@ -60,26 +58,24 @@ class LocationRepository {
   }
 
   Future<Position?> getCurrentPosition() async {
-    if (await checkAndRequestPermissions()) {      
+    if (await checkAndRequestPermissions()) {
       return Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 5)
-      );
+          desiredAccuracy: LocationAccuracy.high,
+          timeLimit: const Duration(milliseconds: 6500));
     }
 
     return null;
   }
 
-  Future<Position?> getLastKnownOrCurrentPosition([Duration? maxLastKnownAge]) async {
-    if (await checkAndRequestPermissions()) {      
+  Future<Position?> getLastKnownOrCurrentPosition(
+      [Duration? maxLastKnownAge]) async {
+    if (await checkAndRequestPermissions()) {
       final lastKnownPosition = await getLastKnownPosition();
       if (lastKnownPosition != null) {
-        final isTooOld = 
-          maxLastKnownAge != null &&
-          lastKnownPosition.timestamp != null &&
-          DateTime
-            .now()
-            .difference(lastKnownPosition.timestamp!) < maxLastKnownAge;
+        final isTooOld = maxLastKnownAge != null &&
+            lastKnownPosition.timestamp != null &&
+            DateTime.now().difference(lastKnownPosition.timestamp!) <
+                maxLastKnownAge;
 
         if (!isTooOld) {
           return lastKnownPosition;
@@ -94,8 +90,6 @@ class LocationRepository {
 
   Future<Address> getAddress(Position position) async {
     return _geoCode.reverseGeocoding(
-      latitude: position.latitude,
-      longitude: position.longitude
-    );
+        latitude: position.latitude, longitude: position.longitude);
   }
 }

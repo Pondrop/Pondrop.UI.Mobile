@@ -42,7 +42,9 @@ void main() {
       final stores = [FakeStore.fakeStore()];
 
       when(() => locationRepository.getCurrentPosition())
-          .thenAnswer((invocation) => Future<Position?>.value(null));
+          .thenAnswer((invocation) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
 
@@ -65,7 +67,9 @@ void main() {
       final stores = [FakeStore.fakeStore()];
 
       when(() => locationRepository.getCurrentPosition())
-          .thenAnswer((invocation) => Future<Position?>.value(null));
+          .thenAnswer((invocation) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
 
@@ -115,9 +119,14 @@ void main() {
       final stores = [FakeStore.fakeStore()];
 
       when(() => locationRepository.getCurrentPosition())
-          .thenAnswer((invocation) => Future<Position?>.value(null));
+          .thenAnswer((invocation) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
+      when(() =>
+              storeRepository.fetchCommunityStores(any(), any(), any(), top: 1))
+          .thenAnswer((invocation) => Future.value(const Tuple2([], true)));
 
       final bloc = StoreBloc(
         storeRepository: storeRepository,
@@ -164,9 +173,14 @@ void main() {
           .toList();
 
       when(() => locationRepository.getCurrentPosition())
-          .thenAnswer((invocation) => Future<Position?>.value(null));
+          .thenAnswer((invocation) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
+      when(() =>
+              storeRepository.fetchCommunityStores(any(), any(), any(), top: 1))
+          .thenAnswer((invocation) => Future.value(const Tuple2([], true)));
       when(() => submissionRepository.fetchCategoryCampaigns(storeIds))
           .thenAnswer((invocation) => Future.value(categoryCampaigns));
       when(() => submissionRepository.fetchProductCampaigns(storeIds))
@@ -201,9 +215,14 @@ void main() {
           .toList();
 
       when(() => locationRepository.getCurrentPosition())
-          .thenAnswer((invocation) => Future<Position?>.value(null));
+          .thenAnswer((invocation) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
+      when(() =>
+              storeRepository.fetchCommunityStores(any(), any(), any(), top: 1))
+          .thenAnswer((invocation) => Future.value(const Tuple2([], true)));
       when(() => submissionRepository.fetchCategoryCampaigns(storeIds))
           .thenAnswer((invocation) => Future.value(categoryCampaigns));
       when(() => submissionRepository.fetchProductCampaigns(storeIds))

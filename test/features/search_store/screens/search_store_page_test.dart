@@ -42,6 +42,8 @@ void main() {
 
       when(() => locationRepository.getCurrentPosition())
           .thenAnswer((invocation) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(query, 0, any())).thenAnswer(
           (_) => Future.value(Tuple2([FakeStore.fakeStore()], true)));
 
@@ -64,6 +66,8 @@ void main() {
       const query = 'Flutter';
 
       when(() => locationRepository.getCurrentPosition())
+          .thenAnswer((_) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
           .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(query, 0, any()))
           .thenAnswer((_) => Future.value(const Tuple2([], false)));

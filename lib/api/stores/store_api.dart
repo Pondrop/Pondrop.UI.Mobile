@@ -19,21 +19,57 @@ class StoreApi {
     String accessToken, {
     String keyword = '',
     int skipIdx = 0,
+    int top = 0,
     Position? sortByPosition,
+  }) {
+    return _searchStores(accessToken,
+        keyword: keyword,
+        skip: skipIdx,
+        top: top,
+        sortByPosition: sortByPosition,
+        communityStores: false);
+  }
+
+  Future<StoreSearchResultDto> searchCommunityStores(
+    String accessToken, {
+    String keyword = '',
+    int skip = 0,
+    int top = 0,
+    Position? sortByPosition,
+  }) {
+    return _searchStores(accessToken,
+        keyword: keyword,
+        skip: skip,
+        top: top,
+        sortByPosition: sortByPosition,
+        communityStores: true);
+  }
+
+  Future<StoreSearchResultDto> _searchStores(
+    String accessToken, {
+    String keyword = '',
+    int skip = 0,
+    int top = 0,
+    Position? sortByPosition,
+    bool communityStores = false,
   }) async {
-    final queryParams = { 
-      'search' : '$keyword*',
-      '\$skip' : '$skipIdx',
-      '\$orderby' : sortByPosition != null
-        ? 'geo.distance(locationSort, geography\'POINT(${sortByPosition.longitude} ${sortByPosition.latitude})\') asc'
-        : '\$orderby=retailer,name asc&'
+    final queryParams = {
+      'search': keyword.isEmpty ? '*' : keyword,
+      '\$filter': 'isCommunityStore eq $communityStores',
+      '\$skip': '$skip',
+      '\$orderby': sortByPosition != null
+          ? 'geo.distance(locationSort, geography\'POINT(${sortByPosition.longitude} ${sortByPosition.latitude})\') asc'
+          : '\$orderby=retailer,name asc&'
     };
 
-    final uri = Uri.https(_baseUrl, "/Store/search", queryParams);  
+    if (top > 0) {
+      queryParams['\$top'] = '$top';
+    }
+
+    final uri = Uri.https(_baseUrl, "/Store/search", queryParams);
     final headers = _getCommonHeaders(accessToken);
 
-    final response =
-        await _httpClient.get(uri, headers: headers);
+    final response = await _httpClient.get(uri, headers: headers);
 
     response.ensureSuccessStatusCode();
 

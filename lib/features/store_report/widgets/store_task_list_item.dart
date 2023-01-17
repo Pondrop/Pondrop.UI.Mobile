@@ -1,10 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:pondrop/api/submission_api.dart';
+import 'package:pondrop/features/global/global.dart';
 import 'package:pondrop/models/models.dart';
 import 'package:pondrop/features/styles/styles.dart';
-import 'package:tuple/tuple.dart';
 
 class StoreTaskListItem extends StatelessWidget {
   const StoreTaskListItem(
@@ -35,7 +33,7 @@ class StoreTaskListItem extends StatelessWidget {
           .join(', ');
     }
 
-    final safeCodePoint = _safeIconCodePoint(
+    final safeCodePoint = IconValidator.safeIconCodePoint(
         submissionTemplate.iconFontFamily, submissionTemplate.iconCodePoint);
 
     return InkWell(
@@ -111,18 +109,5 @@ class StoreTaskListItem extends StatelessWidget {
                 ),
               ],
             )));
-  }
-
-  Tuple2<String, int> _safeIconCodePoint(String fontFamily, int codePoint) {
-    if (fontFamily.isNotEmpty) {
-      try {
-        String.fromCharCode(codePoint);
-        return Tuple2(fontFamily, codePoint);
-      } catch (e) {
-        log(e.toString());
-      }
-    }
-
-    return Tuple2('MaterialIcons', Icons.inventory_outlined.codePoint);
   }
 }

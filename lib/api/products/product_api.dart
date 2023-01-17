@@ -20,15 +20,14 @@ class ProductApi {
     int skipIdx = 0,
   }) async {
     final queryParams = {
-      'search' : '$keyword*',
-      '\$skip' : '$skipIdx',
+      'search': keyword.isEmpty ? '*' : keyword,
+      '\$skip': '$skipIdx',
     };
 
-    final uri = Uri.https(_baseUrl, "/Product/search", queryParams);  
+    final uri = Uri.https(_baseUrl, "/Product/search", queryParams);
     final headers = _getCommonHeaders(accessToken);
 
-    final response =
-        await _httpClient.get(uri, headers: headers);
+    final response = await _httpClient.get(uri, headers: headers);
 
     response.ensureSuccessStatusCode();
 
@@ -36,20 +35,17 @@ class ProductApi {
   }
 
   Future<ProductSearchResultDto> searchProductsById(
-    String accessToken,
-    Set<String> ids
-  ) async {
+      String accessToken, Set<String> ids) async {
     final queryParams = {
-      'search' : ids.map((i) => '"$i"').join('|'),
-      'searchFields' : 'id',
-      '\$top' : ids.length.toString(),
+      'search': ids.map((i) => '"$i"').join('|'),
+      'searchFields': 'id',
+      '\$top': ids.length.toString(),
     };
 
-    final uri = Uri.https(_baseUrl, "/Product/search", queryParams);  
+    final uri = Uri.https(_baseUrl, "/Product/search", queryParams);
     final headers = _getCommonHeaders(accessToken);
 
-    final response =
-        await _httpClient.get(uri, headers: headers);
+    final response = await _httpClient.get(uri, headers: headers);
 
     response.ensureSuccessStatusCode();
 
@@ -62,19 +58,18 @@ class ProductApi {
     int skipIdx = 0,
   }) async {
     final queryParams = {
-      'search' : '$keyword*',
-      '\$skip' : '$skipIdx',
+      'search': keyword.isEmpty ? '*' : keyword,
+      '\$skip': '$skipIdx',
     };
 
     if (keyword.isEmpty) {
       queryParams['\$orderby'] = 'name asc';
     }
 
-    final uri = Uri.https(_baseUrl, "/Category/search", queryParams);  
+    final uri = Uri.https(_baseUrl, "/Category/search", queryParams);
     final headers = _getCommonHeaders(accessToken);
 
-    final response =
-        await _httpClient.get(uri, headers: headers);
+    final response = await _httpClient.get(uri, headers: headers);
 
     response.ensureSuccessStatusCode();
 
@@ -82,20 +77,17 @@ class ProductApi {
   }
 
   Future<CategorySearchResultDto> searchCategoriesById(
-    String accessToken,
-    Set<String> ids
-  ) async {
+      String accessToken, Set<String> ids) async {
     final queryParams = {
-      'search' : ids.map((i) => '"$i"').join('|'),
-      'searchFields' : 'id',
-      '\$top' : ids.length.toString(),
+      'search': ids.map((i) => '"$i"').join('|'),
+      'searchFields': 'id',
+      '\$top': ids.length.toString(),
     };
 
-    final uri = Uri.https(_baseUrl, "/Category/search", queryParams);  
+    final uri = Uri.https(_baseUrl, "/Category/search", queryParams);
     final headers = _getCommonHeaders(accessToken);
 
-    final response =
-        await _httpClient.get(uri, headers: headers);
+    final response = await _httpClient.get(uri, headers: headers);
 
     response.ensureSuccessStatusCode();
 

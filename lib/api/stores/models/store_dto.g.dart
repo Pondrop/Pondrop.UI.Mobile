@@ -27,6 +27,7 @@ StoreDto _$StoreDtoFromJson(Map<String, dynamic> json) => StoreDto(
       country: json['country'] as String?,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
+      isCommunityStore: json['isCommunityStore'] as bool,
     );
 
 Map<String, dynamic> _$StoreDtoToJson(StoreDto instance) => <String, dynamic>{
@@ -48,4 +49,5 @@ Map<String, dynamic> _$StoreDtoToJson(StoreDto instance) => <String, dynamic>{
       'country': instance.country,
       'latitude': instance.latitude,
       'longitude': instance.longitude,
+      'isCommunityStore': instance.isCommunityStore,
     };

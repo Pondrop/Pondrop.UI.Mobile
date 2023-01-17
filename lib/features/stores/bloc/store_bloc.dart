@@ -42,7 +42,8 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
       emit(state.copyWith(status: StoreStatus.loading));
 
       final position = state.stores.isEmpty
-          ? await _locationRepository.getCurrentPosition()
+          ? await _locationRepository.getCurrentPosition() ??
+              await _locationRepository.getLastKnownPosition()
           : state.position;
       final storesResult =
           await _storeRepository.fetchStores('', state.stores.length, position);
@@ -75,16 +76,25 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
     emit(state.copyWith(status: StoreStatus.loading));
 
     try {
-      final position = await _locationRepository.getCurrentPosition();
-      final storesResult = await _storeRepository.fetchStores('', 0, position);
+      final position = await _locationRepository.getCurrentPosition() ??
+          await _locationRepository.getLastKnownPosition();
+
+      final fetchStores = _storeRepository.fetchStores('', 0, position);
+      final fetchCommunityStores =
+          _storeRepository.fetchCommunityStores('', 0, position, top: 1);
+
+      await Future.wait([fetchStores, fetchCommunityStores]);
+
+      final storesResult = await fetchStores;
+      final communityStoresResult = await fetchCommunityStores;
 
       emit(
         state.copyWith(
-          status: StoreStatus.success,
-          stores: List.of(state.stores)..addAll(storesResult.item1),
-          position: position,
-          hasReachedMax: !storesResult.item2,
-        ),
+            status: StoreStatus.success,
+            stores: storesResult.item1,
+            position: position,
+            hasReachedMax: !storesResult.item2,
+            communityStore: communityStoresResult.item1.firstOrNull),
       );
 
       final storeIds = storesResult.item1.map((i) => i.id).toList();

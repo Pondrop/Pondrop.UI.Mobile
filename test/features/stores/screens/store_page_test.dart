@@ -85,8 +85,17 @@ void main() {
       when(() => authenticationBloc.state).thenReturn(authState);
       when(() => locationRepository.getCurrentPosition())
           .thenAnswer((_) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any())).thenAnswer(
           (_) => Future.value(Tuple2([FakeStore.fakeStore()], false)));
+      when(() =>
+              storeRepository.fetchCommunityStores(any(), any(), any(), top: 1))
+          .thenAnswer((_) => Future.value(const Tuple2([], false)));
+      when(() => submissionRepository.fetchCategoryCampaigns(any()))
+          .thenAnswer((invocation) => Future.value(const []));
+      when(() => submissionRepository.fetchProductCampaigns(any()))
+          .thenAnswer((invocation) => Future.value(const []));
 
       await tester.pumpApp(MultiRepositoryProvider(
           providers: [
@@ -130,8 +139,15 @@ void main() {
       when(() => authenticationBloc.state).thenReturn(authState);
       when(() => locationRepository.getCurrentPosition())
           .thenAnswer((_) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
+      when(() =>
+              storeRepository.fetchCommunityStores(any(), any(), any(), top: 1))
+          .thenAnswer((_) => Future.value(const Tuple2([], false)));
       when(() => submissionRepository.fetchCategoryCampaigns(storeIds))
           .thenAnswer((invocation) => Future.value(categoryCampaigns));
       when(() => submissionRepository.fetchProductCampaigns(storeIds))
