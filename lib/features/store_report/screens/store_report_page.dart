@@ -295,11 +295,12 @@ class StoreReportPage extends StatelessWidget {
           .where((e) => e.id == i.submissionTemplateId)
           .firstOrNull;
       if (template != null) {
-        final icon = IconValidator.safeIconCodePoint(
+        final safeCodePoint = IconValidator.safeIconCodePoint(
             template.iconFontFamily, template.iconCodePoint);
 
         items.add(StoreReportListItem(
-            iconData: IconData(icon.item2, fontFamily: icon.item1),
+            iconData:
+                IconData(safeCodePoint.item2, fontFamily: safeCodePoint.item1),
             title: template.title,
             subTitle: i.focusName,
             onTap: () {
@@ -349,11 +350,12 @@ class StoreReportPage extends StatelessWidget {
       if (template != null) {
         final focus = i.toFocusString();
 
-        final icon = IconValidator.safeIconCodePoint(
+        final safeCodePoint = IconValidator.safeIconCodePoint(
             template.iconFontFamily, template.iconCodePoint);
 
         items.add(StoreReportListItem(
-            iconData: IconData(icon.item2, fontFamily: icon.item1),
+            iconData:
+                IconData(safeCodePoint.item2, fontFamily: safeCodePoint.item1),
             title: template.title,
             subTitle: focus.isNotEmpty ? focus : template.description,
             photoCount: i.photoCount(),

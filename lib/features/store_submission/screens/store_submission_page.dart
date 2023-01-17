@@ -7,6 +7,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/api/submission_api.dart';
 import 'package:pondrop/features/app/app.dart';
 import 'package:pondrop/features/dialogs/dialogs.dart';
+import 'package:pondrop/features/global/global.dart';
 import 'package:pondrop/features/store_submission/widgets/submission_summary_list_view.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
@@ -100,16 +101,25 @@ class StoreSubmissionPage extends StatelessWidget {
                 (state.submission.steps.where((e) => e.isFocus).length) -
                 (state.lastStepHasMandatoryFields ? 0 : 1);
 
+            final safeCodePoint = IconValidator.safeIconCodePoint(
+                state.currentStep.instructionsIconFontFamily,
+                state.currentStep.instructionsIconCodePoint);
+
             final okay =
                 await navigator.push<bool?>(DialogPage.route(DialogConfig(
               title: state.currentStep.isFocus
                   ? ''
                   : l10n.itemOfItem(currentStepNum, totalStepNum),
-              iconData: IconData(state.currentStep.instructionsIconCodePoint,
-                  fontFamily: state.currentStep.instructionsIconFontFamily),
+              iconData: safeCodePoint.item2 > 0
+                  ? IconData(safeCodePoint.item2,
+                      fontFamily: safeCodePoint.item1)
+                  : null,
               header: state.currentStep.title,
               body: state.currentStep.instructions,
-              okayButtonText: state.currentStep.instructionsContinueButton,
+              okayButtonText:
+                  state.currentStep.instructionsContinueButton.isNotEmpty
+                      ? state.currentStep.instructionsContinueButton
+                      : l10n.okay,
               cancelButtonText: state.currentStep.instructionsSkipButton,
             )));
 
