@@ -9,7 +9,6 @@ import 'package:pondrop/features/search_items/widgets/search_list_item.dart';
 import 'package:pondrop/features/store_submission/widgets/fields/fields.dart';
 import 'package:pondrop/features/store_submission/widgets/submission_failed_view.dart';
 import 'package:pondrop/models/models.dart';
-import 'package:pondrop/models/store_submission.dart';
 import 'package:pondrop/repositories/repositories.dart';
 import 'package:pondrop/features/store_submission/store_submission.dart';
 import 'package:pondrop/features/store_submission/widgets/camera_access_view.dart';
@@ -53,6 +52,7 @@ void main() {
         address: '123 St, City',
         latitude: 0,
         longitude: 0,
+        communityStore: false,
         lastKnowDistanceMetres: -1);
     visit = StoreVisitDto(
         id: const Uuid().v4(),

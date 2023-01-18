@@ -11,6 +11,7 @@ class Store extends Equatable {
     required this.address,
     required this.latitude,
     required this.longitude,
+    required this.communityStore,
     required this.lastKnowDistanceMetres,
     this.categoryCampaigns = const [],
     this.productCampaigns = const [],
@@ -23,6 +24,7 @@ class Store extends Equatable {
   final String address;
   final double latitude;
   final double longitude;
+  final bool communityStore;
   final double lastKnowDistanceMetres;
 
   final List<TaskIdentifier> categoryCampaigns;
@@ -57,6 +59,7 @@ class Store extends Equatable {
       address: address,
       latitude: latitude,
       longitude: longitude,
+      communityStore: communityStore,
       lastKnowDistanceMetres:
           lastKnowDistanceMetres ?? this.lastKnowDistanceMetres,
       categoryCampaigns: categoryCampaigns ?? this.categoryCampaigns,
@@ -72,6 +75,7 @@ class Store extends Equatable {
         address,
         latitude,
         longitude,
+        communityStore,
         lastKnowDistanceMetres,
         categoryCampaigns,
         productCampaigns

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:pondrop/api/auth_api.dart';
 import 'package:pondrop/models/models.dart';
@@ -7,11 +8,10 @@ import 'package:pondrop/repositories/repositories.dart';
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
-  AuthenticationRepository({
-    required UserRepository userRepository,
-    AuthApi? authApi
-  }) : _userRepository = userRepository,
-       _authApi = authApi ?? AuthApi();
+  AuthenticationRepository(
+      {required UserRepository userRepository, AuthApi? authApi})
+      : _userRepository = userRepository,
+        _authApi = authApi ?? AuthApi();
 
   final UserRepository _userRepository;
   final AuthApi _authApi;
@@ -20,8 +20,8 @@ class AuthenticationRepository {
   Stream<AuthenticationStatus> get status async* {
     final user = await _userRepository.getUser();
     yield user?.accessToken.isNotEmpty == true
-      ? AuthenticationStatus.authenticated
-      : AuthenticationStatus.unauthenticated;
+        ? AuthenticationStatus.authenticated
+        : AuthenticationStatus.unauthenticated;
     yield* _controller.stream;
   }
 
@@ -32,7 +32,8 @@ class AuthenticationRepository {
     final accessToken = await _authApi.signIn(email: email, password: password);
 
     if (accessToken.isNotEmpty) {
-      await _userRepository.setUser(User(email: email, accessToken: accessToken));
+      await _userRepository
+          .setUser(User(email: email, accessToken: accessToken));
       _controller.add(AuthenticationStatus.authenticated);
     }
 
@@ -40,7 +41,11 @@ class AuthenticationRepository {
   }
 
   Future<void> signOut(String accessToken) async {
-    await _authApi.signOut(accessToken);
+    try {
+      await _authApi.signOut(accessToken);
+    } catch (e) {
+      log(e.toString());
+    }
     await _userRepository.clearUser();
     _controller.add(AuthenticationStatus.unauthenticated);
   }

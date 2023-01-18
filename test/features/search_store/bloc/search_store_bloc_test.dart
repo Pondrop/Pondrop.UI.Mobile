@@ -48,7 +48,9 @@ void main() {
       final stores = [FakeStore.fakeStore()];
 
       when(() => locationRepository.getCurrentPosition())
-          .thenAnswer((invocation) => Future<Position?>.value(null));
+          .thenAnswer((invocation) => Future.value(null));
+      when(() => locationRepository.getLastKnownPosition())
+          .thenAnswer((_) => Future.value(null));
       when(() => storeRepository.fetchStores(any(), any(), any()))
           .thenAnswer((invocation) => Future.value(Tuple2(stores, true)));
 

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pondrop/models/models.dart';
@@ -11,18 +10,6 @@ import 'package:stream_transform/stream_transform.dart';
 part 'search_store_event.dart';
 part 'search_store_state.dart';
 
-const throttleDuration = Duration(milliseconds: 300);
-
-EventTransformer<E> throttleDroppable<E>(Duration duration) {
-  return (events, mapper) {
-    return droppable<E>().call(events.throttle(duration), mapper);
-  };
-}
-
-EventTransformer<Event> debounce<Event>(Duration duration) {
-  return (events, mapper) => events.debounce(duration).switchMap(mapper);
-}
-
 class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
   SearchStoreBloc(
       {required StoreRepository storeRepository,
@@ -30,7 +17,8 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
       : _storeService = storeRepository,
         _locationRepository = locationRepository,
         super(const SearchStoreState()) {
-    on<TextChanged>(_onSearchStore, transformer: debounce(throttleDuration));
+    on<TextChanged>(_onSearchStore,
+        transformer: _debounce(const Duration(milliseconds: 300)));
   }
 
   final StoreRepository _storeService;
@@ -46,7 +34,8 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
     }
 
     try {
-      final position = await _locationRepository.getCurrentPosition();
+      final position = await _locationRepository.getCurrentPosition() ??
+          await _locationRepository.getLastKnownPosition();
       final stores = await _storeService.fetchStores(searchTerm, 0, position);
 
       emit(
@@ -61,4 +50,8 @@ class SearchStoreBloc extends Bloc<SearchStoreEvent, SearchStoreState> {
       emit(state.copyWith(status: SearchStoreStatus.failure));
     }
   }
+}
+
+EventTransformer<Event> _debounce<Event>(Duration duration) {
+  return (events, mapper) => events.debounce(duration).switchMap(mapper);
 }

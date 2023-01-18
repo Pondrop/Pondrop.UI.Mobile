@@ -129,7 +129,7 @@ class StoreSubmissionBloc
       nextStep.longitude = lastKnown?.longitude ?? 0;
       nextStep.started = DateTime.now();
 
-      if (nextStep.instructionsContinueButton.isNotEmpty) {
+      if (nextStep.instructions.isNotEmpty) {
         emit(state.copyWith(
           action: SubmissionStatus.stepInstructions,
           currentStepIdx: nextStepIdx,

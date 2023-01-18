@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pondrop/features/app/app.dart';
+import 'package:pondrop/features/global/global.dart';
 import 'package:pondrop/features/store_submission/screens/store_submission_page.dart';
 import 'package:pondrop/l10n/l10n.dart';
 import 'package:pondrop/models/models.dart';
@@ -104,16 +105,26 @@ class StoreReportPage extends StatelessWidget {
               listenWhen: (previous, current) =>
                   previous.pendingState != current.pendingState),
         ],
-        child: Scaffold(
-          appBar: AppBar(
-              elevation: 0,
-              title: Text(
-                l10n.storeActivity,
-                style: PondropStyles.appBarTitleTextStyle,
-              ),
-              centerTitle: true),
-          body: Builder(builder: (context) {
-            return WillPopScope(
+        child: Builder(builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+                elevation:
+                    context.read<StoreReportBloc>().state.store.communityStore
+                        ? null
+                        : 0,
+                title: BlocBuilder<StoreReportBloc, StoreReportState>(
+                    buildWhen: (previous, current) =>
+                        previous.store != current.store,
+                    builder: (context, state) {
+                      return Text(
+                        state.store.communityStore
+                            ? l10n.communityStoreTasks
+                            : l10n.storeActivity,
+                        style: PondropStyles.appBarTitleTextStyle,
+                      );
+                    }),
+                centerTitle: true),
+            body: WillPopScope(
                 onWillPop: () async {
                   if (await _canPop(context)) {
                     final bloc = context.read<StoreReportBloc>();
@@ -170,40 +181,41 @@ class StoreReportPage extends StatelessWidget {
                           }),
                         ),
                       )
-                    ]));
-          }),
-          floatingActionButton: BlocBuilder<StoreReportBloc, StoreReportState>(
-            builder: (context, state) {
-              switch (state.status) {
-                case StoreReportStatus.loading:
-                  return ElevatedButton(
+                    ])),
+            floatingActionButton:
+                BlocBuilder<StoreReportBloc, StoreReportState>(
+              builder: (context, state) {
+                switch (state.status) {
+                  case StoreReportStatus.loading:
+                    return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: PondropColors.primaryLightColor,
+                            foregroundColor: Colors.black),
+                        onPressed: () {},
+                        child: const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(),
+                        ));
+                  case StoreReportStatus.loaded:
+                    return ElevatedButton.icon(
+                      icon: const Icon(Icons.add),
+                      label: Text(l10n.addItem(l10n.task.toLowerCase())),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: PondropColors.primaryLightColor,
                           foregroundColor: Colors.black),
-                      onPressed: () {},
-                      child: const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(),
-                      ));
-                case StoreReportStatus.loaded:
-                  return ElevatedButton.icon(
-                    icon: const Icon(Icons.add),
-                    label: Text(l10n.addItem(l10n.task.toLowerCase())),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: PondropColors.primaryLightColor,
-                        foregroundColor: Colors.black),
-                    onPressed: () async {
-                      await Navigator.of(context).push(
-                          TaskTemplatesPage.route(state.visit!, state.store));
-                    },
-                  );
-                default:
-                  return const SizedBox.shrink();
-              }
-            },
-          ),
-        ),
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                            TaskTemplatesPage.route(state.visit!, state.store));
+                      },
+                    );
+                  default:
+                    return const SizedBox.shrink();
+                }
+              },
+            ),
+          );
+        }),
       ),
     );
   }
@@ -227,6 +239,12 @@ class StoreReportPage extends StatelessWidget {
 
   Widget _storeHeader(BuildContext context) {
     return Builder(builder: (context) {
+      final bloc = context.read<StoreReportBloc>();
+
+      if (bloc.state.store.communityStore) {
+        return const SizedBox.shrink();
+      }
+
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -244,14 +262,14 @@ class StoreReportPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(context.read<StoreReportBloc>().state.store.displayName,
+                  Text(bloc.state.store.displayName,
                       style: Theme.of(context)
                           .textTheme
                           .bodyText1!
                           .copyWith(fontSize: 14, fontWeight: FontWeight.w400)),
                   const SizedBox(height: 4),
                   Text(
-                    context.read<StoreReportBloc>().state.store.address,
+                    bloc.state.store.address,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.caption!.copyWith(
                           fontSize: 12,
@@ -277,9 +295,12 @@ class StoreReportPage extends StatelessWidget {
           .where((e) => e.id == i.submissionTemplateId)
           .firstOrNull;
       if (template != null) {
+        final safeCodePoint = IconValidator.safeIconCodePoint(
+            template.iconFontFamily, template.iconCodePoint);
+
         items.add(StoreReportListItem(
-            iconData: IconData(template.iconCodePoint,
-                fontFamily: template.iconFontFamily),
+            iconData:
+                IconData(safeCodePoint.item2, fontFamily: safeCodePoint.item1),
             title: template.title,
             subTitle: i.focusName,
             onTap: () {
@@ -329,9 +350,12 @@ class StoreReportPage extends StatelessWidget {
       if (template != null) {
         final focus = i.toFocusString();
 
+        final safeCodePoint = IconValidator.safeIconCodePoint(
+            template.iconFontFamily, template.iconCodePoint);
+
         items.add(StoreReportListItem(
-            iconData: IconData(template.iconCodePoint,
-                fontFamily: template.iconFontFamily),
+            iconData:
+                IconData(safeCodePoint.item2, fontFamily: safeCodePoint.item1),
             title: template.title,
             subTitle: focus.isNotEmpty ? focus : template.description,
             photoCount: i.photoCount(),

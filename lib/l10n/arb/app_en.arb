@@ -368,5 +368,10 @@
     "reordering": "Reordering",
     "@reordering": {},
     "agreeToTandCs": "By clicking Continue, you agree to our Terms and Conditions and Privacy Policy.",
-    "@agreeToTandCs": {}    
+    "@agreeToTandCs": {},
+    "communityStore": "Community Store",
+    "@communityStore": {},
+    "communityStoreTasks": "Community Store Tasks",
+    "@communityStoreTasks": {}
+    
 }

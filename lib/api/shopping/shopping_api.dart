@@ -165,7 +165,7 @@ class ShoppingApi {
 
   Future<bool> deleteListItem(
       String accessToken, String listId, String listItemId) async {
-    final uri = Uri.https(_baseUrl, '/ListItem/update');
+    final uri = Uri.https(_baseUrl, '/ListItem/remove');
     final headers = _getCommonHeaders(accessToken);
 
     final json = jsonEncode({

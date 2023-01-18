@@ -38,6 +38,7 @@ void main() {
         address: '123 St, City',
         latitude: 0,
         longitude: 0,
+        communityStore: false,
         lastKnowDistanceMetres: -1);
     storeVisitDto = StoreVisitDto(
         id: const Uuid().v4(),

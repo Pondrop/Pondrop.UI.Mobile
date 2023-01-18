@@ -26,7 +26,8 @@ class StoreDto {
       required this.postcode,
       required this.country,
       required this.latitude,
-      required this.longitude});
+      required this.longitude,
+      required this.isCommunityStore});
 
   @JsonKey(name: '@search.score')
   final double searchScore;
@@ -64,8 +65,10 @@ class StoreDto {
   final double latitude;
   @JsonKey(name: 'longitude')
   final double longitude;
+  @JsonKey(name: 'isCommunityStore')
+  final bool isCommunityStore;
 
-    double distanceInMeters(Position? position) {
+  double distanceInMeters(Position? position) {
     if (position == null) {
       return -1;
     }
@@ -73,7 +76,6 @@ class StoreDto {
     return Geolocator.distanceBetween(
         position.latitude, position.longitude, latitude, longitude);
   }
-
 
   static StoreDto fromJson(Map<String, dynamic> json) =>
       _$StoreDtoFromJson(json);
