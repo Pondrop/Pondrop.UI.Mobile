@@ -30,7 +30,7 @@ void main() {
     });
 
     testWidgets('renders TaskTemplates', (tester) async {
-      when(() => submissionRepository.fetchTemplates())
+      when(() => submissionRepository.fetchTemplates(useCachedResult: true))
           .thenAnswer((invocation) => Future.value(templates));
 
       await tester.pumpApp(MultiRepositoryProvider(
@@ -46,7 +46,7 @@ void main() {
     });
 
     testWidgets('renders TaskTemplates empty', (tester) async {
-      when(() => submissionRepository.fetchTemplates())
+      when(() => submissionRepository.fetchTemplates(useCachedResult: true))
           .thenAnswer((invocation) => Future.value([]));
 
       await tester.pumpApp(MultiRepositoryProvider(

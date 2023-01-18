@@ -28,7 +28,7 @@ void main() {
     blocTest<TaskTemplatesBloc, TaskTemplatesState>(
       'emits templates when TaskTemplatesFetched added',
       setUp: () {
-        when(() => submissionRepository.fetchTemplates())
+        when(() => submissionRepository.fetchTemplates(useCachedResult: true))
             .thenAnswer((invocation) => Future.value(templates));
       },
       build: () =>
@@ -43,7 +43,7 @@ void main() {
     blocTest<TaskTemplatesBloc, TaskTemplatesState>(
       'emits error when TaskTemplatesFetched throws',
       setUp: () {
-        when(() => submissionRepository.fetchTemplates())
+        when(() => submissionRepository.fetchTemplates(useCachedResult: true))
             .thenThrow(Exception());
       },
       build: () =>
@@ -54,7 +54,7 @@ void main() {
     );
 
     test('emits templates when TaskTemplatesRefreshed added', () async {
-      when(() => submissionRepository.fetchTemplates())
+      when(() => submissionRepository.fetchTemplates(useCachedResult: true))
           .thenAnswer((invocation) => Future.value(templates));
 
       final bloc =
@@ -82,7 +82,7 @@ void main() {
     });
 
     test('emits error when TaskTemplatesRefreshed throws', () async {
-      when(() => submissionRepository.fetchTemplates())
+      when(() => submissionRepository.fetchTemplates(useCachedResult: true))
           .thenAnswer((invocation) => Future.value(templates));
 
       final bloc =
@@ -92,7 +92,7 @@ void main() {
 
       await bloc.stream.first;
 
-      when(() => submissionRepository.fetchTemplates())
+      when(() => submissionRepository.fetchTemplates(useCachedResult: true))
           .thenThrow(Exception());
 
       bloc.add(const TaskTemplatesRefreshed());
