@@ -38,7 +38,7 @@ void main() {
     test('Get templates from API', () async {
       final templates = FakeStoreSubmissionTemplates.fakeTemplates();
 
-      when(() => submissionApi.fetchTemplates(user.accessToken))
+      when(() => submissionApi.fetchTemplates(user.accessToken, false))
           .thenAnswer((invocation) => Future.value(templates));
 
       final repo = SubmissionRepository(
@@ -50,7 +50,7 @@ void main() {
     });
 
     test('Get templates from API - failure returns empty', () async {
-      when(() => submissionApi.fetchTemplates(user.accessToken))
+      when(() => submissionApi.fetchTemplates(user.accessToken, false))
           .thenThrow(Exception());
 
       final repo = SubmissionRepository(

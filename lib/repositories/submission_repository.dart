@@ -24,13 +24,14 @@ class SubmissionRepository {
     yield* _controller.stream;
   }
 
-  Future<List<SubmissionTemplateDto>> fetchTemplates() async {
+  Future<List<SubmissionTemplateDto>> fetchTemplates(
+      {bool useCachedResult = false}) async {
     final user = await _userRepository.getUser();
 
     if (user?.accessToken.isNotEmpty == true) {
       try {
-        final templates =
-            await _submissionApi.fetchTemplates(user!.accessToken);
+        final templates = await _submissionApi.fetchTemplates(
+            user!.accessToken, useCachedResult);
         return templates;
       } catch (e) {
         log(e.toString());
