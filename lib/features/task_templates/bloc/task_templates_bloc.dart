@@ -38,9 +38,10 @@ class TaskTemplatesBloc extends Bloc<TaskTemplatesEvent, TaskTemplatesState> {
 
   Future<void> _loadTemplates(Emitter<TaskTemplatesState> emit) async {
     try {
-      final templates = (await _submissionRepository.fetchTemplates())
-          .where((e) => e.manualEnabled)
-          .toList();
+      final templates =
+          (await _submissionRepository.fetchTemplates(useCachedResult: true))
+              .where((e) => e.manualEnabled)
+              .toList();
       emit(state.copyWith(
           status: TaskTemplateStatus.success, templates: templates));
     } on Exception {

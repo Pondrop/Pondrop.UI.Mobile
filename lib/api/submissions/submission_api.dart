@@ -17,12 +17,14 @@ class SubmissionApi {
   final http.Client _httpClient;
   final Map<String, List<SubmissionTemplateDto>> _localTemplates = {};
 
-  Future<List<SubmissionTemplateDto>> fetchTemplates(String accessToken) async {
-    if (_localTemplates.isNotEmpty) {
+  Future<List<SubmissionTemplateDto>> fetchTemplates(
+      String accessToken, bool useCachedResult) async {
+    if (_localTemplates.isNotEmpty && useCachedResult) {
       if (_localTemplates.containsKey(accessToken)) {
         return _localTemplates[accessToken]!;
+      } else {
+        _localTemplates.clear();
       }
-      _localTemplates.clear();
     }
 
     final headers = _getCommonHeaders(accessToken);
