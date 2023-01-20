@@ -98,6 +98,11 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
       );
 
       final storeIds = storesResult.item1.map((i) => i.id).toList();
+
+      if (state.communityStore != null) {
+        storeIds.add(state.communityStore!.id);
+      }
+
       add(StoreCampaignCountsRefreshed(storeIds: storeIds));
     } catch (ex) {
       log(ex.toString());
@@ -113,6 +118,11 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
     try {
       final stores = List.of(state.stores);
+
+      if (state.communityStore != null) {
+        stores.add(state.communityStore!);
+      }
+
       final submissionMap =
           groupBy(event.completedTasks, (TaskIdentifier i) => i.storeId);
 
@@ -128,7 +138,11 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
         }
       }
 
-      emit(state.copyWith(stores: stores));
+      final communityStore = state.communityStore != null ? stores.last : null;
+
+      emit(state.copyWith(
+          stores: stores..remove(communityStore),
+          communityStore: communityStore));
     } catch (ex) {
       log(ex.toString());
     }
@@ -159,8 +173,11 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
 
       final stores = List.of(state.stores);
 
-      for (final s
-          in state.stores.where((i) => event.storeIds.contains(i.id))) {
+      if (state.communityStore != null) {
+        stores.add(state.communityStore!);
+      }
+
+      for (final s in stores.where((i) => event.storeIds.contains(i.id))) {
         final idx = stores.indexOf(s);
         stores[idx] = stores[idx].copyWith(
           categoryCampaigns: categoryCounts[s.id] ?? const [],
@@ -168,9 +185,12 @@ class StoreBloc extends Bloc<StoreEvent, StoreState> {
         );
       }
 
+      final communityStore = state.communityStore != null ? stores.last : null;
+
       emit(
         state.copyWith(
-          stores: stores,
+          stores: stores..remove(communityStore),
+          communityStore: communityStore,
           campaignCountsRefreshedMs: DateTime.now().millisecondsSinceEpoch,
         ),
       );
