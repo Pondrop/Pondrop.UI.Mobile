@@ -372,6 +372,7 @@
     "communityStore": "Community Store",
     "@communityStore": {},
     "communityStoreTasks": "Community Store Tasks",
-    "@communityStoreTasks": {}
-    
+    "@communityStoreTasks": {},
+    "skip": "Skip",
+    "@skip": {}    
 }
