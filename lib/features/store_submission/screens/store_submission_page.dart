@@ -107,7 +107,7 @@ class StoreSubmissionPage extends StatelessWidget {
 
             final okay =
                 await navigator.push<bool?>(DialogPage.route(DialogConfig(
-              title: state.currentStep.isFocus
+              title: state.currentStep.isFocus || state.currentStep.isSummary
                   ? ''
                   : l10n.itemOfItem(currentStepNum, totalStepNum),
               iconData: safeCodePoint.item2 > 0
