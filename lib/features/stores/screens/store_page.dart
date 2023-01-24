@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -97,15 +98,29 @@ class StorePage extends StatelessWidget {
                       ),
                       if (state.communityStore != null)
                         ListTile(
-                          leading: const Icon(Icons.store_outlined),
+                          leading: Badge(
+                            showBadge: state.communityStore!.campaignCount > 0,
+                            badgeContent: Text(
+                              '${state.communityStore!.campaignCount}',
+                              style: const TextStyle(
+                                  color: PondropColors.badgeFgBlueColor,
+                                  fontSize: 9),
+                            ),
+                            badgeColor: PondropColors.badgeBgBlueColor,
+                            child: const Icon(Icons.store_outlined),
+                          ),
                           title: Text(l10n.communityStore),
                           selectedColor: Colors.black,
                           iconColor: Colors.black,
                           selectedTileColor:
                               PondropColors.selectedListItemColor,
                           onTap: () async {
-                            await Navigator.of(context).push(
-                                StoreReportPage.route(state.communityStore!));
+                            final bloc = context.read<StoreBloc>();
+                            final taskIdentifiers = await Navigator.of(context)
+                                .push(StoreReportPage.route(
+                                    state.communityStore!));
+                            bloc.add(StoreCompletedTasks(
+                                completedTasks: taskIdentifiers ?? const []));
                           },
                         ),
                       ListTile(
