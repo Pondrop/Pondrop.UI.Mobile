@@ -107,20 +107,23 @@ class StoreSubmissionPage extends StatelessWidget {
 
             final okay =
                 await navigator.push<bool?>(DialogPage.route(DialogConfig(
-              title: state.currentStep.isFocus
+              title: state.currentStep.isFocus || state.currentStep.isSummary
                   ? ''
                   : l10n.itemOfItem(currentStepNum, totalStepNum),
               iconData: safeCodePoint.item2 > 0
                   ? IconData(safeCodePoint.item2,
                       fontFamily: safeCodePoint.item1)
-                  : null,
+                  : Icons.add_a_photo_outlined,
               header: state.currentStep.title,
               body: state.currentStep.instructions,
               okayButtonText:
                   state.currentStep.instructionsContinueButton.isNotEmpty
                       ? state.currentStep.instructionsContinueButton
-                      : l10n.okay,
-              cancelButtonText: state.currentStep.instructionsSkipButton,
+                      : l10n.gotIt,
+              cancelButtonText:
+                  state.currentStep.instructionsSkipButton.isNotEmpty
+                      ? state.currentStep.instructionsSkipButton
+                      : l10n.skip,
             )));
 
             bloc.add(const StoreSubmissionNextEvent());
